@@ -8,7 +8,7 @@ const Customers: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  // Mock customer data
+  // Mock customer data - expanded to show pagination
   const [customers] = useState([
     {
       id: 'C001',
@@ -79,6 +79,104 @@ const Customers: React.FC = () => {
       status: 'Active',
       registrationDate: '2024-01-12',
       lastOrder: '2024-01-19'
+    },
+    {
+      id: 'C006',
+      name: 'Global Food Solutions',
+      contactPerson: 'Lisa Thompson',
+      email: 'lisa.t@globalfood.com',
+      phone: '+1 (555) 678-9012',
+      address: '987 Global Plaza, International District',
+      city: 'Metro City',
+      country: 'USA',
+      website: 'www.globalfood.com',
+      status: 'Active',
+      registrationDate: '2024-01-08',
+      lastOrder: '2024-01-21'
+    },
+    {
+      id: 'C007',
+      name: 'Fresh Produce Co',
+      contactPerson: 'Robert Wilson',
+      email: 'robert.w@freshproduce.com',
+      phone: '+1 (555) 789-0123',
+      address: '147 Fresh Street, Produce District',
+      city: 'Fresh City',
+      country: 'USA',
+      website: 'www.freshproduce.com',
+      status: 'Active',
+      registrationDate: '2024-01-14',
+      lastOrder: '2024-01-23'
+    },
+    {
+      id: 'C008',
+      name: 'Quality Assurance Ltd',
+      contactPerson: 'Maria Garcia',
+      email: 'maria.g@qualityassurance.com',
+      phone: '+1 (555) 890-1234',
+      address: '258 Quality Boulevard, Assurance District',
+      city: 'Quality Town',
+      country: 'USA',
+      website: 'www.qualityassurance.com',
+      status: 'Active',
+      registrationDate: '2024-01-11',
+      lastOrder: '2024-01-24'
+    },
+    {
+      id: 'C009',
+      name: 'Export Trading Corp',
+      contactPerson: 'James Brown',
+      email: 'james.b@exporttrading.com',
+      phone: '+1 (555) 901-2345',
+      address: '369 Export Avenue, Trading District',
+      city: 'Export City',
+      country: 'USA',
+      website: 'www.exporttrading.com',
+      status: 'Inactive',
+      registrationDate: '2023-11-15',
+      lastOrder: '2023-12-10'
+    },
+    {
+      id: 'C010',
+      name: 'AgriTech Innovations',
+      contactPerson: 'Jennifer Davis',
+      email: 'jennifer.d@agritech.com',
+      phone: '+1 (555) 012-3456',
+      address: '741 AgriTech Park, Innovation District',
+      city: 'Tech City',
+      country: 'USA',
+      website: 'www.agritech.com',
+      status: 'Active',
+      registrationDate: '2024-01-16',
+      lastOrder: '2024-01-25'
+    },
+    {
+      id: 'C011',
+      name: 'Farm Fresh Direct',
+      contactPerson: 'Michael Taylor',
+      email: 'michael.t@farmfresh.com',
+      phone: '+1 (555) 123-4567',
+      address: '852 Farm Road, Direct District',
+      city: 'Farm City',
+      country: 'USA',
+      website: 'www.farmfresh.com',
+      status: 'Active',
+      registrationDate: '2024-01-13',
+      lastOrder: '2024-01-26'
+    },
+    {
+      id: 'C012',
+      name: 'Natural Products Inc',
+      contactPerson: 'Amanda White',
+      email: 'amanda.w@naturalproducts.com',
+      phone: '+1 (555) 234-5678',
+      address: '963 Natural Way, Products District',
+      city: 'Natural City',
+      country: 'USA',
+      website: 'www.naturalproducts.com',
+      status: 'Active',
+      registrationDate: '2024-01-17',
+      lastOrder: '2024-01-27'
     }
   ]);
 
@@ -249,7 +347,7 @@ const Customers: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">New This Month</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">3</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">8</p>
             </div>
             <div className="p-3 bg-purple-500 rounded-full">
               <Building2 className="w-6 h-6 text-white" />
@@ -287,7 +385,7 @@ const Customers: React.FC = () => {
         filterable={true}
         exportable={true}
         pagination={true}
-        pageSize={10}
+        pageSize={5}
       />
     </div>
   );

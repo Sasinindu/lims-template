@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Building2, User, Mail, Phone, MapPin, Globe } from 'lucide-react';
+import CustomSelect, { SelectOption } from '../components/CustomSelect';
+import MultiSelect, { MultiSelectOption } from '../components/MultiSelect';
 
 const AddCustomer: React.FC = () => {
   const navigate = useNavigate();
@@ -15,14 +17,75 @@ const AddCustomer: React.FC = () => {
     city: '',
     country: '',
     website: '',
-    status: 'Active'
+    status: 'Active',
+    services: [] as string[]
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const statusOptions: SelectOption[] = [
+    {
+      value: 'Active',
+      label: 'Active'
+    },
+    {
+      value: 'Inactive',
+      label: 'Inactive'
+    }
+  ];
+
+  const serviceOptions: MultiSelectOption[] = [
+    {
+      value: 'pesticide-testing',
+      label: 'Pesticide Testing'
+    },
+    {
+      value: 'heavy-metal-testing',
+      label: 'Heavy Metal Testing'
+    },
+    {
+      value: 'microbiological-analysis',
+      label: 'Microbiological Analysis'
+    },
+    {
+      value: 'nutritional-analysis',
+      label: 'Nutritional Analysis'
+    },
+    {
+      value: 'allergen-testing',
+      label: 'Allergen Testing'
+    },
+    {
+      value: 'quality-control',
+      label: 'Quality Control'
+    },
+    {
+      value: 'certification',
+      label: 'Certification'
+    },
+    {
+      value: 'consulting',
+      label: 'Consulting'
+    }
+  ];
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleStatusChange = (value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      status: value
+    }));
+  };
+
+  const handleServicesChange = (values: string[]) => {
+    setFormData(prev => ({
+      ...prev,
+      services: values
     }));
   };
 
@@ -271,20 +334,25 @@ const AddCustomer: React.FC = () => {
               </div>
               
               <div>
-                <label htmlFor="status" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Status
-                </label>
-                <select
-                  id="status"
-                  name="status"
+                <CustomSelect
+                  options={statusOptions}
                   value={formData.status}
-                  onChange={handleInputChange}
-                  className="input-field"
-                >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
+                  onChange={handleStatusChange}
+                  label="Status"
+                  placeholder="Select status"
+                />
               </div>
+            </div>
+
+            <div>
+              <MultiSelect
+                options={serviceOptions}
+                value={formData.services}
+                onChange={handleServicesChange}
+                label="Services Required"
+                placeholder="Select services"
+                maxDisplay={3}
+              />
             </div>
           </div>
 

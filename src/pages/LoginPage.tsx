@@ -76,9 +76,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
-              <p className="text-gray-600 dark:text-gray-400 mt-2">
+              {/* <p className="text-gray-600 dark:text-gray-400 mt-2">
                 Laboratory Management System
-              </p>
+              </p> */}
             </motion.div>
           </div>
 
