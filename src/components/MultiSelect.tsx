@@ -81,11 +81,11 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={`
-          w-full px-3 py-2 text-left bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 
-          rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent 
-          transition-all duration-200 flex items-center justify-between min-h-[42px]
-          ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-gray-400 dark:hover:border-gray-500'}
-          ${isOpen ? 'ring-2 ring-primary-500 border-primary-500' : ''}
+          w-full px-3 py-2 text-left bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 
+          rounded-lg shadow-sm shadow-black/5 dark:shadow-black/20 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 
+          transition-all duration-300 flex items-center justify-between min-h-[36px] text-sm
+          ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-md hover:shadow-black/10 dark:hover:shadow-black/30'}
+          ${isOpen ? 'ring-2 ring-primary-500/50 border-primary-500 shadow-md shadow-primary-500/10 dark:shadow-primary-500/20' : ''}
         `}
       >
         <div className="flex items-center space-x-2 flex-wrap gap-1">
@@ -94,7 +94,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
               {selectedOptions.slice(0, maxDisplay).map((option) => (
                 <span
                   key={option.value}
-                  className="inline-flex items-center px-2 py-1 text-xs bg-primary-100 text-primary-800 dark:bg-primary-900/20 dark:text-primary-400 rounded-md"
+                  className="inline-flex items-center px-2 py-1 text-xs bg-primary-100/80 dark:bg-primary-900/20 text-primary-800 dark:text-primary-400 rounded-md backdrop-blur-sm border border-primary-200/50 dark:border-primary-700/50 shadow-sm"
                 >
                   {option.label}
                   <button
@@ -103,7 +103,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                       e.stopPropagation();
                       handleRemove(option.value);
                     }}
-                    className="ml-1 hover:text-primary-600 dark:hover:text-primary-300"
+                    className="ml-1 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -116,26 +116,26 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
               )}
             </>
           ) : (
-            <span className="text-gray-500 dark:text-gray-400">{placeholder}</span>
+            <span className="text-gray-500 dark:text-gray-400 text-sm">{placeholder}</span>
           )}
         </div>
         
         <div className="flex-shrink-0">
-          <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
         </div>
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-auto">
+        <div className="absolute z-50 w-full mt-1 bg-white/95 dark:bg-gray-800/95 backdrop-blur-2xl border border-white/30 dark:border-gray-700/50 rounded-lg shadow-lg shadow-black/10 dark:shadow-black/30 max-h-60 overflow-auto">
           {options.map((option) => (
             <button
               key={option.value}
               onClick={() => handleSelect(option.value)}
               className={`
-                w-full px-3 py-2 text-left flex items-center justify-between transition-colors duration-200
+                w-full px-3 py-2 text-left flex items-center justify-between transition-colors duration-200 text-sm
                 ${value.includes(option.value)
-                  ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' 
-                  : 'text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  ? 'bg-primary-50/80 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' 
+                  : 'text-gray-900 dark:text-gray-100 hover:bg-white/60 dark:hover:bg-gray-700/60'
                 }
                 first:rounded-t-lg last:rounded-b-lg
               `}

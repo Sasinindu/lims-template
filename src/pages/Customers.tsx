@@ -194,9 +194,9 @@ const Customers: React.FC = () => {
   const columns: Column[] = [
     {
       key: 'id',
-      title: 'Customer ID',
+      title: 'ID',
       dataIndex: 'id',
-      width: '120px',
+      width: '150px',
       sortable: true,
       render: (value) => (
         <div className="flex items-center">
@@ -263,16 +263,6 @@ const Customers: React.FC = () => {
         <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}>
           {value}
         </span>
-      )
-    },
-    {
-      key: 'lastOrder',
-      title: 'Last Order',
-      dataIndex: 'lastOrder',
-      width: '120px',
-      sortable: true,
-      render: (value) => (
-        <span className="text-sm text-gray-600 dark:text-gray-400">{value}</span>
       )
     }
   ];

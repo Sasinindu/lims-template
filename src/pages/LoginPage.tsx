@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Sun, Moon, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface LoginPageProps {
@@ -8,20 +8,30 @@ interface LoginPageProps {
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setLoading(true);
     
     // Simulate login process
     setTimeout(() => {
-      setIsLoading(false);
-      onLogin(); // Call the login function passed from App
+      setLoading(false);
+      onLogin();
     }, 1500);
   };
 
@@ -34,73 +44,67 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           backgroundSize: '60px 60px'
         }}></div>
       </div>
-      
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.5 }}
         className="relative w-full max-w-md"
       >
         {/* Theme Toggle */}
         <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={toggleTheme}
-          className="absolute -top-16 right-0 p-3 rounded-full glass-effect hover:bg-white/90 dark:hover:bg-gray-800/90 transition-all duration-300"
+          className="absolute top-4 right-4 p-2 rounded-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur-2xl border border-white/20 dark:border-gray-700/50 shadow-lg shadow-black/5 dark:shadow-black/20 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 transition-all duration-300 z-10"
         >
           {theme === 'light' ? (
             <Moon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
           ) : (
-            <Sun className="w-5 h-5 text-yellow-500" />
+            <Sun className="w-5 h-5 text-gray-600 dark:text-gray-300" />
           )}
         </motion.button>
 
         {/* Login Card */}
-        <div className="card p-8 space-y-6">
+        <div className="glass-card-light glossy-overlay p-6 rounded-2xl shadow-2xl shadow-black/10 dark:shadow-black/30">
           {/* Logo and Title */}
-          <div className="text-center space-y-4">
-            <motion.div
+          <div className="text-center mb-6">
+          <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="flex justify-center"
+              className="flex justify-center mt-10 mb-2"
             >
               <img
                 src="/logo.svg"
                 alt="Control Union Logo"
-                className="h-16 w-auto"
+                className="h-14 w-auto"
               />
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-            >
-              {/* <p className="text-gray-600 dark:text-gray-400 mt-2">
-                Laboratory Management System
-              </p> */}
-            </motion.div>
+            
           </div>
 
           {/* Login Form */}
           <motion.form
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
             onSubmit={handleSubmit}
             className="space-y-4"
           >
-            <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            {/* Email Field */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
-                  id="email"
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
                   className="input-field pl-10"
                   placeholder="Enter your email"
                   required
@@ -108,63 +112,70 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            {/* Password Field */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
-                  id="password"
                   type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
                   className="input-field pl-10 pr-10"
                   placeholder="Enter your password"
                   required
                 />
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </motion.button>
               </div>
             </div>
 
+            {/* Remember Me & Forgot Password */}
             <div className="flex items-center justify-between">
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700"
+                  className="rounded border-gray-300 text-primary-600 shadow-sm focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
                 />
                 <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
                   Remember me
                 </span>
               </label>
-              <a
+              <motion.a
+                whileHover={{ scale: 1.02 }}
                 href="#"
-                className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
+                className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200"
               >
-                Forgot Password?
-              </a>
+                Forgot password?
+              </motion.a>
             </div>
 
+            {/* Login Button */}
             <motion.button
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              disabled={isLoading}
-              className="w-full btn-primary py-3 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={loading}
+              className="w-full btn-primary flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Signing in...
-                </div>
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Signing in...</span>
+                </>
               ) : (
-                'Sign In'
+                <span>Sign In</span>
               )}
             </motion.button>
           </motion.form>
@@ -174,9 +185,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="text-center text-sm text-gray-500 dark:text-gray-400"
+            className="mt-6 text-center"
           >
-            <p>© 2024 Control Union. All rights reserved.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              © 2024 Control Union. All rights reserved.
+            </p>
           </motion.div>
         </div>
       </motion.div>

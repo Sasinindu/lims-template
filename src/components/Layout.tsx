@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from './Header';
@@ -11,22 +11,31 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  
-  // Get current page from the URL path
+
   const getCurrentPage = () => {
-    const path = location.pathname;
-    if (path === '/') return 'dashboard';
-    if (path.startsWith('/customers')) return 'customers';
-    if (path.startsWith('/tests')) return 'tests';
-    if (path.startsWith('/commodities')) return 'commodities';
-    if (path.startsWith('/chemicals')) return 'chemicals';
-    return path.substring(1); // Remove leading slash
+    const path = location.pathname.substring(1); // Remove leading slash
+    // Map paths to sidebar item IDs if they differ
+    const pathMap: { [key: string]: string } = {
+      'dashboard': 'dashboard',
+      'lab-tests': 'lab-tests',
+      'reports': 'reports',
+      'analytics': 'analytics',
+      'calendar': 'calendar',
+      'database': 'database',
+      'users': 'users',
+      'settings': 'settings',
+      'customers': 'customers',
+      'customers/add': 'customers', // Highlight customers when adding
+      'customers/edit': 'customers',
+      'customers/view': 'customers',
+      'tests': 'tests',
+      'commodities': 'commodities',
+      'chemicals': 'chemicals',
+    };
+    return pathMap[path] || 'dashboard'; // Default to dashboard
   };
 
-  const currentPage = getCurrentPage();
-
-  const handlePageChange = (page: string) => {
-    // Map page IDs to actual routes
+  const handlePageChange = (pageId: string) => {
     const routeMap: { [key: string]: string } = {
       'dashboard': '/dashboard',
       'lab-tests': '/lab-tests',
@@ -39,34 +48,32 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       'customers': '/customers',
       'tests': '/tests',
       'commodities': '/commodities',
-      'chemicals': '/chemicals'
+      'chemicals': '/chemicals',
     };
-
-    const route = routeMap[page];
-    if (route) {
-      navigate(route);
+    const path = routeMap[pageId];
+    if (path) {
+      navigate(path);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
-      {/* Sidebar */}
-      <Sidebar currentPage={currentPage} onPageChange={handlePageChange} />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex">
+      <Sidebar currentPage={getCurrentPage()} onPageChange={handlePageChange} />
       
-      {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Header */}
         <Header />
         
-        {/* Page Content */}
-        <motion.main
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex-1 p-6"
-        >
-          {children}
-        </motion.main>
+        <main className="flex-1 p-6 overflow-auto">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="max-w-7xl mx-auto"
+          >
+            {children}
+          </motion.div>
+        </main>
       </div>
     </div>
   );

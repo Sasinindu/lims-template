@@ -138,12 +138,12 @@ const AddCustomer: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="card p-8"
+        className="card-light p-6"
       >
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Company Information */}
-          <div className="space-y-6">
-            <div className="flex items-center space-x-3 mb-6">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3 mb-4">
               <div className="p-2 bg-blue-500 rounded-lg">
                 <Building2 className="w-5 h-5 text-white" />
               </div>
@@ -152,44 +152,50 @@ const AddCustomer: React.FC = () => {
               </h2>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Company Name *
                 </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  placeholder="Enter company name"
-                  required
-                />
+                <div className="relative">
+                  <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 z-10" />
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className="input-field pl-10"
+                    placeholder="Enter company name"
+                    required
+                  />
+                </div>
               </div>
               
               <div>
                 <label htmlFor="contactPerson" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Contact Person *
                 </label>
-                <input
-                  type="text"
-                  id="contactPerson"
-                  name="contactPerson"
-                  value={formData.contactPerson}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  placeholder="Enter contact person name"
-                  required
-                />
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 z-10" />
+                  <input
+                    type="text"
+                    id="contactPerson"
+                    name="contactPerson"
+                    value={formData.contactPerson}
+                    onChange={handleInputChange}
+                    className="input-field pl-10"
+                    placeholder="Enter contact person name"
+                    required
+                  />
+                </div>
               </div>
             </div>
           </div>
 
           {/* Contact Information */}
-          <div className="space-y-6">
-            <div className="flex items-center space-x-3 mb-6">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3 mb-4">
               <div className="p-2 bg-green-500 rounded-lg">
                 <User className="w-5 h-5 text-white" />
               </div>
@@ -198,13 +204,13 @@ const AddCustomer: React.FC = () => {
               </h2>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Email Address *
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 z-10" />
                   <input
                     type="email"
                     id="email"
@@ -223,7 +229,7 @@ const AddCustomer: React.FC = () => {
                   Phone Number *
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 z-10" />
                   <input
                     type="tel"
                     id="phone"
@@ -240,8 +246,8 @@ const AddCustomer: React.FC = () => {
           </div>
 
           {/* Address Information */}
-          <div className="space-y-6">
-            <div className="flex items-center space-x-3 mb-6">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3 mb-4">
               <div className="p-2 bg-purple-500 rounded-lg">
                 <MapPin className="w-5 h-5 text-white" />
               </div>
@@ -250,62 +256,71 @@ const AddCustomer: React.FC = () => {
               </h2>
             </div>
             
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div>
                 <label htmlFor="address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Street Address *
                 </label>
-                <input
-                  type="text"
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  placeholder="Enter street address"
-                  required
-                />
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 z-10" />
+                  <input
+                    type="text"
+                    id="address"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    className="input-field pl-10"
+                    placeholder="Enter street address"
+                    required
+                  />
+                </div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     City *
                   </label>
-                  <input
-                    type="text"
-                    id="city"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    className="input-field"
-                    placeholder="Enter city"
-                    required
-                  />
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 z-10" />
+                    <input
+                      type="text"
+                      id="city"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      className="input-field pl-10"
+                      placeholder="Enter city"
+                      required
+                    />
+                  </div>
                 </div>
                 
                 <div>
                   <label htmlFor="country" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Country *
                   </label>
-                  <input
-                    type="text"
-                    id="country"
-                    name="country"
-                    value={formData.country}
-                    onChange={handleInputChange}
-                    className="input-field"
-                    placeholder="Enter country"
-                    required
-                  />
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 z-10" />
+                    <input
+                      type="text"
+                      id="country"
+                      name="country"
+                      value={formData.country}
+                      onChange={handleInputChange}
+                      className="input-field pl-10"
+                      placeholder="Enter country"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Additional Information */}
-          <div className="space-y-6">
-            <div className="flex items-center space-x-3 mb-6">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3 mb-4">
               <div className="p-2 bg-orange-500 rounded-lg">
                 <Globe className="w-5 h-5 text-white" />
               </div>
@@ -314,13 +329,13 @@ const AddCustomer: React.FC = () => {
               </h2>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="website" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Website
                 </label>
                 <div className="relative">
-                  <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 z-10" />
                   <input
                     type="url"
                     id="website"

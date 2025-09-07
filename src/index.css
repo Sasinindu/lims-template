@@ -2,38 +2,165 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html {
-    font-family: 'Inter', system-ui, sans-serif;
-  }
-  
-  body {
-    @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300;
-  }
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
 }
 
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* Glassmorphism and glossy effects */
 @layer components {
-  .glass-effect {
-    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-white/20 dark:border-gray-700/20;
+  .glass-card {
+    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-white/20 dark:border-gray-700/50 shadow-2xl shadow-black/5 dark:shadow-black/20;
+  }
+  
+  .glass-card-light {
+    @apply bg-white/90 backdrop-blur-2xl border border-white/30 shadow-2xl shadow-black/10;
+  }
+  
+  .glass-card-dark {
+    @apply bg-gray-800/90 dark:backdrop-blur-2xl border border-gray-700/30 shadow-2xl shadow-black/30;
+  }
+  
+  .glossy-surface {
+    @apply relative overflow-hidden;
+  }
+  
+  .glossy-surface::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none;
+  }
+  
+  .glossy-surface-dark::before {
+    @apply bg-gradient-to-br from-white/10 via-transparent to-transparent;
   }
   
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-300;
+    @apply glass-card glossy-surface rounded-2xl p-6 transition-all duration-300 hover:shadow-3xl hover:shadow-black/10 dark:hover:shadow-black/30 hover:-translate-y-1;
   }
   
-  .card-hover {
-    @apply hover:shadow-xl hover:scale-[1.02] transition-all duration-300;
+  .card-light {
+    @apply glass-card-light glossy-surface rounded-2xl p-6 transition-all duration-300 hover:shadow-3xl hover:shadow-black/15 hover:-translate-y-1;
+  }
+  
+  .card-dark {
+    @apply glass-card-dark glossy-surface-dark rounded-2xl p-6 transition-all duration-300 hover:shadow-3xl hover:shadow-black/40 hover:-translate-y-1;
   }
   
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800;
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-medium px-4 py-2 rounded-lg shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0;
   }
   
   .btn-secondary {
-    @apply bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 font-medium px-4 py-2 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800;
+    @apply bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 text-gray-700 dark:text-gray-300 font-medium px-4 py-2 rounded-lg shadow-lg shadow-black/5 dark:shadow-black/20 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 hover:bg-white/90 dark:hover:bg-gray-700/90;
   }
   
   .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+    @apply w-full px-3 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-lg shadow-sm shadow-black/5 dark:shadow-black/20 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-300 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm;
   }
+  
+  .input-field:focus {
+    @apply shadow-md shadow-primary-500/10 dark:shadow-primary-500/20;
+  }
+  
+  .input-field-sm {
+    @apply w-full px-2 py-1.5 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-md shadow-sm shadow-black/5 dark:shadow-black/20 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-300 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm;
+  }
+  
+  .input-field-sm:focus {
+    @apply shadow-md shadow-primary-500/10 dark:shadow-primary-500/20;
+  }
+  
+  .sidebar-item {
+    @apply flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-white/10 dark:hover:bg-gray-700/50 hover:backdrop-blur-sm;
+  }
+  
+  .sidebar-item-active {
+    @apply bg-gradient-to-r from-primary-500/20 to-primary-600/20 dark:from-primary-500/30 dark:to-primary-600/30 backdrop-blur-sm border border-primary-500/30 dark:border-primary-500/40 shadow-lg shadow-primary-500/10 dark:shadow-primary-500/20;
+  }
+  
+  .header-glass {
+    @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-2xl border-b border-white/20 dark:border-gray-700/50 shadow-xl shadow-black/5 dark:shadow-black/20;
+  }
+  
+  .dropdown-glass {
+    @apply bg-white/95 dark:bg-gray-800/95 backdrop-blur-2xl border border-white/30 dark:border-gray-700/50 shadow-2xl shadow-black/10 dark:shadow-black/30;
+  }
+  
+  .notification-badge {
+    @apply absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg shadow-red-500/25;
+  }
+  
+  .avatar-ring {
+    @apply ring-2 ring-white/20 dark:ring-gray-700/50 shadow-lg shadow-black/10 dark:shadow-black/20;
+  }
+  
+  .metric-card {
+    @apply glass-card glossy-surface rounded-2xl p-6 transition-all duration-300 hover:shadow-3xl hover:shadow-black/10 dark:hover:shadow-black/30 hover:-translate-y-1;
+  }
+  
+  .metric-card-light {
+    @apply glass-card-light glossy-surface rounded-2xl p-6 transition-all duration-300 hover:shadow-3xl hover:shadow-black/15 hover:-translate-y-1;
+  }
+  
+  .metric-card-dark {
+    @apply glass-card-dark glossy-surface-dark rounded-2xl p-6 transition-all duration-300 hover:shadow-3xl hover:shadow-black/40 hover:-translate-y-1;
+  }
+}
+
+/* Enhanced shadows for glossy effect */
+.shadow-3xl {
+  box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Glossy gradient overlays */
+.glossy-overlay {
+  position: relative;
+}
+
+.glossy-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  pointer-events: none;
+}
+
+.glossy-overlay-dark::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+/* Enhanced animations */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background-size: 200px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Custom focus styles for glossy effect */
+.focus-glossy:focus {
+  box-shadow: 0 0 0 3px rgba(0, 156, 235, 0.1), 0 20px 40px -12px rgba(0, 156, 235, 0.15);
 }
