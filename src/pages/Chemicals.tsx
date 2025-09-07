@@ -383,7 +383,6 @@ const Chemicals: React.FC = () => {
         columns={columns}
         data={chemicals}
         loading={loading}
-        title="Chemical Inventory"
         searchPlaceholder="Search chemicals..."
         addButtonText="Add Chemical"
         onAdd={handleAddChemical}

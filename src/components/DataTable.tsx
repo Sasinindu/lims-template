@@ -37,7 +37,6 @@ export interface DataTableProps {
   onView?: (row: any) => void;
   addButtonText?: string;
   searchPlaceholder?: string;
-  title?: string;
 }
 
 const DataTable: React.FC<DataTableProps> = ({
@@ -54,8 +53,7 @@ const DataTable: React.FC<DataTableProps> = ({
   onDelete,
   onView,
   addButtonText = 'Add New',
-  searchPlaceholder = 'Search...',
-  title
+  searchPlaceholder = 'Search...'
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
@@ -155,84 +153,78 @@ const DataTable: React.FC<DataTableProps> = ({
       {/* Glossy overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent dark:from-white/10 dark:via-transparent dark:to-transparent pointer-events-none"></div>
       
-      {/* Header */}
+      {/* Header - Search on left, actions on right */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 relative">
-        {title && (
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {title}
-          </h2>
-        )}
-        
-        <div className="flex flex-col sm:flex-row gap-4">
-          {/* Search */}
+        {/* Left side - Search */}
+        <div className="flex items-center gap-4">
           {searchable && (
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-gray-400 z-10" />
               <input
                 type="text"
                 placeholder={searchPlaceholder}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-lg shadow-sm shadow-black/5 dark:shadow-black/20 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-300 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm pl-10 sm:w-64"
+                className="w-full pl-10 pr-3 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-lg shadow-sm shadow-black/5 dark:shadow-black/20 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-300 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:w-64"
               />
             </div>
           )}
+        </div>
 
-          {/* Actions */}
-          <div className="flex gap-2">
-            {filterable && (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="p-3 rounded-xl bg-white/60 dark:bg-gray-700/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 shadow-lg shadow-black/5 dark:shadow-black/20 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 transition-all duration-300"
-              >
-                <Filter className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-              </motion.button>
-            )}
-            
-            {exportable && (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="p-3 rounded-xl bg-white/60 dark:bg-gray-700/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 shadow-lg shadow-black/5 dark:shadow-black/20 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 transition-all duration-300"
-              >
-                <Download className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-              </motion.button>
-            )}
-            
-            {onAdd && (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={onAdd}
-                className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-medium px-4 py-2 rounded-lg shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 flex items-center space-x-2"
-              >
-                <Plus className="w-4 h-4" />
-                <span>{addButtonText}</span>
-              </motion.button>
-            )}
-          </div>
+        {/* Right side - Actions */}
+        <div className="flex gap-2">
+          {filterable && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-3 rounded-xl bg-white/60 dark:bg-gray-700/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 shadow-lg shadow-black/5 dark:shadow-black/20 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 transition-all duration-300"
+            >
+              <Filter className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+            </motion.button>
+          )}
+          
+          {exportable && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-3 rounded-xl bg-white/60 dark:bg-gray-700/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 shadow-lg shadow-black/5 dark:shadow-black/20 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 transition-all duration-300"
+            >
+              <Download className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+            </motion.button>
+          )}
+          
+          {onAdd && (
+            <motion.button
+              onClick={onAdd}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 transition-all duration-300"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="text-sm font-medium">{addButtonText}</span>
+            </motion.button>
+          )}
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto relative">
+      <div className="relative overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-gray-200/50 dark:border-gray-700/50">
+            <tr className="border-b border-gray-200 dark:border-gray-700">
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className={`px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-full ${
+                  className={`px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider ${
                     column.sortable ? 'cursor-pointer hover:text-gray-700 dark:hover:text-gray-300' : ''
                   }`}
                   style={{ width: column.width }}
-                  onClick={() => column.sortable && handleSort(column.key)}
+                  onClick={() => column.sortable && handleSort(column.dataIndex || column.key)}
                 >
-                  <div className="flex items-center justify-between w-full">
-                    <span className="flex-1">{column.title}</span>
-                    {column.sortable && sortConfig?.key === column.key && (
-                      <span className="text-primary-600 dark:text-primary-400 ml-2">
+                  <div className="flex items-center gap-2">
+                    {column.title}
+                    {column.sortable && sortConfig?.key === (column.dataIndex || column.key) && (
+                      <span className="text-primary-600">
                         {sortConfig.direction === 'asc' ? '↑' : '↓'}
                       </span>
                     )}
@@ -240,70 +232,67 @@ const DataTable: React.FC<DataTableProps> = ({
                 </th>
               ))}
               {(onEdit || onDelete || onView) && (
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-full">
-                  <div className="flex items-center justify-between w-full">
-                    <span className="flex-1">Actions</span>
-                  </div>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-20">
+                  Actions
                 </th>
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200/30 dark:divide-gray-700/30">
-            {paginatedData.map((row, index) => (
-              <motion.tr
-                key={row.id || index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="hover:bg-white/50 dark:hover:bg-gray-700/30 transition-colors duration-200"
-              >
-                {columns.map((column) => (
-                  <td key={column.key} className="px-6 py-4 whitespace-nowrap">
-                    {column.render ? (
-                      column.render(row[column.dataIndex || column.key], row)
-                    ) : (
-                      <div className="text-sm text-gray-900 dark:text-white">
-                        {column.key === 'status' ? (
-                          <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(row[column.dataIndex || column.key])}`}>
-                            {row[column.dataIndex || column.key]}
-                          </span>
-                        ) : (
-                          row[column.dataIndex || column.key]
-                        )}
-                      </div>
-                    )}
-                  </td>
-                ))}
-                {(onEdit || onDelete || onView) && (
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="relative">
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => toggleActions(row.id || index)}
-                        className="p-2 rounded-lg bg-white/60 dark:bg-gray-700/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md transition-all duration-200"
-                      >
-                        <MoreVertical className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-                      </motion.button>
-                      
-                      {showActions[row.id || index] && (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          className="absolute right-0 mt-2 w-48 bg-white/95 dark:bg-gray-800/95 backdrop-blur-2xl border border-white/30 dark:border-gray-700/50 rounded-lg shadow-lg shadow-black/10 dark:shadow-black/30 z-10"
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            {paginatedData.length === 0 ? (
+              <tr>
+                <td colSpan={columns.length + ((onEdit || onDelete || onView) ? 1 : 0)} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                  No data available
+                </td>
+              </tr>
+            ) : (
+              paginatedData.map((row, index) => (
+                <motion.tr
+                  key={row.id || index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors duration-200"
+                >
+                  {columns.map((column) => (
+                    <td key={column.key} className="px-4 py-4 whitespace-nowrap">
+                      {column.render ? 
+                        column.render(row[column.dataIndex || column.key], row) : 
+                        <span className="text-sm text-gray-900 dark:text-white">
+                          {row[column.dataIndex || column.key]}
+                        </span>
+                      }
+                    </td>
+                  ))}
+                  {(onEdit || onDelete || onView) && (
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      <div className="relative">
+                        <motion.button
+                          onClick={() => toggleActions(row.id || index)}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
                         >
-                          <div className="py-2">
+                          <MoreVertical className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                        </motion.button>
+                        
+                        {showActions[row.id || index] && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="absolute right-0 top-8 z-10 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1"
+                          >
                             {onView && (
                               <button
                                 onClick={() => {
                                   onView(row);
                                   setShowActions(prev => ({ ...prev, [row.id || index]: false }));
                                 }}
-                                className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-white/60 dark:hover:bg-gray-700/60 transition-colors duration-200"
+                                className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
                               >
                                 <Eye className="w-4 h-4" />
-                                <span>View</span>
+                                View
                               </button>
                             )}
                             {onEdit && (
@@ -312,10 +301,10 @@ const DataTable: React.FC<DataTableProps> = ({
                                   onEdit(row);
                                   setShowActions(prev => ({ ...prev, [row.id || index]: false }));
                                 }}
-                                className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-white/60 dark:hover:bg-gray-700/60 transition-colors duration-200"
+                                className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
                               >
                                 <Edit className="w-4 h-4" />
-                                <span>Edit</span>
+                                Edit
                               </button>
                             )}
                             {onDelete && (
@@ -324,52 +313,56 @@ const DataTable: React.FC<DataTableProps> = ({
                                   onDelete(row);
                                   setShowActions(prev => ({ ...prev, [row.id || index]: false }));
                                 }}
-                                className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors duration-200"
+                                className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
                               >
                                 <Trash2 className="w-4 h-4" />
-                                <span>Delete</span>
+                                Delete
                               </button>
                             )}
-                          </div>
-                        </motion.div>
-                      )}
-                    </div>
-                  </td>
-                )}
-              </motion.tr>
-            ))}
+                          </motion.div>
+                        )}
+                      </div>
+                    </td>
+                  )}
+                </motion.tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
 
       {/* Pagination */}
       {pagination && totalPages > 1 && (
-        <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200/50 dark:border-gray-700/50 relative">
+        <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
           <div className="text-sm text-gray-700 dark:text-gray-300">
             Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, filteredData.length)} of {filteredData.length} results
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="p-2 rounded-lg bg-white/60 dark:bg-gray-700/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              whileHover={{ scale: currentPage > 1 ? 1.05 : 1 }}
+              whileTap={{ scale: currentPage > 1 ? 0.95 : 1 }}
+              className={`p-2 rounded-lg transition-colors duration-200 ${
+                currentPage === 1 
+                  ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed' 
+                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+              }`}
             >
-              <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+              <ChevronLeft className="w-4 h-4" />
             </motion.button>
             
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <motion.button
                 key={page}
+                onClick={() => handlePageChange(page)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => handlePageChange(page)}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                className={`px-3 py-2 text-sm rounded-lg transition-colors duration-200 ${
                   currentPage === page
-                    ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25'
-                    : 'bg-white/60 dark:bg-gray-700/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 text-gray-700 dark:text-gray-300 hover:shadow-md'
+                    ? 'bg-primary-600 text-white'
+                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {page}
@@ -377,13 +370,17 @@ const DataTable: React.FC<DataTableProps> = ({
             ))}
             
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="p-2 rounded-lg bg-white/60 dark:bg-gray-700/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              whileHover={{ scale: currentPage < totalPages ? 1.05 : 1 }}
+              whileTap={{ scale: currentPage < totalPages ? 0.95 : 1 }}
+              className={`p-2 rounded-lg transition-colors duration-200 ${
+                currentPage === totalPages 
+                  ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed' 
+                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+              }`}
             >
-              <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+              <ChevronRight className="w-4 h-4" />
             </motion.button>
           </div>
         </div>

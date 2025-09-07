@@ -265,7 +265,6 @@ const Tests: React.FC = () => {
         columns={columns}
         data={tests}
         loading={loading}
-        title="Test Procedures"
         searchPlaceholder="Search tests..."
         addButtonText="Add Test"
         onAdd={handleAddTest}

@@ -364,7 +364,6 @@ const Customers: React.FC = () => {
         columns={columns}
         data={customers}
         loading={loading}
-        title="Customer List"
         searchPlaceholder="Search customers..."
         addButtonText="Add Customer"
         onAdd={handleAddCustomer}

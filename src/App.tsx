@@ -16,6 +16,7 @@ import Chemicals from './pages/Chemicals';
 import Analytics from './pages/Analytics';
 import Calendar from './pages/Calendar';
 import DatabasePage from './pages/Database';
+import InstrumentCategories from './pages/InstrumentCategories';
 
 // Mock authentication state
 const useAuth = () => {
@@ -66,6 +67,7 @@ const App: React.FC = () => {
             <Route path="/tests" element={<Tests />} />
             <Route path="/commodities" element={<Commodities />} />
             <Route path="/chemicals" element={<Chemicals />} />
+<Route path="/instrument-categories" element={<InstrumentCategories />} />
           </Routes>
         </Layout>
       </Router>

@@ -298,7 +298,6 @@ const Commodities: React.FC = () => {
         columns={columns}
         data={commodities}
         loading={loading}
-        title="Commodity List"
         searchPlaceholder="Search commodities..."
         addButtonText="Add Commodity"
         onAdd={handleAddCommodity}
