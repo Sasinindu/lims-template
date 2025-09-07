@@ -32,6 +32,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       'commodities': 'commodities',
       'chemicals': 'chemicals',
 'instrument-categories': 'instrument-categories',
+instruments: 'instruments',
     };
     return pathMap[path] || 'dashboard'; // Default to dashboard
   };
@@ -51,6 +52,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       'commodities': '/commodities',
       'chemicals': '/chemicals',
 'instrument-categories': '/instrument-categories',
+instruments: '/instruments',
+instruments: 'instruments',
     };
     const path = routeMap[pageId];
     if (path) {

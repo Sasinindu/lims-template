@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Input from '../components/Input';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';

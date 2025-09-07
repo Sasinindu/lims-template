@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Label from './Label';
 import { ChevronDown, Check, X } from 'lucide-react';
 
 export interface MultiSelectOption {
@@ -72,7 +73,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   return (
     <div className={`relative ${className}`} ref={selectRef}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
           {label}
         </label>
       )}

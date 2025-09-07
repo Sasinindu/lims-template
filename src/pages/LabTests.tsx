@@ -64,7 +64,7 @@ const LabTests: React.FC = () => {
             <input
               type="text"
               placeholder="Search tests..."
-              className="input-field pl-10"
+              className="input-field border-gray-300 pl-10"
             />
           </div>
           <div className="flex gap-2">

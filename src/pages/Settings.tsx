@@ -1,4 +1,6 @@
 import React from 'react';
+import Label from '../components/Label';
+import Input from '../components/Input';
 import { motion } from 'framer-motion';
 import { Settings as SettingsIcon, Save, Bell, Shield, Database } from 'lucide-react';
 
@@ -38,20 +40,20 @@ const Settings: React.FC = () => {
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
                 Laboratory Name
               </label>
               <input
                 type="text"
                 defaultValue="Control Union Lab"
-                className="input-field"
+                className="input-field border-gray-300"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
                 Time Zone
               </label>
-              <select className="input-field">
+              <select className="input-field border-gray-300">
                 <option>UTC-5 (Eastern Time)</option>
                 <option>UTC-6 (Central Time)</option>
                 <option>UTC-7 (Mountain Time)</option>
@@ -59,10 +61,10 @@ const Settings: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
                 Date Format
               </label>
-              <select className="input-field">
+              <select className="input-field border-gray-300">
                 <option>MM/DD/YYYY</option>
                 <option>DD/MM/YYYY</option>
                 <option>YYYY-MM-DD</option>
@@ -151,13 +153,13 @@ const Settings: React.FC = () => {
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
                 Session Timeout (minutes)
               </label>
               <input
                 type="number"
                 defaultValue="30"
-                className="input-field"
+                className="input-field border-gray-300"
               />
             </div>
             <div className="flex items-center justify-between">
@@ -209,23 +211,23 @@ const Settings: React.FC = () => {
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
                 Backup Frequency
               </label>
-              <select className="input-field">
+              <select className="input-field border-gray-300">
                 <option>Daily</option>
                 <option>Weekly</option>
                 <option>Monthly</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
                 Data Retention (years)
               </label>
               <input
                 type="number"
                 defaultValue="7"
-                className="input-field"
+                className="input-field border-gray-300"
               />
             </div>
             <div className="flex items-center justify-between">

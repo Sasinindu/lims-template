@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import Label from '../components/Label';
+import Input from '../components/Input';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Building2, User, Mail, Phone, MapPin, Globe } from 'lucide-react';
@@ -154,7 +156,7 @@ const AddCustomer: React.FC = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
                   Company Name *
                 </label>
                 <div className="relative">
@@ -165,7 +167,7 @@ const AddCustomer: React.FC = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="input-field pl-10"
+                    className="input-field border-gray-300 pl-10"
                     placeholder="Enter company name"
                     required
                   />
@@ -173,7 +175,7 @@ const AddCustomer: React.FC = () => {
               </div>
               
               <div>
-                <label htmlFor="contactPerson" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="contactPerson" className="block text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
                   Contact Person *
                 </label>
                 <div className="relative">
@@ -184,7 +186,7 @@ const AddCustomer: React.FC = () => {
                     name="contactPerson"
                     value={formData.contactPerson}
                     onChange={handleInputChange}
-                    className="input-field pl-10"
+                    className="input-field border-gray-300 pl-10"
                     placeholder="Enter contact person name"
                     required
                   />
@@ -206,7 +208,7 @@ const AddCustomer: React.FC = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
                   Email Address *
                 </label>
                 <div className="relative">
@@ -217,7 +219,7 @@ const AddCustomer: React.FC = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="input-field pl-10"
+                    className="input-field border-gray-300 pl-10"
                     placeholder="Enter email address"
                     required
                   />
@@ -225,7 +227,7 @@ const AddCustomer: React.FC = () => {
               </div>
               
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
                   Phone Number *
                 </label>
                 <div className="relative">
@@ -236,7 +238,7 @@ const AddCustomer: React.FC = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="input-field pl-10"
+                    className="input-field border-gray-300 pl-10"
                     placeholder="Enter phone number"
                     required
                   />
@@ -258,7 +260,7 @@ const AddCustomer: React.FC = () => {
             
             <div className="space-y-4">
               <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="address" className="block text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
                   Street Address *
                 </label>
                 <div className="relative">
@@ -269,7 +271,7 @@ const AddCustomer: React.FC = () => {
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
-                    className="input-field pl-10"
+                    className="input-field border-gray-300 pl-10"
                     placeholder="Enter street address"
                     required
                   />
@@ -278,7 +280,7 @@ const AddCustomer: React.FC = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label htmlFor="city" className="block text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
                     City *
                   </label>
                   <div className="relative">
@@ -289,7 +291,7 @@ const AddCustomer: React.FC = () => {
                       name="city"
                       value={formData.city}
                       onChange={handleInputChange}
-                      className="input-field pl-10"
+                      className="input-field border-gray-300 pl-10"
                       placeholder="Enter city"
                       required
                     />
@@ -297,7 +299,7 @@ const AddCustomer: React.FC = () => {
                 </div>
                 
                 <div>
-                  <label htmlFor="country" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label htmlFor="country" className="block text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
                     Country *
                   </label>
                   <div className="relative">
@@ -308,7 +310,7 @@ const AddCustomer: React.FC = () => {
                       name="country"
                       value={formData.country}
                       onChange={handleInputChange}
-                      className="input-field pl-10"
+                      className="input-field border-gray-300 pl-10"
                       placeholder="Enter country"
                       required
                     />
@@ -331,7 +333,7 @@ const AddCustomer: React.FC = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="website" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="website" className="block text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
                   Website
                 </label>
                 <div className="relative">
@@ -342,7 +344,7 @@ const AddCustomer: React.FC = () => {
                     name="website"
                     value={formData.website}
                     onChange={handleInputChange}
-                    className="input-field pl-10"
+                    className="input-field border-gray-300 pl-10"
                     placeholder="Enter website URL"
                   />
                 </div>

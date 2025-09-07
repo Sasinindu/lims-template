@@ -7,6 +7,8 @@ import {
   X
 } from 'lucide-react';
 import CustomSelect from './CustomSelect';
+import Label from './Label';
+import Input from './Input';
 
 interface AddInstrumentCategoryFormProps {
   onSave: (category: any) => void;
@@ -73,33 +75,22 @@ const AddInstrumentCategoryForm: React.FC<AddInstrumentCategoryFormProps> = ({
     <form id="category-form" onSubmit={handleSubmit} className="space-y-6 p-6">
       {/* Basic Information */}
       <div className="space-y-4">
-
-        
         <div className="space-y-4">
           {/* Category Name */}
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Category Name *
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={formData.categoryName}
-                onChange={(e) => handleInputChange('categoryName', e.target.value)}
-                className={`input-field-sm  ${errors.categoryName ? 'border-red-500 focus:border-red-500' : ''}`}
-                placeholder="Enter category name"
-              />
-            </div>
-            {errors.categoryName && (
-              <p className="text-sm text-red-600 dark:text-red-400">{errors.categoryName}</p>
-            )}
-          </div>
+          <Input
+            label="Category Name"
+            required
+            value={formData.categoryName}
+            onChange={(e) => handleInputChange('categoryName', e.target.value)}
+            placeholder="Enter category name"
+            error={errors.categoryName}
+          />
 
           {/* Status */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Status *
-            </label>
+            <Label htmlFor="status" required>
+              Status
+            </Label>
             <CustomSelect
               value={formData.status}
               onChange={(value) => handleInputChange('status', value)}
@@ -110,15 +101,16 @@ const AddInstrumentCategoryForm: React.FC<AddInstrumentCategoryFormProps> = ({
 
           {/* Description */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <Label htmlFor="description">
               Description
-            </label>
+            </Label>
             <div className="relative">
               <textarea
+                id="description"
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 rows={3}
-                className="input-field-sm resize-none"
+                className="w-full px-3 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-300 dark:border-gray-600/50 rounded-lg shadow-sm shadow-black/5 dark:shadow-black/20 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-300 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm resize-none"
                 placeholder="Enter category description"
               />
             </div>

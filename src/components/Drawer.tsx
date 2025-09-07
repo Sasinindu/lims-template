@@ -103,10 +103,10 @@ const Drawer: React.FC<DrawerProps> = ({
             }}
           >
             {/* Header - Reduced size */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700 flex-shrink-0 bg-primary-100">
+              <h3 className=" font-semibold text-gray-700 dark:text-white">
                 {title}
-              </h2>
+              </h3>
               <button
                 onClick={onClose}
                 className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"

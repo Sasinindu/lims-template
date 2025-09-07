@@ -15,6 +15,7 @@ import {
   FlaskConical,
   Package,
   Droplets,
+Microscope,
   Menu,
 // X
 } from 'lucide-react';
@@ -43,6 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
 
   const masterDataItems = [
     { id: 'instrument-categories', label: 'Instrument Categories', icon: Building2 },
+{ id: 'instruments', label: 'Instruments', icon: Microscope },
     { id: 'tests', label: 'Tests', icon: FlaskConical },
     { id: 'commodities', label: 'Commodities', icon: Package },
     { id: 'chemicals', label: 'Chemicals', icon: Droplets },

@@ -1,46 +1,72 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Building2, Plus, Edit, Eye, Trash2, Save, X, Check, CircleXIcon } from 'lucide-react';
+import { Microscope, Plus, Edit, Eye, Trash2, Save, X, Check, CircleXIcon } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
 import Drawer from '../components/Drawer';
-import AddInstrumentCategoryForm from '../components/AddInstrumentCategoryForm';
+import AddInstrumentForm from '../components/AddInstrumentForm';
 
-const InstrumentCategories: React.FC = () => {
+const Instruments: React.FC = () => {
   const [loading] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<any>(null);
+  const [editingInstrument, setEditingInstrument] = useState<any>(null);
 
-  // Mock instrument category data
-  const [categories, setCategories] = useState([
+  // Mock instrument data
+  const [instruments, setInstruments] = useState([
     {
-      id: 'IC001',
-      categoryName: 'Analytical Instruments',
-      status: 'Active',
-      description: 'Instruments for chemical analysis and testing'
+      id: 'I001',
+      instrumentName: 'High Performance Liquid Chromatograph',
+      instrumentCategory: 'Analytical Instruments',
+      serialNumber: 'HPLC-2024-001',
+      status: 'Active'
     },
     {
-      id: 'IC002',
-      categoryName: 'Measurement Equipment',
-      status: 'Active',
-      description: 'Precision measurement and calibration equipment'
+      id: 'I002',
+      instrumentName: 'Gas Chromatograph Mass Spectrometer',
+      instrumentCategory: 'Analytical Instruments',
+      serialNumber: 'GCMS-2024-002',
+      status: 'Active'
     },
     {
-      id: 'IC003',
-      categoryName: 'Sample Preparation',
-      status: 'Active',
-      description: 'Equipment for sample preparation and processing'
+      id: 'I003',
+      instrumentName: 'Atomic Absorption Spectrophotometer',
+      instrumentCategory: 'Analytical Instruments',
+      serialNumber: 'AAS-2024-003',
+      status: 'Active'
     },
     {
-      id: 'IC004',
-      categoryName: 'Environmental Monitoring',
-      status: 'Inactive',
-      description: 'Instruments for environmental parameter monitoring'
+      id: 'I004',
+      instrumentName: 'Digital Balance',
+      instrumentCategory: 'Measurement Equipment',
+      serialNumber: 'BAL-2024-004',
+      status: 'Active'
     },
     {
-      id: 'IC005',
-      categoryName: 'Safety Equipment',
-      status: 'Active',
-      description: 'Safety and protective equipment for laboratory use'
+      id: 'I005',
+      instrumentName: 'pH Meter',
+      instrumentCategory: 'Measurement Equipment',
+      serialNumber: 'PHM-2024-005',
+      status: 'Inactive'
+    },
+    {
+      id: 'I006',
+      instrumentName: 'Centrifuge',
+      instrumentCategory: 'Sample Preparation',
+      serialNumber: 'CEN-2024-006',
+      status: 'Active'
+    },
+    {
+      id: 'I007',
+      instrumentName: 'Environmental Monitor',
+      instrumentCategory: 'Environmental Monitoring',
+      serialNumber: 'ENV-2024-007',
+      status: 'Active'
+    },
+    {
+      id: 'I008',
+      instrumentName: 'Safety Cabinet',
+      instrumentCategory: 'Safety Equipment',
+      serialNumber: 'SAF-2024-008',
+      status: 'Active'
     }
   ]);
 
@@ -58,32 +84,44 @@ const InstrumentCategories: React.FC = () => {
   const columns: Column[] = [
     {
       key: 'id',
-      title: 'Category ID',
+      title: 'Instrument ID',
       dataIndex: 'id',
       width: '120px',
       sortable: true,
       render: (value) => (
         <div className="flex items-center">
-          <Building2 className="w-4 h-4 text-primary-600 mr-2" />
+          <Microscope className="w-4 h-4 text-primary-600 mr-2" />
           <span className="font-medium text-primary-600 dark:text-primary-400">{value}</span>
         </div>
       )
     },
     {
-      key: 'categoryName',
-      title: 'Category Name',
-      dataIndex: 'categoryName',
+      key: 'instrumentName',
+      title: 'Instrument Name',
+      dataIndex: 'instrumentName',
       sortable: true,
       render: (value) => (
         <div className="font-medium text-gray-900 dark:text-white">{value}</div>
       )
     },
     {
-      key: 'description',
-      title: 'Description',
-      dataIndex: 'description',
+      key: 'instrumentCategory',
+      title: 'Category',
+      dataIndex: 'instrumentCategory',
+      sortable: true,
       render: (value) => (
-        <span className="text-sm text-gray-600 dark:text-gray-400">{value}</span>
+        <span className="text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md">
+          {value}
+        </span>
+      )
+    },
+    {
+      key: 'serialNumber',
+      title: 'Serial Number',
+      dataIndex: 'serialNumber',
+      sortable: true,
+      render: (value) => (
+        <span className="text-sm text-gray-600 dark:text-gray-400 font-mono">{value}</span>
       )
     },
     {
@@ -100,45 +138,45 @@ const InstrumentCategories: React.FC = () => {
     }
   ];
 
-  const handleAddCategory = () => {
-    setEditingCategory(null);
+  const handleAddInstrument = () => {
+    setEditingInstrument(null);
     setIsDrawerOpen(true);
   };
 
-  const handleEditCategory = (record: any) => {
-    setEditingCategory(record);
+  const handleEditInstrument = (record: any) => {
+    setEditingInstrument(record);
     setIsDrawerOpen(true);
   };
 
-  const handleViewCategory = (record: any) => {
-    console.log('View category:', record.id);
+  const handleViewInstrument = (record: any) => {
+    console.log('View instrument:', record.id);
   };
 
-  const handleDeleteCategory = (record: any) => {
-    if (window.confirm(`Are you sure you want to delete category "${record.categoryName}"?`)) {
-      setCategories(prev => prev.filter(cat => cat.id !== record.id));
+  const handleDeleteInstrument = (record: any) => {
+    if (window.confirm(`Are you sure you want to delete instrument "${record.instrumentName}"?`)) {
+      setInstruments(prev => prev.filter(inst => inst.id !== record.id));
     }
   };
 
-  const handleSaveCategory = (categoryData: any) => {
-    if (editingCategory) {
-      // Update existing category
-      setCategories(prev => 
-        prev.map(cat => 
-          cat.id === editingCategory.id ? { ...categoryData, id: editingCategory.id } : cat
+  const handleSaveInstrument = (instrumentData: any) => {
+    if (editingInstrument) {
+      // Update existing instrument
+      setInstruments(prev => 
+        prev.map(inst => 
+          inst.id === editingInstrument.id ? { ...instrumentData, id: editingInstrument.id } : inst
         )
       );
     } else {
-      // Add new category
-      setCategories(prev => [...prev, categoryData]);
+      // Add new instrument
+      setInstruments(prev => [...prev, instrumentData]);
     }
     setIsDrawerOpen(false);
-    setEditingCategory(null);
+    setEditingInstrument(null);
   };
 
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
-    setEditingCategory(null);
+    setEditingInstrument(null);
   };
 
   // Footer component for the drawer
@@ -157,13 +195,13 @@ const InstrumentCategories: React.FC = () => {
         </motion.button>
         <motion.button
           type="submit"
-          form="category-form"
+          form="instrument-form"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
         >
           <Save className="w-4 h-4 mr-2" />
-          {editingCategory ? 'Update Category' : 'Add Category'}
+          {editingInstrument ? 'Update Instrument' : 'Add Instrument'}
         </motion.button>
       </div>
     </div>
@@ -178,14 +216,14 @@ const InstrumentCategories: React.FC = () => {
         transition={{ duration: 0.5 }}
       >
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Instrument Categories
+          Instruments
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Manage instrument categories and classifications
+          Manage laboratory instruments and equipment
         </p>
       </motion.div>
 
-      {/* Category Stats */}
+      {/* Instrument Stats */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -195,20 +233,20 @@ const InstrumentCategories: React.FC = () => {
         <div className="card p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Categories</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{categories.length}</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Instruments</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{instruments.length}</p>
             </div>
             <div className="p-3 bg-blue-500 rounded-full">
-              <Building2 className="w-6 h-6 text-white" />
+              <Microscope className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
         <div className="card p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Categories</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Instruments</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {categories.filter(c => c.status === 'Active').length}
+                {instruments.filter(i => i.status === 'Active').length}
               </p>
             </div>
             <div className="p-3 bg-green-500 rounded-full">
@@ -219,9 +257,9 @@ const InstrumentCategories: React.FC = () => {
         <div className="card p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Inactive Categories</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Inactive Instruments</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {categories.filter(c => c.status === 'Inactive').length}
+                {instruments.filter(i => i.status === 'Inactive').length}
               </p>
             </div>
             <div className="p-3 bg-red-500 rounded-full">
@@ -231,17 +269,17 @@ const InstrumentCategories: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Category Data Table */}
+      {/* Instrument Data Table */}
       <DataTable
         columns={columns}
-        data={categories}
+        data={instruments}
         loading={loading}
-        searchPlaceholder="Search categories..."
-        addButtonText="Add Category"
-        onAdd={handleAddCategory}
-        onEdit={handleEditCategory}
-        onView={handleViewCategory}
-        onDelete={handleDeleteCategory}
+        searchPlaceholder="Search instruments..."
+        addButtonText="Add Instrument"
+        onAdd={handleAddInstrument}
+        onEdit={handleEditInstrument}
+        onView={handleViewInstrument}
+        onDelete={handleDeleteInstrument}
         searchable={true}
         filterable={true}
         exportable={true}
@@ -249,23 +287,23 @@ const InstrumentCategories: React.FC = () => {
         pageSize={10}
       />
 
-      {/* Add/Edit Category Drawer */}
+      {/* Add/Edit Instrument Drawer */}
       <Drawer
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}
-        title={editingCategory ? 'Edit Category' : 'Add New Category'}
+        title={editingInstrument ? 'Edit Instrument' : 'Add New Instrument'}
         size="md"
         footer={drawerFooter}
       >
-        <AddInstrumentCategoryForm
-          onSave={handleSaveCategory}
+        <AddInstrumentForm
+          onSave={handleSaveInstrument}
           onCancel={handleCloseDrawer}
-          isEditing={!!editingCategory}
-          initialData={editingCategory}
+          isEditing={!!editingInstrument}
+          initialData={editingInstrument}
         />
       </Drawer>
     </div>
   );
 };
 
-export default InstrumentCategories;
+export default Instruments;
