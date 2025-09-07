@@ -10,13 +10,13 @@ import {
   Users, 
   Settings,
   ChevronRight,
-  ChevronDown,
+// ChevronDown,
   Building2,
   FlaskConical,
   Package,
   Droplets,
   Menu,
-  X
+// X
 } from 'lucide-react';
 
 interface SidebarProps {

@@ -4,7 +4,7 @@ import { TestTube, FlaskConical, Clock, CheckCircle } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
 
 const Tests: React.FC = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   // Mock test data
   const [tests] = useState([

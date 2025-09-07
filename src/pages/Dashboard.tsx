@@ -1,16 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Activity, 
+// Activity, 
   Users, 
   TestTube, 
   FileText, 
-  TrendingUp, 
-  Clock,
+// TrendingUp, 
+// Clock,
   CheckCircle,
   AlertCircle,
   BarChart3,
-  Calendar,
+// Calendar,
   Bell,
   Settings
 } from 'lucide-react';
@@ -293,7 +293,7 @@ const Dashboard: React.FC = () => {
             { icon: FileText, label: 'Generate Report', color: 'green' },
             { icon: Users, label: 'Add User', color: 'purple' },
             { icon: BarChart3, label: 'View Analytics', color: 'orange' }
-          ].map((action, index) => (
+          ].map((action) => (
             <motion.button
               key={action.label}
               whileHover={{ scale: 1.05, y: -2 }}

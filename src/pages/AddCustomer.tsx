@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Building2, User, Mail, Phone, MapPin, Globe } from 'lucide-react';
 import CustomSelect, { SelectOption } from '../components/CustomSelect';
-import MultiSelect, { MultiSelectOption } from '../components/MultiSelect';
+import MultiSelect from '../components/MultiSelect';
 
 const AddCustomer: React.FC = () => {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ const AddCustomer: React.FC = () => {
     }
   ];
 
-  const serviceOptions: MultiSelectOption[] = [
+  const serviceOptions: SelectOption[] = [
     {
       value: 'pesticide-testing',
       label: 'Pesticide Testing'

@@ -6,7 +6,7 @@ import DataTable, { Column } from '../components/DataTable';
 
 const Customers: React.FC = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   // Mock customer data - expanded to show pagination
   const [customers] = useState([

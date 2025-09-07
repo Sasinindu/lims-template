@@ -176,7 +176,7 @@ const Header: React.FC = () => {
                       </div>
                     </div>
                     <div className="py-2">
-                      {userMenuItems.map((item, index) => (
+                      {userMenuItems.map((item) => (
                         <motion.a
                           key={item.label}
                           whileHover={{ backgroundColor: 'rgba(0, 156, 235, 0.05)' }}

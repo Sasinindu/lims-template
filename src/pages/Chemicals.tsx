@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FlaskConical, AlertTriangle, Shield, Droplets } from 'lucide-react';
+import { FlaskConical, AlertTriangle, Shield, Droplets, Save, X } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
+import Drawer from '../components/Drawer';
+import AddChemicalForm from '../components/AddChemicalForm';
 
 const Chemicals: React.FC = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [editingChemical, setEditingChemical] = useState<any>(null);
 
   // Mock chemical data
-  const [chemicals] = useState([
+  const [chemicals, setChemicals] = useState([
     {
       id: 'CH001',
       name: 'Sodium Hydroxide',
@@ -231,11 +235,13 @@ const Chemicals: React.FC = () => {
   ];
 
   const handleAddChemical = () => {
-    console.log('Add new chemical');
+    setEditingChemical(null);
+    setIsDrawerOpen(true);
   };
 
   const handleEditChemical = (record: any) => {
-    console.log('Edit chemical:', record.id);
+    setEditingChemical(record);
+    setIsDrawerOpen(true);
   };
 
   const handleViewChemical = (record: any) => {
@@ -244,9 +250,58 @@ const Chemicals: React.FC = () => {
 
   const handleDeleteChemical = (record: any) => {
     if (window.confirm(`Are you sure you want to delete chemical ${record.name}?`)) {
-      console.log('Delete chemical:', record.id);
+      setChemicals(prev => prev.filter(chem => chem.id !== record.id));
     }
   };
+
+  const handleSaveChemical = (chemicalData: any) => {
+    if (editingChemical) {
+      // Update existing chemical
+      setChemicals(prev => 
+        prev.map(chem => 
+          chem.id === editingChemical.id ? { ...chemicalData, id: editingChemical.id } : chem
+        )
+      );
+    } else {
+      // Add new chemical
+      setChemicals(prev => [...prev, chemicalData]);
+    }
+    setIsDrawerOpen(false);
+    setEditingChemical(null);
+  };
+
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
+    setEditingChemical(null);
+  };
+
+  // Footer component for the drawer
+  const drawerFooter = (
+    <div className="p-4">
+      <div className="flex items-center justify-end space-x-3">
+        <motion.button
+          type="button"
+          onClick={handleCloseDrawer}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Cancel
+        </motion.button>
+        <motion.button
+          type="submit"
+          form="chemical-form"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
+        >
+          <Save className="w-4 h-4 mr-2" />
+          {editingChemical ? 'Update Chemical' : 'Add Chemical'}
+        </motion.button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -341,6 +396,22 @@ const Chemicals: React.FC = () => {
         pagination={true}
         pageSize={10}
       />
+
+      {/* Add/Edit Chemical Drawer */}
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={handleCloseDrawer}
+        title={editingChemical ? 'Edit Chemical' : 'Add New Chemical'}
+        size="lg"
+        footer={drawerFooter}
+      >
+        <AddChemicalForm
+          onSave={handleSaveChemical}
+          onCancel={handleCloseDrawer}
+          isEditing={!!editingChemical}
+          initialData={editingChemical}
+        />
+      </Drawer>
     </div>
   );
 };

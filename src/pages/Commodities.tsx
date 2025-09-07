@@ -4,7 +4,7 @@ import { Package, Wheat, Apple, Carrot, Coffee } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
 
 const Commodities: React.FC = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   // Mock commodity data
   const [commodities] = useState([
