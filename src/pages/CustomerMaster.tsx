@@ -1,0 +1,1225 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Users, UserCheck, ChevronRight, CheckCircle, XCircle, Save, X, MapPin, Plus, Trash2, Edit } from 'lucide-react';
+import DataTable, { Column } from '../components/DataTable';
+import Drawer from '../components/Drawer';
+import CustomSelect from '../components/CustomSelect';
+import Label from '../components/Label';
+import Input from '../components/Input';
+import SimpleTable from '../components/SimpleTable';
+
+const CustomerMaster: React.FC = () => {
+  const [activeSection, setActiveSection] = useState('customer-groups');
+
+  const sections = [
+    {
+      id: 'customer-groups',
+      title: 'Customer Groups',
+      description: 'Manage customer groups',
+      icon: UserCheck
+    },
+    {
+      id: 'customers',
+      title: 'Customers',
+      description: 'Manage customers',
+      icon: Users
+    }
+  ];
+
+  const renderSection = () => {
+    switch (activeSection) {
+      case 'customer-groups':
+        return <CustomerGroups />;
+      case 'customers':
+        return <Customers />;
+      default:
+        return <CustomerGroups />;
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Page Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          Customer Master
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">
+          Manage customer groups and customers
+        </p>
+      </motion.div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Sidebar Navigation */}
+        <div className="lg:col-span-1">
+          <div className="card p-4">
+            <nav className="space-y-2">
+              {sections.map((section) => {
+                const Icon = section.icon;
+                return (
+                  <motion.button
+                    key={section.id}
+                    onClick={() => setActiveSection(section.id)}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors duration-200 ${
+                      activeSection === section.id
+                        ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
+                        : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <Icon className="w-5 h-5 mr-3" />
+                      <div className="text-left">
+                        <div className="font-medium">{section.title}</div>
+                        <div className="text-xs opacity-75">{section.description}</div>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4" />
+                  </motion.button>
+                );
+              })}
+            </nav>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="lg:col-span-3">
+          <motion.div
+            key={activeSection}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {renderSection()}
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Customer Groups Component
+const CustomerGroups: React.FC = () => {
+  const [loading] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [editingGroup, setEditingGroup] = useState<any>(null);
+
+  const [customerGroups, setCustomerGroups] = useState([
+    { id: 'CG001', groupName: 'Premium Customers', description: 'High-value customers with premium services', status: 'Active' },
+    { id: 'CG002', groupName: 'Standard Customers', description: 'Regular customers with standard services', status: 'Active' },
+    { id: 'CG003', groupName: 'Government Clients', description: 'Government and public sector clients', status: 'Active' },
+    { id: 'CG004', groupName: 'Research Institutions', description: 'Universities and research organizations', status: 'Active' },
+    { id: 'CG005', groupName: 'Inactive Groups', description: 'Temporarily inactive customer groups', status: 'Inactive' }
+  ]);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Active':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'Inactive':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+    }
+  };
+
+  const columns: Column[] = [
+    {
+      key: 'groupName',
+      title: 'Group Name',
+      dataIndex: 'groupName',
+      sortable: true,
+      render: (value) => (
+        <div className="flex items-center">
+          <UserCheck className="w-4 h-4 text-primary-600 mr-2" />
+          <span className="font-medium text-gray-900 dark:text-white">{value}</span>
+        </div>
+      )
+    },
+    {
+      key: 'description',
+      title: 'Description',
+      dataIndex: 'description',
+      sortable: true,
+      render: (value) => (
+        <span className="text-sm text-gray-600 dark:text-gray-400">{value}</span>
+      )
+    },
+    {
+      key: 'status',
+      title: 'Status',
+      dataIndex: 'status',
+      width: '120px',
+      sortable: true,
+      render: (value) => (
+        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}>
+          {value}
+        </span>
+      )
+    }
+  ];
+
+  const handleAddGroup = () => {
+    setEditingGroup(null);
+    setIsDrawerOpen(true);
+  };
+
+  const handleEditGroup = (record: any) => {
+    setEditingGroup(record);
+    setIsDrawerOpen(true);
+  };
+
+  const handleViewGroup = (record: any) => {
+    console.log('View group:', record.id);
+  };
+
+  const handleDeleteGroup = (record: any) => {
+    if (window.confirm(`Are you sure you want to delete group "${record.groupName}"?`)) {
+      setCustomerGroups(prev => prev.filter(group => group.id !== record.id));
+    }
+  };
+
+  const handleSaveGroup = (groupData: any) => {
+    if (editingGroup) {
+      setCustomerGroups(prev => 
+        prev.map(group => 
+          group.id === editingGroup.id ? { ...groupData, id: editingGroup.id } : group
+        )
+      );
+    } else {
+      const newGroup = {
+        ...groupData,
+        id: `CG${String(Date.now()).slice(-3)}`
+      };
+      setCustomerGroups(prev => [...prev, newGroup]);
+    }
+    setIsDrawerOpen(false);
+    setEditingGroup(null);
+  };
+
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
+    setEditingGroup(null);
+  };
+
+  // Footer component for the drawer
+  const drawerFooter = (
+    <div className="p-4">
+      <div className="flex items-center justify-end space-x-3">
+        <motion.button
+          type="button"
+          onClick={handleCloseDrawer}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Cancel
+        </motion.button>
+        <motion.button
+          type="submit"
+          form="group-form"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
+        >
+          <Save className="w-4 h-4 mr-2" />
+          {editingGroup ? 'Update Group' : 'Add Group'}
+        </motion.button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-6">
+      {/* Group Stats */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
+        <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Groups</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{customerGroups.length}</p>
+            </div>
+            <div className="p-3 bg-blue-500 rounded-full">
+              <UserCheck className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Groups</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {customerGroups.filter(g => g.status === 'Active').length}
+              </p>
+            </div>
+            <div className="p-3 bg-green-500 rounded-full">
+              <CheckCircle className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Inactive Groups</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {customerGroups.filter(g => g.status === 'Inactive').length}
+              </p>
+            </div>
+            <div className="p-3 bg-red-500 rounded-full">
+              <XCircle className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Groups Data Table */}
+      <DataTable
+        columns={columns}
+        data={customerGroups}
+        loading={loading}
+        searchPlaceholder="Search customer groups..."
+        addButtonText="Add Group"
+        onAdd={handleAddGroup}
+        onEdit={handleEditGroup}
+        onView={handleViewGroup}
+        onDelete={handleDeleteGroup}
+        searchable={true}
+        filterable={true}
+        exportable={true}
+        pagination={true}
+        pageSize={10}
+      />
+
+      {/* Add/Edit Group Drawer */}
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={handleCloseDrawer}
+        title={editingGroup ? 'Edit Customer Group' : 'Add New Customer Group'}
+        size="md"
+        footer={drawerFooter}
+      >
+        <CustomerGroupForm
+          onSave={handleSaveGroup}
+          onCancel={handleCloseDrawer}
+          isEditing={!!editingGroup}
+          initialData={editingGroup}
+        />
+      </Drawer>
+    </div>
+  );
+};
+
+// Customers Component
+const Customers: React.FC = () => {
+  const [loading] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState<any>(null);
+  const [isSitesDrawerOpen, setIsSitesDrawerOpen] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+
+  const [customers, setCustomers] = useState([
+    { 
+      id: 'C001', 
+      customerName: 'ABC Corporation', 
+      registrationNo: 'REG001', 
+      group: 'Premium Customers', 
+      status: 'Active',
+      sites: [
+        { id: 'S001', siteName: 'Head Office', addressLine1: '123 Business St', addressLine2: 'Suite 100', city: 'New York', country: 'USA', phoneNumber: '+1-555-0123' },
+        { id: 'S002', siteName: 'Branch Office', addressLine1: '456 Commerce Ave', addressLine2: '', city: 'Los Angeles', country: 'USA', phoneNumber: '+1-555-0456' }
+      ]
+    },
+    { 
+      id: 'C002', 
+      customerName: 'XYZ Industries', 
+      registrationNo: 'REG002', 
+      group: 'Standard Customers', 
+      status: 'Active',
+      sites: [
+        { id: 'S003', siteName: 'Main Facility', addressLine1: '789 Industrial Blvd', addressLine2: 'Building A', city: 'Chicago', country: 'USA', phoneNumber: '+1-555-0789' }
+      ]
+    },
+    { 
+      id: 'C003', 
+      customerName: 'Ministry of Health', 
+      registrationNo: 'REG003', 
+      group: 'Government Clients', 
+      status: 'Active',
+      sites: []
+    },
+    { 
+      id: 'C004', 
+      customerName: 'University of Science', 
+      registrationNo: 'REG004', 
+      group: 'Research Institutions', 
+      status: 'Active',
+      sites: []
+    },
+    { 
+      id: 'C005', 
+      customerName: 'Old Company Ltd', 
+      registrationNo: 'REG005', 
+      group: 'Inactive Groups', 
+      status: 'Inactive',
+      sites: []
+    }
+  ]);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Active':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'Inactive':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+    }
+  };
+
+  const columns: Column[] = [
+    {
+      key: 'customerName',
+      title: 'Customer / Company Name',
+      dataIndex: 'customerName',
+      sortable: true,
+      render: (value) => (
+        <div className="flex items-center">
+          <Users className="w-4 h-4 text-primary-600 mr-2" />
+          <span className="font-medium text-gray-900 dark:text-white">{value}</span>
+        </div>
+      )
+    },
+    {
+      key: 'registrationNo',
+      title: 'Registration No',
+      dataIndex: 'registrationNo',
+      sortable: true,
+      render: (value) => (
+        <span className="text-sm text-gray-600 dark:text-gray-400">{value}</span>
+      )
+    },
+    {
+      key: 'group',
+      title: 'Group',
+      dataIndex: 'group',
+      sortable: true,
+      render: (value) => (
+        <span className="text-sm text-gray-600 dark:text-gray-400">{value}</span>
+      )
+    },
+    {
+      key: 'sites',
+      title: 'Sites',
+      dataIndex: 'sites',
+      width: '100px',
+      sortable: false,
+      render: (value, record) => (
+        <div className="flex items-center space-x-2">
+          <span className="text-sm text-gray-600 dark:text-gray-400">
+            {record.sites?.length || 0}
+          </span>
+          <motion.button
+            onClick={() => handleManageSites(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+            title="Manage Sites"
+          >
+            <MapPin className="w-4 h-4" />
+          </motion.button>
+        </div>
+      )
+    },
+    {
+      key: 'status',
+      title: 'Status',
+      dataIndex: 'status',
+      width: '120px',
+      sortable: true,
+      render: (value) => (
+        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}>
+          {value}
+        </span>
+      )
+    }
+  ];
+
+  const handleAddCustomer = () => {
+    setEditingCustomer(null);
+    setIsDrawerOpen(true);
+  };
+
+  const handleEditCustomer = (record: any) => {
+    setEditingCustomer(record);
+    setIsDrawerOpen(true);
+  };
+
+  const handleViewCustomer = (record: any) => {
+    console.log('View customer:', record.id);
+  };
+
+  const handleDeleteCustomer = (record: any) => {
+    if (window.confirm(`Are you sure you want to delete customer "${record.customerName}"?`)) {
+      setCustomers(prev => prev.filter(customer => customer.id !== record.id));
+    }
+  };
+
+  const handleManageSites = (customer: any) => {
+    setSelectedCustomer(customer);
+    setIsSitesDrawerOpen(true);
+  };
+
+  const handleSaveCustomer = (customerData: any) => {
+    if (editingCustomer) {
+      setCustomers(prev => 
+        prev.map(customer => 
+          customer.id === editingCustomer.id ? { ...customerData, id: editingCustomer.id, sites: editingCustomer.sites || [] } : customer
+        )
+      );
+    } else {
+      const newCustomer = {
+        ...customerData,
+        id: `C${String(Date.now()).slice(-3)}`,
+        sites: []
+      };
+      setCustomers(prev => [...prev, newCustomer]);
+    }
+    setIsDrawerOpen(false);
+    setEditingCustomer(null);
+  };
+
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
+    setEditingCustomer(null);
+  };
+
+  const handleCloseSitesDrawer = () => {
+    setIsSitesDrawerOpen(false);
+    setSelectedCustomer(null);
+  };
+
+  const handleSaveSites = (sites: any[]) => {
+    if (selectedCustomer) {
+      setCustomers(prev => 
+        prev.map(customer => 
+          customer.id === selectedCustomer.id ? { ...customer, sites } : customer
+        )
+      );
+    }
+    setIsSitesDrawerOpen(false);
+    setSelectedCustomer(null);
+  };
+
+  // Footer component for the customer drawer
+  const drawerFooter = (
+    <div className="p-4">
+      <div className="flex items-center justify-end space-x-3">
+        <motion.button
+          type="button"
+          onClick={handleCloseDrawer}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Cancel
+        </motion.button>
+        <motion.button
+          type="submit"
+          form="customer-form"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
+        >
+          <Save className="w-4 h-4 mr-2" />
+          {editingCustomer ? 'Update Customer' : 'Add Customer'}
+        </motion.button>
+      </div>
+    </div>
+  );
+
+  // Footer component for the sites drawer
+  const sitesDrawerFooter = (
+    <div className="p-4">
+      <div className="flex items-center justify-end space-x-3">
+        <motion.button
+          type="button"
+          onClick={handleCloseSitesDrawer}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Cancel
+        </motion.button>
+        <motion.button
+          type="button"
+          onClick={() => {
+            // Get the current sites from the SitesManagement component
+            const sitesManagementElement = document.querySelector('[data-sites-management]');
+            if (sitesManagementElement) {
+              const sites = JSON.parse(sitesManagementElement.getAttribute('data-sites') || '[]');
+              handleSaveSites(sites);
+            }
+          }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
+        >
+          <Save className="w-4 h-4 mr-2" />
+          Save Sites
+        </motion.button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-6">
+      {/* Customer Stats */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
+        <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Customers</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{customers.length}</p>
+            </div>
+            <div className="p-3 bg-blue-500 rounded-full">
+              <Users className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Customers</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {customers.filter(c => c.status === 'Active').length}
+              </p>
+            </div>
+            <div className="p-3 bg-green-500 rounded-full">
+              <CheckCircle className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Sites</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {customers.reduce((total, customer) => total + (customer.sites?.length || 0), 0)}
+              </p>
+            </div>
+            <div className="p-3 bg-purple-500 rounded-full">
+              <MapPin className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Customers Data Table */}
+      <DataTable
+        columns={columns}
+        data={customers}
+        loading={loading}
+        searchPlaceholder="Search customers..."
+        addButtonText="Add Customer"
+        onAdd={handleAddCustomer}
+        onEdit={handleEditCustomer}
+        onView={handleViewCustomer}
+        onDelete={handleDeleteCustomer}
+        searchable={true}
+        filterable={true}
+        exportable={true}
+        pagination={true}
+        pageSize={10}
+      />
+
+      {/* Add/Edit Customer Drawer */}
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={handleCloseDrawer}
+        title={editingCustomer ? 'Edit Customer' : 'Add New Customer'}
+        size="md"
+        footer={drawerFooter}
+      >
+        <CustomerForm
+          onSave={handleSaveCustomer}
+          onCancel={handleCloseDrawer}
+          isEditing={!!editingCustomer}
+          initialData={editingCustomer}
+        />
+      </Drawer>
+
+      {/* Sites Management Drawer */}
+      <Drawer
+        isOpen={isSitesDrawerOpen}
+        onClose={handleCloseSitesDrawer}
+        title={`Manage Sites - ${selectedCustomer?.customerName || ''}`}
+        size="3xl"
+      >
+        <SitesManagement
+          customer={selectedCustomer}
+          onSave={handleSaveSites}
+          onCancel={handleCloseSitesDrawer}
+        />
+      </Drawer>
+    </div>
+  );
+};
+
+// Sites Management Component
+const SitesManagement: React.FC<{
+  customer: any;
+  onSave: (sites: any[]) => void;
+  onCancel: () => void;
+}> = ({ customer, onSave, onCancel }) => {
+  const [sites, setSites] = useState(customer?.sites || []);
+  const [isAddSiteOpen, setIsAddSiteOpen] = useState(false);
+  const [editingSite, setEditingSite] = useState<any>(null);
+  const [loading] = useState(false);
+
+  // Update the data attribute when sites change
+  React.useEffect(() => {
+    const element = document.querySelector('[data-sites-management]');
+    if (element) {
+      element.setAttribute('data-sites', JSON.stringify(sites));
+    }
+  }, [sites]);
+
+  const siteColumns: Column[] = [
+    {
+      key: 'siteName',
+      title: 'Site Name',
+      dataIndex: 'siteName',
+      sortable: true,
+      render: (value: string) => (
+        <div className="flex items-center">
+          <MapPin className="w-4 h-4 text-primary-600 mr-2" />
+          <span className="font-medium text-gray-900 dark:text-white">{value}</span>
+        </div>
+      )
+    },
+    {
+      key: 'addressLine1',
+      title: 'Address',
+      dataIndex: 'addressLine1',
+      sortable: true,
+      render: (value: string, record: any) => (
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          <div>{value}</div>
+          {record.addressLine2 && <div>{record.addressLine2}</div>}
+          <div>{record.city}, {record.country}</div>
+        </div>
+      )
+    },
+    {
+      key: 'phoneNumber',
+      title: 'Phone',
+      dataIndex: 'phoneNumber',
+      sortable: true,
+      render: (value: string) => (
+        <span className="text-sm text-gray-600 dark:text-gray-400">{value}</span>
+      )
+    }
+  ];
+
+  const handleAddSite = () => {
+    setEditingSite(null);
+    setIsAddSiteOpen(true);
+  };
+
+  const handleEditSite = (record: any) => {
+    setEditingSite(record);
+    setIsAddSiteOpen(true);
+  };
+
+  const handleViewSite = (record: any) => {
+    console.log('View site:', record.id);
+  };
+
+  const handleDeleteSite = (record: any) => {
+    if (window.confirm(`Are you sure you want to delete site "${record.siteName}"?`)) {
+      setSites(prev => prev.filter(site => site.id !== record.id));
+    }
+  };
+
+  const handleSaveSite = (siteData: any) => {
+    if (editingSite) {
+      setSites(prev => 
+        prev.map((site) => 
+          site.id === editingSite.id ? { ...siteData, id: editingSite.id } : site
+        )
+      );
+    } else {
+      const newSite = {
+        ...siteData,
+        id: `S${String(Date.now()).slice(-3)}`
+      };
+      setSites(prev => [...prev, newSite]);
+    }
+    setIsAddSiteOpen(false);
+    setEditingSite(null);
+  };
+
+  const handleCloseAddSite = () => {
+    setIsAddSiteOpen(false);
+    setEditingSite(null);
+  };
+
+  return (
+    <div className="p-6 space-y-6" data-sites-management>
+      {/* Sites Data Table */}
+      <div>
+        
+
+        <DataTable
+          columns={siteColumns}
+          data={sites}
+          loading={loading}
+          searchPlaceholder="Search sites..."
+          addButtonText="Add Site"
+          onAdd={handleAddSite}
+          onEdit={handleEditSite}
+          // onView={handleViewSite}
+          onDelete={handleDeleteSite}
+          searchable={true}
+          filterable={true}
+          exportable={true}
+          pagination={true}
+          pageSize={5}
+        />
+      </div>
+
+      {/* Add/Edit Site Form */}
+      {isAddSiteOpen && (
+        <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+          <SiteForm
+            onSave={handleSaveSite}
+            onCancel={handleCloseAddSite}
+            isEditing={!!editingSite}
+            initialData={editingSite}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Site Form Component
+const SiteForm: React.FC<{
+  onSave: (data: any) => void;
+  onCancel: () => void;
+  isEditing?: boolean;
+  initialData?: any;
+}> = ({ onSave, onCancel, isEditing = false, initialData = null }) => {
+  const [formData, setFormData] = useState({
+    siteName: initialData?.siteName || '',
+    addressLine1: initialData?.addressLine1 || '',
+    addressLine2: initialData?.addressLine2 || '',
+    city: initialData?.city || '',
+    country: initialData?.country || '',
+    phoneNumber: initialData?.phoneNumber || ''
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const cityOptions = [
+    { value: 'New York', label: 'New York' },
+    { value: 'Los Angeles', label: 'Los Angeles' },
+    { value: 'Chicago', label: 'Chicago' },
+    { value: 'Houston', label: 'Houston' },
+    { value: 'Phoenix', label: 'Phoenix' },
+    { value: 'Philadelphia', label: 'Philadelphia' },
+    { value: 'San Antonio', label: 'San Antonio' },
+    { value: 'San Diego', label: 'San Diego' },
+    { value: 'Dallas', label: 'Dallas' },
+    { value: 'San Jose', label: 'San Jose' }
+  ];
+
+  const countryOptions = [
+    { value: 'USA', label: 'USA' },
+    { value: 'Canada', label: 'Canada' },
+    { value: 'Mexico', label: 'Mexico' },
+    { value: 'UK', label: 'United Kingdom' },
+    { value: 'Germany', label: 'Germany' },
+    { value: 'France', label: 'France' },
+    { value: 'Japan', label: 'Japan' },
+    { value: 'China', label: 'China' },
+    { value: 'India', label: 'India' },
+    { value: 'Australia', label: 'Australia' }
+  ];
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.siteName.trim()) {
+      newErrors.siteName = 'Site name is required';
+    }
+    if (!formData.addressLine1.trim()) {
+      newErrors.addressLine1 = 'Address line 1 is required';
+    }
+    if (!formData.city) {
+      newErrors.city = 'City is required';
+    }
+    if (!formData.country) {
+      newErrors.country = 'Country is required';
+    }
+    if (!formData.phoneNumber.trim()) {
+      newErrors.phoneNumber = 'Phone number is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateForm()) {
+      onSave(formData);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Sites</h4>
+        
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="siteName" required>
+              Site Name
+            </Label>
+            <Input
+              value={formData.siteName}
+              onChange={(e) => handleInputChange('siteName', e.target.value)}
+              placeholder="Enter site name"
+              error={errors.siteName}
+              icon={<MapPin className="w-4 h-4 text-gray-400" />}
+            />
+          </div>
+
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <h5 className="text-md font-medium text-gray-900 dark:text-white mb-4">Address Details</h5>
+            
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="addressLine1" required>
+                  Address Line 1
+                </Label>
+                <Input
+                  value={formData.addressLine1}
+                  onChange={(e) => handleInputChange('addressLine1', e.target.value)}
+                  placeholder="Enter address line 1"
+                  error={errors.addressLine1}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="addressLine2">
+                  Address Line 2
+                </Label>
+                <Input
+                  value={formData.addressLine2}
+                  onChange={(e) => handleInputChange('addressLine2', e.target.value)}
+                  placeholder="Enter address line 2 (optional)"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="city" required>
+                  City
+                </Label>
+                <CustomSelect
+                  value={formData.city}
+                  onChange={(value) => handleInputChange('city', value)}
+                  options={cityOptions}
+                  placeholder="Select City"
+                  error={errors.city}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="country" required>
+                  Country
+                </Label>
+                <CustomSelect
+                  value={formData.country}
+                  onChange={(value) => handleInputChange('country', value)}
+                  options={countryOptions}
+                  placeholder="Select Country"
+                  error={errors.country}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="phoneNumber" required>
+              Phone Number
+            </Label>
+            <Input
+              value={formData.phoneNumber}
+              onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+              placeholder="Enter phone number"
+              error={errors.phoneNumber}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-end space-x-3 pt-4">
+        <motion.button
+          type="button"
+          onClick={onCancel}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Cancel
+        </motion.button>
+        <motion.button
+          type="submit"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
+        >
+          <Save className="w-4 h-4 mr-2" />
+          {isEditing ? 'Update Site' : 'Add Site'}
+        </motion.button>
+      </div>
+    </form>
+  );
+};
+
+// Form Components
+const CustomerGroupForm: React.FC<{
+  onSave: (data: any) => void;
+  onCancel: () => void;
+  isEditing?: boolean;
+  initialData?: any;
+}> = ({ onSave, onCancel, isEditing = false, initialData = null }) => {
+  const [formData, setFormData] = useState({
+    groupName: initialData?.groupName || '',
+    description: initialData?.description || '',
+    status: initialData?.status || 'Active'
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const statusOptions = [
+    { value: 'Active', label: 'Active' },
+    { value: 'Inactive', label: 'Inactive' }
+  ];
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.groupName.trim()) {
+      newErrors.groupName = 'Group name is required';
+    }
+    if (!formData.description.trim()) {
+      newErrors.description = 'Description is required';
+    }
+    if (!formData.status) {
+      newErrors.status = 'Status is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateForm()) {
+      onSave(formData);
+    }
+  };
+
+  return (
+    <form id="group-form" onSubmit={handleSubmit} className="space-y-6 p-6">
+      <div>
+        <Label htmlFor="groupName" required>
+          Group Name
+        </Label>
+        <Input
+          value={formData.groupName}
+          onChange={(e) => handleInputChange('groupName', e.target.value)}
+          placeholder="Enter Group Name"
+          error={errors.groupName}
+          icon={<UserCheck className="w-4 h-4 text-gray-400" />}
+        />
+      </div>
+      <div>
+        <Label htmlFor="description" required>
+          Description
+        </Label>
+        <Input
+          value={formData.description}
+          onChange={(e) => handleInputChange('description', e.target.value)}
+          placeholder="Enter Description"
+          error={errors.description}
+        />
+      </div>
+      <div>
+        <Label htmlFor="status" required>
+          Status
+        </Label>
+        <CustomSelect
+          value={formData.status}
+          onChange={(value) => handleInputChange('status', value)}
+          options={statusOptions}
+          placeholder="Select status"
+          error={errors.status}
+        />
+      </div>
+    </form>
+  );
+};
+
+const CustomerForm: React.FC<{
+  onSave: (data: any) => void;
+  onCancel: () => void;
+  isEditing?: boolean;
+  initialData?: any;
+}> = ({ onSave, onCancel, isEditing = false, initialData = null }) => {
+  const [formData, setFormData] = useState({
+    customerName: initialData?.customerName || '',
+    registrationNo: initialData?.registrationNo || '',
+    group: initialData?.group || '',
+    status: initialData?.status || 'Active'
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const groupOptions = [
+    { value: 'Premium Customers', label: 'Premium Customers' },
+    { value: 'Standard Customers', label: 'Standard Customers' },
+    { value: 'Government Clients', label: 'Government Clients' },
+    { value: 'Research Institutions', label: 'Research Institutions' },
+    { value: 'Inactive Groups', label: 'Inactive Groups' }
+  ];
+
+  const statusOptions = [
+    { value: 'Active', label: 'Active' },
+    { value: 'Inactive', label: 'Inactive' }
+  ];
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.customerName.trim()) {
+      newErrors.customerName = 'Customer name is required';
+    }
+    if (!formData.registrationNo.trim()) {
+      newErrors.registrationNo = 'Registration number is required';
+    }
+    if (!formData.group) {
+      newErrors.group = 'Group is required';
+    }
+    if (!formData.status) {
+      newErrors.status = 'Status is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateForm()) {
+      onSave(formData);
+    }
+  };
+
+  return (
+    <form id="customer-form" onSubmit={handleSubmit} className="space-y-6 p-6">
+      <div>
+        <Label htmlFor="customerName" required>
+          Customer / Company Name
+        </Label>
+        <Input
+          value={formData.customerName}
+          onChange={(e) => handleInputChange('customerName', e.target.value)}
+          placeholder="Enter Customer / Company Name"
+          error={errors.customerName}
+          icon={<Users className="w-4 h-4 text-gray-400" />}
+        />
+      </div>
+      <div>
+        <Label htmlFor="registrationNo" required>
+          Registration No
+        </Label>
+        <Input
+          value={formData.registrationNo}
+          onChange={(e) => handleInputChange('registrationNo', e.target.value)}
+          placeholder="Enter Registration No"
+          error={errors.registrationNo}
+        />
+      </div>
+      <div>
+        <Label htmlFor="group" required>
+          Group
+        </Label>
+        <CustomSelect
+          value={formData.group}
+          onChange={(value) => handleInputChange('group', value)}
+          options={groupOptions}
+          placeholder="Select group"
+          error={errors.group}
+        />
+      </div>
+      <div>
+        <Label htmlFor="status" required>
+          Status
+        </Label>
+        <CustomSelect
+          value={formData.status}
+          onChange={(value) => handleInputChange('status', value)}
+          options={statusOptions}
+          placeholder="Select status"
+          error={errors.status}
+        />
+      </div>
+    </form>
+  );
+};
+
+export default CustomerMaster;

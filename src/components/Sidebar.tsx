@@ -10,15 +10,11 @@ import {
   Users, 
   Settings,
   ChevronRight,
-  Building2,
-  FlaskConical,
-  Package,
   Droplets,
   Microscope,
   Menu,
-  Settings as SettingsIcon,
   ShoppingCart,
-  Box
+  UserCheck
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -44,6 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
   ];
 
   const masterDataItems = [
+    { id: 'customer-master', label: 'Customer Master', icon: UserCheck },
     { id: 'instrument-master', label: 'Instrument Master', icon: Microscope },
     { id: 'tests', label: 'Test Master', icon: TestTube },
     { id: 'commodities', label: 'Commodity Master', icon: ShoppingCart },

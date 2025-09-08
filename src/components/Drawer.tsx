@@ -8,7 +8,7 @@ interface DrawerProps {
   title: string;
   children: React.ReactNode;
   footer?: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
   position?: 'right' | 'left';
 }
 
@@ -25,7 +25,9 @@ const Drawer: React.FC<DrawerProps> = ({
     sm: 'w-96',
     md: 'w-[500px]',
     lg: 'w-[600px]',
-    xl: 'w-[800px]'
+    xl: 'w-[800px]',
+    '2xl': 'w-[1000px]',
+    '3xl': 'w-[1200px]'
   };
 
   const positionClasses = {
@@ -103,7 +105,7 @@ const Drawer: React.FC<DrawerProps> = ({
             }}
           >
             {/* Header - Reduced size */}
-            <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700 flex-shrink-0 bg-primary-100">
+            <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700 flex-shrink-0 bg-primary-100 dark:bg-gray-800">
               <h3 className=" font-semibold text-gray-700 dark:text-white">
                 {title}
               </h3>

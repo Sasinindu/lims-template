@@ -8,8 +8,7 @@ import LabTests from './pages/LabTests';
 import Reports from './pages/Reports';
 import UsersPage from './pages/Users';
 import Settings from './pages/Settings';
-import Customers from './pages/Customers';
-import AddCustomer from './pages/AddCustomer';
+import CustomerMaster from './pages/CustomerMaster';
 import Tests from './pages/Tests';
 import Chemicals from './pages/Chemicals';
 import Commodities from './pages/Commodities';
@@ -60,10 +59,7 @@ const App: React.FC = () => {
             <Route path="/settings" element={<Settings />} />
             
             {/* Master Data Routes */}
-            <Route path="/customers" element={<Customers />} />
-            <Route path="/customers/add" element={<AddCustomer />} />
-            <Route path="/customers/edit/:id" element={<AddCustomer />} />
-            <Route path="/customers/view/:id" element={<AddCustomer />} />
+            <Route path="/customer-master" element={<CustomerMaster />} />
             <Route path="/tests" element={<Tests />} />
             <Route path="/chemicals" element={<Chemicals />} />
             <Route path="/commodities" element={<Commodities />} />
