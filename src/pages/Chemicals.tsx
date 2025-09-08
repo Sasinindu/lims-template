@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FlaskConical, AlertTriangle, Shield, Droplets, Save, X } from 'lucide-react';
+import { FlaskConical, Package, CheckCircle, AlertCircle, Save, X } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
 import Drawer from '../components/Drawer';
 import AddChemicalForm from '../components/AddChemicalForm';
@@ -10,72 +10,47 @@ const Chemicals: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingChemical, setEditingChemical] = useState<any>(null);
 
-  // Mock chemical data
+  // Mock chemical data with new structure
   const [chemicals, setChemicals] = useState([
     {
       id: 'CH001',
       name: 'Sodium Hydroxide',
-      formula: 'NaOH',
-      category: 'Base',
-      concentration: '99.5%',
-      hazardLevel: 'High',
-      storageTemp: 'Room Temperature',
-      expiryDate: '2025-12-31',
-      supplier: 'ChemSupply Inc',
-      status: 'Active',
-      description: 'Strong base for pH adjustment'
+      unit: 'kg',
+      availability: 'In Stock',
+      volume: 5.5,
+      status: 'Active'
     },
     {
       id: 'CH002',
       name: 'Hydrochloric Acid',
-      formula: 'HCl',
-      category: 'Acid',
-      concentration: '37%',
-      hazardLevel: 'High',
-      storageTemp: 'Room Temperature',
-      expiryDate: '2025-06-30',
-      supplier: 'AcidCorp Ltd',
-      status: 'Active',
-      description: 'Strong acid for sample preparation'
+      unit: 'l',
+      availability: 'Low Stock',
+      volume: 2.3,
+      status: 'Active'
     },
     {
       id: 'CH003',
       name: 'Ethanol',
-      formula: 'C2H5OH',
-      category: 'Solvent',
-      concentration: '95%',
-      hazardLevel: 'Medium',
-      storageTemp: 'Cool Storage',
-      expiryDate: '2025-03-15',
-      supplier: 'Solvent Solutions',
-      status: 'Active',
-      description: 'Organic solvent for extractions'
+      unit: 'l',
+      availability: 'In Stock',
+      volume: 10.0,
+      status: 'Active'
     },
     {
       id: 'CH004',
       name: 'Potassium Permanganate',
-      formula: 'KMnO4',
-      category: 'Oxidizing Agent',
-      concentration: '99%',
-      hazardLevel: 'High',
-      storageTemp: 'Cool Storage',
-      expiryDate: '2024-12-31',
-      supplier: 'OxidChem Corp',
-      status: 'Expired',
-      description: 'Strong oxidizing agent for titrations'
+      unit: 'g',
+      availability: 'Out of Stock',
+      volume: 0,
+      status: 'Inactive'
     },
     {
       id: 'CH005',
       name: 'Sodium Chloride',
-      formula: 'NaCl',
-      category: 'Salt',
-      concentration: '99.9%',
-      hazardLevel: 'Low',
-      storageTemp: 'Room Temperature',
-      expiryDate: '2026-01-01',
-      supplier: 'SaltWorks Inc',
-      status: 'Active',
-      description: 'Standard salt for calibration'
+      unit: 'kg',
+      availability: 'In Stock',
+      volume: 25.0,
+      status: 'Active'
     }
   ]);
 
@@ -83,40 +58,23 @@ const Chemicals: React.FC = () => {
     switch (status) {
       case 'Active':
         return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
-      case 'Expired':
+      case 'Inactive':
         return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+      case 'Pending':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+    }
+  };
+
+  const getAvailabilityColor = (availability: string) => {
+    switch (availability) {
+      case 'In Stock':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
       case 'Low Stock':
         return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
-    }
-  };
-
-  const getHazardColor = (level: string) => {
-    switch (level) {
-      case 'High':
+      case 'Out of Stock':
         return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
-      case 'Medium':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
-      case 'Low':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
-    }
-  };
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'Acid':
-        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
-      case 'Base':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
-      case 'Solvent':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400';
-      case 'Oxidizing Agent':
-        return 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400';
-      case 'Salt':
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
     }
@@ -124,100 +82,51 @@ const Chemicals: React.FC = () => {
 
   const columns: Column[] = [
     {
-      key: 'id',
-      title: 'Chemical ID',
-      dataIndex: 'id',
-      width: '100px',
-      sortable: true,
-      render: (value) => (
-        <div className="flex items-center">
-          <FlaskConical className="w-4 h-4 text-primary-600 mr-2" />
-          <span className="font-medium text-primary-600 dark:text-primary-400">{value}</span>
-        </div>
-      )
-    },
-    {
       key: 'name',
       title: 'Chemical Name',
       dataIndex: 'name',
       sortable: true,
-      render: (value, record) => (
-        <div>
-          <div className="font-medium text-gray-900 dark:text-white">{value}</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">{record.formula}</div>
+      render: (value) => (
+        <div className="flex items-center">
+          <FlaskConical className="w-4 h-4 text-primary-600 mr-2" />
+          <span className="font-medium text-gray-900 dark:text-white">{value}</span>
         </div>
       )
     },
     {
-      key: 'category',
-      title: 'Category',
-      dataIndex: 'category',
-      width: '120px',
+      key: 'unit',
+      title: 'Unit',
+      dataIndex: 'unit',
+      width: '100px',
       sortable: true,
       render: (value) => (
-        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(value)}`}>
+        <span className="text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md">
           {value}
         </span>
       )
     },
     {
-      key: 'concentration',
-      title: 'Concentration',
-      dataIndex: 'concentration',
-      width: '120px',
-      render: (value) => (
-        <span className="text-sm text-gray-600 dark:text-gray-400">{value}</span>
-      )
-    },
-    {
-      key: 'hazardLevel',
-      title: 'Hazard Level',
-      dataIndex: 'hazardLevel',
+      key: 'availability',
+      title: 'Availability',
+      dataIndex: 'availability',
       width: '120px',
       sortable: true,
       render: (value) => (
-        <div className="flex items-center">
-          <AlertTriangle className={`w-3 h-3 mr-1 ${
-            value === 'High' ? 'text-red-500' : 
-            value === 'Medium' ? 'text-yellow-500' : 'text-green-500'
-          }`} />
-          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getHazardColor(value)}`}>
-            {value}
-          </span>
-        </div>
+        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getAvailabilityColor(value)}`}>
+          {value}
+        </span>
       )
     },
     {
-      key: 'storageTemp',
-      title: 'Storage Temp',
-      dataIndex: 'storageTemp',
-      width: '140px',
-      render: (value) => (
-        <span className="text-sm text-gray-600 dark:text-gray-400">{value}</span>
-      )
-    },
-    {
-      key: 'expiryDate',
-      title: 'Expiry Date',
-      dataIndex: 'expiryDate',
-      width: '120px',
+      key: 'volume',
+      title: 'Volume',
+      dataIndex: 'volume',
+      width: '100px',
       sortable: true,
-      render: (value) => {
-        const isExpired = new Date(value) < new Date();
-        return (
-          <span className={`text-sm ${isExpired ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
-            {value}
-          </span>
-        );
-      }
-    },
-    {
-      key: 'supplier',
-      title: 'Supplier',
-      dataIndex: 'supplier',
-      width: '140px',
-      render: (value) => (
-        <span className="text-sm text-gray-600 dark:text-gray-400">{value}</span>
+      render: (value, record) => (
+        <span className="text-sm text-gray-600 dark:text-gray-400">
+          {value} {record.unit}
+        </span>
       )
     },
     {
@@ -264,7 +173,11 @@ const Chemicals: React.FC = () => {
       );
     } else {
       // Add new chemical
-      setChemicals(prev => [...prev, chemicalData]);
+      const newChemical = {
+        ...chemicalData,
+        id: `CH${String(Date.now()).slice(-3)}`
+      };
+      setChemicals(prev => [...prev, newChemical]);
     }
     setIsDrawerOpen(false);
     setEditingChemical(null);
@@ -340,39 +253,39 @@ const Chemicals: React.FC = () => {
         <div className="card p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Chemicals</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">In Stock</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {chemicals.filter(c => c.status === 'Active').length}
+                {chemicals.filter(c => c.availability === 'In Stock').length}
               </p>
             </div>
             <div className="p-3 bg-green-500 rounded-full">
-              <Shield className="w-6 h-6 text-white" />
+              <CheckCircle className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
         <div className="card p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">High Hazard</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Low Stock</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {chemicals.filter(c => c.hazardLevel === 'High').length}
+                {chemicals.filter(c => c.availability === 'Low Stock').length}
+              </p>
+            </div>
+            <div className="p-3 bg-yellow-500 rounded-full">
+              <AlertCircle className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Out of Stock</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {chemicals.filter(c => c.availability === 'Out of Stock').length}
               </p>
             </div>
             <div className="p-3 bg-red-500 rounded-full">
-              <AlertTriangle className="w-6 h-6 text-white" />
-            </div>
-          </div>
-        </div>
-        <div className="card p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Expired</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {chemicals.filter(c => c.status === 'Expired').length}
-              </p>
-            </div>
-            <div className="p-3 bg-orange-500 rounded-full">
-              <Droplets className="w-6 h-6 text-white" />
+              <Package className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
@@ -401,7 +314,7 @@ const Chemicals: React.FC = () => {
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}
         title={editingChemical ? 'Edit Chemical' : 'Add New Chemical'}
-        size="lg"
+        size="md"
         footer={drawerFooter}
       >
         <AddChemicalForm

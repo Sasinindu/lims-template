@@ -1,16 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  FlaskConical, 
-  AlertTriangle, 
-  Thermometer, 
-  Calendar,
-  Building2,
-  FileText,
-  Save,
-  X,
-  Droplets
-} from 'lucide-react';
+import { FlaskConical, Package, Hash } from 'lucide-react';
 import CustomSelect from './CustomSelect';
 import Label from './Label';
 import Input from './Input';
@@ -30,35 +20,36 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
 }) => {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
-    formula: initialData?.formula || '',
-    category: initialData?.category || '',
-    concentration: initialData?.concentration || '',
-    hazardLevel: initialData?.hazardLevel || '',
-    storageTemp: initialData?.storageTemp || '',
-    expiryDate: initialData?.expiryDate || '',
-    supplier: initialData?.supplier || '',
-    description: initialData?.description || '',
+    unit: initialData?.unit || '',
+    availability: initialData?.availability || '',
+    volume: initialData?.volume || '',
+    status: initialData?.status || 'Active',
     ...(initialData || {})
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const categoryOptions = [
-    { value: 'Acid', label: 'Acid' },
-    { value: 'Base', label: 'Base' },
-    { value: 'Solvent', label: 'Solvent' },
-    { value: 'Reagent', label: 'Reagent' },
-    { value: 'Buffer', label: 'Buffer' }
+  const unitOptions = [
+    { value: 'mL', label: 'mL (Milliliters)' },
+    { value: 'l', label: 'L (Liters)' },
+    { value: 'g', label: 'g (Grams)' },
+    { value: 'kg', label: 'kg (Kilograms)' }
   ];
 
-  const hazardLevelOptions = [
-    { value: 'Low', label: 'Low' },
-    { value: 'Medium', label: 'Medium' },
-    { value: 'High', label: 'High' },
-    { value: 'Extreme', label: 'Extreme' }
+  const availabilityOptions = [
+    { value: 'In Stock', label: 'In Stock' },
+    { value: 'Low Stock', label: 'Low Stock' },
+    { value: 'Out of Stock', label: 'Out of Stock' },
+    { value: 'On Order', label: 'On Order' }
   ];
 
-  const handleInputChange = (field: string, value: string) => {
+  const statusOptions = [
+    { value: 'Active', label: 'Active' },
+    { value: 'Inactive', label: 'Inactive' },
+    { value: 'Pending', label: 'Pending' }
+  ];
+
+  const handleInputChange = (field: string, value: string | number) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
@@ -72,23 +63,17 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
     if (!formData.name.trim()) {
       newErrors.name = 'Chemical name is required';
     }
-    if (!formData.formula.trim()) {
-      newErrors.formula = 'Chemical formula is required';
+    if (!formData.unit) {
+      newErrors.unit = 'Unit is required';
     }
-    if (!formData.category) {
-      newErrors.category = 'Category is required';
+    if (!formData.availability) {
+      newErrors.availability = 'Availability is required';
     }
-    if (!formData.concentration.trim()) {
-      newErrors.concentration = 'Concentration is required';
+    if (!formData.volume || formData.volume <= 0) {
+      newErrors.volume = 'Volume must be greater than 0';
     }
-    if (!formData.hazardLevel) {
-      newErrors.hazardLevel = 'Hazard level is required';
-    }
-    if (!formData.expiryDate.trim()) {
-      newErrors.expiryDate = 'Expiry date is required';
-    }
-    if (!formData.supplier.trim()) {
-      newErrors.supplier = 'Supplier is required';
+    if (!formData.status) {
+      newErrors.status = 'Status is required';
     }
 
     setErrors(newErrors);
@@ -97,11 +82,12 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       const chemicalData = {
         ...formData,
-        id: isEditing ? formData.id : `C${String(Date.now()).slice(-3)}`
+        volume: parseFloat(formData.volume.toString()),
+        id: isEditing ? formData.id : `CH${String(Date.now()).slice(-3)}`
       };
       onSave(chemicalData);
     }
@@ -109,130 +95,72 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
 
   return (
     <form id="chemical-form" onSubmit={handleSubmit} className="space-y-6 p-6">
-      {/* Basic Information */}
+      {/* Chemical Information */}
       <div className="space-y-6">
-        <h3 className="flex items-center text-lg font-semibold text-gray-900 dark:text-white">
-          <FlaskConical className="w-5 h-5 mr-2 text-primary-600" />
-          Basic Information
-        </h3>
-        
+  
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Chemical Name */}
-          <Input
-            label="Chemical Name"
-            required
-            value={formData.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
-            placeholder="Enter chemical name"
-            error={errors.name}
-            icon={<FlaskConical className="w-4 h-4 text-gray-400" />}
-          />
-
-          {/* Chemical Formula */}
-          <Input
-            label="Chemical Formula"
-            required
-            value={formData.formula}
-            onChange={(e) => handleInputChange('formula', e.target.value)}
-            placeholder="Enter chemical formula"
-            error={errors.formula}
-            icon={<FileText className="w-4 h-4 text-gray-400" />}
-          />
-
-          {/* Category */}
-          <div className="space-y-2">
-            <Label htmlFor="category" required>
-              Category
-            </Label>
-            <CustomSelect
-              value={formData.category}
-              onChange={(value) => handleInputChange('category', value)}
-              options={categoryOptions}
-              placeholder="Select category"
-              error={errors.category}
+          <div className="md:col-span-2">
+            <Input
+              label="Chemical Name"
+              required
+              value={formData.name}
+              onChange={(e) => handleInputChange('name', e.target.value)}
+              placeholder="Enter chemical name"
+              error={errors.name}
             />
           </div>
 
-          {/* Concentration */}
-          <Input
-            label="Concentration"
-            required
-            value={formData.concentration}
-            onChange={(e) => handleInputChange('concentration', e.target.value)}
-            placeholder="Enter concentration"
-            error={errors.concentration}
-            icon={<Droplets className="w-4 h-4 text-gray-400" />}
-          />
-
-          {/* Hazard Level */}
+          {/* Unit */}
           <div className="space-y-2">
-            <Label htmlFor="hazardLevel" required>
-              Hazard Level
-            </Label>
+
             <CustomSelect
-              value={formData.hazardLevel}
-              onChange={(value) => handleInputChange('hazardLevel', value)}
-              options={hazardLevelOptions}
-              placeholder="Select hazard level"
-              error={errors.hazardLevel}
+              label="Unit"
+              value={formData.unit}
+              onChange={(value) => handleInputChange('unit', value)}
+              options={unitOptions}
+              placeholder="Select unit"
+              error={errors.unit}
             />
           </div>
 
-          {/* Storage Temperature */}
-          <Input
-            label="Storage Temperature"
-            value={formData.storageTemp}
-            onChange={(e) => handleInputChange('storageTemp', e.target.value)}
-            placeholder="Enter storage temperature"
-            icon={<Thermometer className="w-4 h-4 text-gray-400" />}
-          />
-        </div>
-      </div>
+          {/* Availability */}
+          <div className="space-y-2">
+            <CustomSelect
+              label="Availability"
+              value={formData.availability}
+              onChange={(value) => handleInputChange('availability', value)}
+              options={availabilityOptions}
+              placeholder="Select availability"
+              error={errors.availability}
+            />
+          </div>
 
-      {/* Additional Information */}
-      <div className="space-y-6">
-        <h3 className="flex items-center text-lg font-semibold text-gray-900 dark:text-white">
-          <Building2 className="w-5 h-5 mr-2 text-primary-600" />
-          Additional Information
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Expiry Date */}
+          {/* Volume */}
           <Input
-            label="Expiry Date"
+            label="Volume"
             required
-            type="date"
-            value={formData.expiryDate}
-            onChange={(e) => handleInputChange('expiryDate', e.target.value)}
-            error={errors.expiryDate}
-            icon={<Calendar className="w-4 h-4 text-gray-400" />}
+            type="number"
+            min="0"
+            step="0.1"
+            value={formData.volume}
+            onChange={(e) => handleInputChange('volume', e.target.value)}
+            placeholder="Enter volume"
+            error={errors.volume}
           />
 
-          {/* Supplier */}
-          <Input
-            label="Supplier"
-            required
-            value={formData.supplier}
-            onChange={(e) => handleInputChange('supplier', e.target.value)}
-            placeholder="Enter supplier name"
-            error={errors.supplier}
-            icon={<Building2 className="w-4 h-4 text-gray-400" />}
-          />
-        </div>
-
-        {/* Description */}
-        <div className="space-y-2">
-          <Label htmlFor="description">
-            Description
-          </Label>
-          <div className="relative">
-            <textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-300 dark:border-gray-600/50 rounded-lg shadow-sm shadow-black/5 dark:shadow-black/20 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-300 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm resize-none"
-              placeholder="Enter chemical description"
+          {/* Status */}
+          <div className="space-y-2">
+            <Label htmlFor="status" required>
+              Status
+            </Label>
+            <CustomSelect
+              value={formData.status}
+              onChange={(value) => handleInputChange('status', value)}
+              options={statusOptions}
+              placeholder="Select status"
+              error={errors.status}
             />
           </div>
         </div>

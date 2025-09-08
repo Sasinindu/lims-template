@@ -29,10 +29,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       'customers/edit': 'customers',
       'customers/view': 'customers',
       'tests': 'tests',
+      'test-types': 'test-types',
       'commodities': 'commodities',
       'chemicals': 'chemicals',
-'instrument-categories': 'instrument-categories',
-instruments: 'instruments',
+      'instrument-categories': 'instrument-categories',
+      'instruments': 'instruments',
     };
     return pathMap[path] || 'dashboard'; // Default to dashboard
   };
@@ -49,11 +50,11 @@ instruments: 'instruments',
       'settings': '/settings',
       'customers': '/customers',
       'tests': '/tests',
+      'test-types': '/test-types',
       'commodities': '/commodities',
       'chemicals': '/chemicals',
-'instrument-categories': '/instrument-categories',
-instruments: '/instruments',
-instruments: 'instruments',
+      'instrument-categories': '/instrument-categories',
+      'instruments': '/instruments',
     };
     const path = routeMap[pageId];
     if (path) {

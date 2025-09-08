@@ -13,6 +13,7 @@ import AddCustomer from './pages/AddCustomer';
 import Tests from './pages/Tests';
 import Commodities from './pages/Commodities';
 import Chemicals from './pages/Chemicals';
+import TestTypes from './pages/TestTypes';
 import Analytics from './pages/Analytics';
 import Calendar from './pages/Calendar';
 import DatabasePage from './pages/Database';
@@ -66,10 +67,11 @@ const App: React.FC = () => {
             <Route path="/customers/edit/:id" element={<AddCustomer />} />
             <Route path="/customers/view/:id" element={<AddCustomer />} />
             <Route path="/tests" element={<Tests />} />
+            <Route path="/test-types" element={<TestTypes />} />
             <Route path="/commodities" element={<Commodities />} />
             <Route path="/chemicals" element={<Chemicals />} />
-<Route path="/instrument-categories" element={<InstrumentCategories />} />
-<Route path="/instruments" element={<Instruments />} />
+            <Route path="/instrument-categories" element={<InstrumentCategories />} />
+            <Route path="/instruments" element={<Instruments />} />
           </Routes>
         </Layout>
       </Router>
