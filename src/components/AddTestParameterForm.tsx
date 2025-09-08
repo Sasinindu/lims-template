@@ -246,7 +246,7 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
       <div className="space-y-6">
         <h3 className="flex items-center text-lg font-semibold text-gray-900 dark:text-white">
           <Settings className="w-5 h-5 mr-2 text-primary-600" />
-          General Test Information
+          General Information
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -356,26 +356,26 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
           Required Chemicals
         </h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="chemical">Select Chemical</Label>
-            <CustomSelect
-              value={newChemical.name}
-              onChange={(value) => setNewChemical(prev => ({ ...prev, name: value }))}
-              options={chemicalOptions}
-              placeholder="Select chemical"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="quantity">Quantity</Label>
-            <CustomSelect
-              value={newChemical.quantity}
-              onChange={(value) => setNewChemical(prev => ({ ...prev, quantity: value }))}
-              options={quantityOptions}
-              placeholder="Select quantity"
-            />
-          </div>
-          <div className="flex items-end">
+        <div className="space-y-4">
+          <div className="flex items-end space-x-4">
+            <div className="flex-1">
+              <Label htmlFor="chemical">Chemical</Label>
+              <CustomSelect
+                value={newChemical.name}
+                onChange={(value) => setNewChemical(prev => ({ ...prev, name: value }))}
+                options={chemicalOptions}
+                placeholder="Select Chemical"
+              />
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="quantity">Quantity</Label>
+              <CustomSelect
+                value={newChemical.quantity}
+                onChange={(value) => setNewChemical(prev => ({ ...prev, quantity: value }))}
+                options={quantityOptions}
+                placeholder="Select Quantity"
+              />
+            </div>
             <motion.button
               type="button"
               onClick={handleAddChemical}
@@ -387,18 +387,18 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
               Add
             </motion.button>
           </div>
-        </div>
 
-        {/* Chemicals Table */}
-        <SimpleTable
-          columns={chemicalColumns}
-          data={formData.chemicals}
-          onRemove={handleRemoveChemical}
-          emptyMessage="No chemicals added yet"
-        />
-        {errors.chemicals && (
-          <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.chemicals}</p>
-        )}
+          {/* Chemicals Table */}
+          <SimpleTable
+            columns={chemicalColumns}
+            data={formData.chemicals}
+            onRemove={handleRemoveChemical}
+            emptyMessage="No chemicals added yet"
+          />
+          {errors.chemicals && (
+            <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.chemicals}</p>
+          )}
+        </div>
       </div>
 
       {/* Cost by Groups */}
@@ -408,28 +408,28 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
           Cost by Groups
         </h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="customerGroup">Select Customer Group</Label>
-            <CustomSelect
-              value={newCostGroup.group}
-              onChange={(value) => setNewCostGroup(prev => ({ ...prev, group: value }))}
-              options={customerGroupOptions}
-              placeholder="Select customer group"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="price">Price</Label>
-            <Input
-              type="number"
-              min="0"
-              step="0.01"
-              value={newCostGroup.price}
-              onChange={(e) => setNewCostGroup(prev => ({ ...prev, price: e.target.value }))}
-              placeholder="Enter price"
-            />
-          </div>
-          <div className="flex items-end">
+        <div className="space-y-4">
+          <div className="flex items-end space-x-4">
+            <div className="flex-1">
+              <Label htmlFor="customerGroup">Customer Group</Label>
+              <CustomSelect
+                value={newCostGroup.group}
+                onChange={(value) => setNewCostGroup(prev => ({ ...prev, group: value }))}
+                options={customerGroupOptions}
+                placeholder="Customer Group"
+              />
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="price">Price</Label>
+              <Input
+                type="number"
+                min="0"
+                step="0.01"
+                value={newCostGroup.price}
+                onChange={(e) => setNewCostGroup(prev => ({ ...prev, price: e.target.value }))}
+                placeholder="Enter price"
+              />
+            </div>
             <motion.button
               type="button"
               onClick={handleAddCostGroup}
@@ -441,18 +441,18 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
               Add
             </motion.button>
           </div>
-        </div>
 
-        {/* Cost Groups Table */}
-        <SimpleTable
-          columns={costGroupColumns}
-          data={formData.costGroups}
-          onRemove={handleRemoveCostGroup}
-          emptyMessage="No cost groups added yet"
-        />
-        {errors.costGroups && (
-          <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.costGroups}</p>
-        )}
+          {/* Cost Groups Table */}
+          <SimpleTable
+            columns={costGroupColumns}
+            data={formData.costGroups}
+            onRemove={handleRemoveCostGroup}
+            emptyMessage="No cost groups added yet"
+          />
+          {errors.costGroups && (
+            <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.costGroups}</p>
+          )}
+        </div>
       </div>
 
       {/* Instruments */}
