@@ -32,7 +32,7 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [newChemical, setNewChemical] = useState({ name: '', quantity: '' });
+  const [newChemical, setNewChemical] = useState({ name: '', quantity: '', unit: '' });
   const [newCostGroup, setNewCostGroup] = useState({ group: '', price: '' });
   const [newAnalyte, setNewAnalyte] = useState('');
   const [newInstrument, setNewInstrument] = useState('');
@@ -57,20 +57,33 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
     { value: 'Formalin', label: 'Formalin' }
   ];
 
-  const quantityOptions = [
-    { value: '1ml', label: '1ml' },
-    { value: '2ml', label: '2ml' },
-    { value: '5ml', label: '5ml' },
-    { value: '10ml', label: '10ml' },
-    { value: '25ml', label: '25ml' },
-    { value: '50ml', label: '50ml' },
-    { value: '100ml', label: '100ml' },
-    { value: '1g', label: '1g' },
-    { value: '5g', label: '5g' },
-    { value: '10g', label: '10g' },
-    { value: '25g', label: '25g' },
-    { value: '50g', label: '50g' }
+  const unitOptions = [
+    { value: 'mL', label: 'mL (Milliliters)' },
+    { value: 'l', label: 'L (Liters)' },
+    { value: 'g', label: 'g (Grams)' },
+    { value: 'kg', label: 'kg (Kilograms)' },
+    { value: 'mg', label: 'mg (Milligrams)' },
+    { value: 'μg', label: 'μg (Micrograms)' },
+    { value: 'μL', label: 'μL (Microliters)' },
+    { value: 'discs', label: 'discs' },
+    { value: 'tubes', label: 'tubes' },
+    { value: 'plates', label: 'plates' }
   ];
+
+  // Auto-select unit based on chemical
+  const getDefaultUnitForChemical = (chemicalName: string) => {
+    const unitMap: Record<string, string> = {
+      'EDTA': 'mL',
+      'Sodium Citrate': 'mL',
+      'ELISA Buffer': 'mL',
+      'Substrate': 'mL',
+      'PBS': 'mL',
+      'Formalin': 'mL',
+      'Agar': 'g',
+      'Antibiotic Discs': 'discs'
+    };
+    return unitMap[chemicalName] || 'mL';
+  };
 
   const customerGroupOptions = [
     { value: 'Standard', label: 'Standard' },
@@ -102,6 +115,15 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
+  };
+
+  const handleChemicalChange = (value: string) => {
+    const defaultUnit = getDefaultUnitForChemical(value);
+    setNewChemical(prev => ({ 
+      ...prev, 
+      name: value, 
+      unit: defaultUnit 
+    }));
   };
 
   const handleAddAnalyte = () => {
@@ -139,12 +161,12 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
   };
 
   const handleAddChemical = () => {
-    if (newChemical.name && newChemical.quantity) {
+    if (newChemical.name && newChemical.quantity && newChemical.unit) {
       setFormData(prev => ({
         ...prev,
         chemicals: [...prev.chemicals, { ...newChemical }]
       }));
-      setNewChemical({ name: '', quantity: '' });
+      setNewChemical({ name: '', quantity: '', unit: '' });
     }
   };
 
@@ -228,7 +250,11 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
 
   const chemicalColumns = [
     { key: 'name', title: 'Chemical Name' },
-    { key: 'quantity', title: 'Quantity' }
+    { 
+      key: 'quantity', 
+      title: 'Quantity',
+      render: (value: string, record: any) => `${value} ${record.unit}`
+    }
   ];
 
   const costGroupColumns = [
@@ -246,7 +272,7 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
       <div className="space-y-6">
         <h3 className="flex items-center text-lg font-semibold text-gray-900 dark:text-white">
           <Settings className="w-5 h-5 mr-2 text-primary-600" />
-          General Information
+          General Test Information
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -362,18 +388,32 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
               <Label htmlFor="chemical">Chemical</Label>
               <CustomSelect
                 value={newChemical.name}
-                onChange={(value) => setNewChemical(prev => ({ ...prev, name: value }))}
+                onChange={handleChemicalChange}
                 options={chemicalOptions}
-                placeholder="Select Chemical"
+                placeholder="Chemical"
               />
             </div>
+            {newChemical.name && (
+              <div className="flex-1">
+                <Label htmlFor="unit">Unit</Label>
+                <CustomSelect
+                  value={newChemical.unit}
+                  onChange={() => {}} // Disabled - no onChange handler
+                  options={unitOptions}
+                  placeholder="Unit"
+                  disabled={true}
+                />
+              </div>
+            )}
             <div className="flex-1">
               <Label htmlFor="quantity">Quantity</Label>
-              <CustomSelect
+              <Input
+                type="number"
+                min="0"
+                step="0.1"
                 value={newChemical.quantity}
-                onChange={(value) => setNewChemical(prev => ({ ...prev, quantity: value }))}
-                options={quantityOptions}
-                placeholder="Select Quantity"
+                onChange={(e) => setNewChemical(prev => ({ ...prev, quantity: e.target.value }))}
+                placeholder="Enter quantity"
               />
             </div>
             <motion.button
