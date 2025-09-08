@@ -17,6 +17,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     // Map paths to sidebar item IDs if they differ
     const pathMap: { [key: string]: string } = {
       'dashboard': 'dashboard',
+      'order-registration': 'order-registration',
       'lab-tests': 'lab-tests',
       'reports': 'reports',
       'analytics': 'analytics',
@@ -36,6 +37,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const handlePageChange = (pageId: string) => {
     const routeMap: { [key: string]: string } = {
       'dashboard': '/dashboard',
+      'order-registration': '/order-registration',
       'lab-tests': '/lab-tests',
       'reports': '/reports',
       'analytics': '/analytics',

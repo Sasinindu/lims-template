@@ -10,11 +10,17 @@ import {
   Users, 
   Settings,
   ChevronRight,
+  Building2,
+  FlaskConical,
+  Package,
   Droplets,
   Microscope,
   Menu,
+  Settings as SettingsIcon,
   ShoppingCart,
-  UserCheck
+  Box,
+  UserCheck,
+  ClipboardList
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -30,21 +36,22 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
 
   const mainMenuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'lab-tests', label: 'Lab Tests', icon: TestTube },
-    { id: 'reports', label: 'Reports', icon: FileText },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'calendar', label: 'Calendar', icon: Calendar },
-    { id: 'database', label: 'Database', icon: Database },
+    { id: 'order-registration', label: 'Order Registration', icon: ClipboardList },
+    // { id: 'lab-tests', label: 'Lab Tests', icon: TestTube },
+    // { id: 'reports', label: 'Reports', icon: FileText },
+    // { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    // { id: 'calendar', label: 'Calendar', icon: Calendar },
+    // { id: 'database', label: 'Database', icon: Database },
     { id: 'users', label: 'Users', icon: Users },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    // { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
   const masterDataItems = [
     { id: 'customer-master', label: 'Customer Master', icon: UserCheck },
     { id: 'instrument-master', label: 'Instrument Master', icon: Microscope },
-    { id: 'tests', label: 'Test Master', icon: TestTube },
-    { id: 'commodities', label: 'Commodity Master', icon: ShoppingCart },
-    { id: 'chemicals', label: 'Chemical Master', icon: Droplets },
+    { id: 'tests', label: 'Tests', icon: TestTube },
+    { id: 'commodities', label: 'Commodities', icon: ShoppingCart },
+    { id: 'chemicals', label: 'Chemicals', icon: Droplets },
   ];
 
   const toggleSection = (sectionId: string) => {
