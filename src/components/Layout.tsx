@@ -77,7 +77,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="max-w-7xl mx-auto"
+            className="max-w-8xl mx-auto"
           >
             {children}
           </motion.div>

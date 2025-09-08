@@ -12,8 +12,8 @@ import Customers from './pages/Customers';
 import AddCustomer from './pages/AddCustomer';
 import TestTypes from './pages/TestTypes';
 import TestParameters from './pages/TestParameters';
-import Commodities from './pages/Commodities';
 import Chemicals from './pages/Chemicals';
+import Commodities from './pages/Commodities';
 import Analytics from './pages/Analytics';
 import Calendar from './pages/Calendar';
 import DatabasePage from './pages/Database';
@@ -68,8 +68,8 @@ const App: React.FC = () => {
             <Route path="/customers/view/:id" element={<AddCustomer />} />
             <Route path="/test-types" element={<TestTypes />} />
             <Route path="/test-parameters" element={<TestParameters />} />
-            <Route path="/commodities" element={<Commodities />} />
             <Route path="/chemicals" element={<Chemicals />} />
+            <Route path="/commodities" element={<Commodities />} />
             <Route path="/instrument-categories" element={<InstrumentCategories />} />
             <Route path="/instruments" element={<Instruments />} />
           </Routes>

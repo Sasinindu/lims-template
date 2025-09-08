@@ -10,15 +10,15 @@ import {
   Users, 
   Settings,
   ChevronRight,
-// ChevronDown,
   Building2,
   FlaskConical,
   Package,
   Droplets,
-Microscope,
+  Microscope,
   Menu,
   Settings as SettingsIcon,
-// X
+  ShoppingCart,
+  Box
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -49,7 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
     { id: 'tests', label: 'Tests', icon: FlaskConical },
     { id: 'test-types', label: 'Test Types', icon: TestTube },
     { id: 'test-parameters', label: 'Test Parameters', icon: SettingsIcon },
-    { id: 'commodities', label: 'Commodities', icon: Package },
+    { id: 'commodities', label: 'Commodities', icon: ShoppingCart },
     { id: 'chemicals', label: 'Chemicals', icon: Droplets },
   ];
 
@@ -210,45 +210,38 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
               </AnimatePresence>
             </div>
           )}
-        </nav>
 
-        {/* Footer */}
-        <div className={`border-t border-gray-200 dark:border-gray-700 ${collapsed ? 'p-2' : 'p-4'}`}>
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            className={`rounded-lg bg-gradient-to-r from-primary-500/10 to-primary-600/10 dark:from-primary-500/20 dark:to-primary-600/20 ${
-              collapsed ? 'p-2' : 'p-3'
-            }`}
-          >
-            {!collapsed && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-center"
-              >
-                <p className="text-xs text-primary-600 dark:text-primary-400 font-medium">
-                  Control Union Lab
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  v1.0.0
-                </p>
-              </motion.div>
-            )}
-            {collapsed && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex justify-center"
-              >
-                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary-500 to-primary-600 flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">CU</span>
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
-        </div>
+          {/* Collapsed Master Data Items */}
+          {collapsed && (
+            <div className="pt-4">
+              <div className="p-2 rounded-lg text-gray-600 dark:text-gray-400 mb-2">
+                <Database className="w-5 h-5 mx-auto" />
+              </div>
+              {masterDataItems.map((item) => (
+                <motion.button
+                  key={item.id}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => onPageChange(item.id)}
+                  className={`w-full flex justify-center px-2 py-3 rounded-lg transition-all duration-200 mb-1 ${
+                    isActive(item.id) 
+                      ? 'bg-primary-100 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' 
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}
+                  title={item.label}
+                >
+                  <div className={`p-2 rounded-lg ${
+                    isActive(item.id) 
+                      ? 'bg-primary-500/20 dark:bg-primary-500/30 text-primary-600 dark:text-primary-400' 
+                      : 'text-gray-600 dark:text-gray-400'
+                  }`}>
+                    <item.icon className="w-4 h-4" />
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+          )}
+        </nav>
       </div>
     </motion.aside>
   );

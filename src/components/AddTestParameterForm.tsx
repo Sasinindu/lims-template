@@ -272,7 +272,7 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
       <div className="space-y-6">
         <h3 className="flex items-center text-lg font-semibold text-gray-900 dark:text-white">
           <Settings className="w-5 h-5 mr-2 text-primary-600" />
-          General Test Information
+          General Information
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
