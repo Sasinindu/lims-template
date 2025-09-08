@@ -17,6 +17,7 @@ import {
   Droplets,
 Microscope,
   Menu,
+  Settings as SettingsIcon,
 // X
 } from 'lucide-react';
 
@@ -47,6 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
     { id: 'instruments', label: 'Instruments', icon: Microscope },
     { id: 'tests', label: 'Tests', icon: FlaskConical },
     { id: 'test-types', label: 'Test Types', icon: TestTube },
+    { id: 'test-parameters', label: 'Test Parameters', icon: SettingsIcon },
     { id: 'commodities', label: 'Commodities', icon: Package },
     { id: 'chemicals', label: 'Chemicals', icon: Droplets },
   ];
