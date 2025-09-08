@@ -10,15 +10,13 @@ import UsersPage from './pages/Users';
 import Settings from './pages/Settings';
 import Customers from './pages/Customers';
 import AddCustomer from './pages/AddCustomer';
-import TestTypes from './pages/TestTypes';
-import TestParameters from './pages/TestParameters';
+import Tests from './pages/Tests';
 import Chemicals from './pages/Chemicals';
 import Commodities from './pages/Commodities';
+import InstrumentMaster from './pages/InstrumentMaster';
 import Analytics from './pages/Analytics';
 import Calendar from './pages/Calendar';
 import DatabasePage from './pages/Database';
-import InstrumentCategories from './pages/InstrumentCategories';
-import Instruments from './pages/Instruments';
 
 // Mock authentication state
 const useAuth = () => {
@@ -66,12 +64,10 @@ const App: React.FC = () => {
             <Route path="/customers/add" element={<AddCustomer />} />
             <Route path="/customers/edit/:id" element={<AddCustomer />} />
             <Route path="/customers/view/:id" element={<AddCustomer />} />
-            <Route path="/test-types" element={<TestTypes />} />
-            <Route path="/test-parameters" element={<TestParameters />} />
+            <Route path="/tests" element={<Tests />} />
             <Route path="/chemicals" element={<Chemicals />} />
             <Route path="/commodities" element={<Commodities />} />
-            <Route path="/instrument-categories" element={<InstrumentCategories />} />
-            <Route path="/instruments" element={<Instruments />} />
+            <Route path="/instrument-master" element={<InstrumentMaster />} />
           </Routes>
         </Layout>
       </Router>

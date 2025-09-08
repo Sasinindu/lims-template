@@ -44,13 +44,10 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
   ];
 
   const masterDataItems = [
-    { id: 'instrument-categories', label: 'Instrument Categories', icon: Building2 },
-    { id: 'instruments', label: 'Instruments', icon: Microscope },
-    { id: 'tests', label: 'Tests', icon: FlaskConical },
-    { id: 'test-types', label: 'Test Types', icon: TestTube },
-    { id: 'test-parameters', label: 'Test Parameters', icon: SettingsIcon },
-    { id: 'commodities', label: 'Commodities', icon: ShoppingCart },
-    { id: 'chemicals', label: 'Chemicals', icon: Droplets },
+    { id: 'instrument-master', label: 'Instrument Master', icon: Microscope },
+    { id: 'tests', label: 'Test Master', icon: TestTube },
+    { id: 'commodities', label: 'Commodity Master', icon: ShoppingCart },
+    { id: 'chemicals', label: 'Chemical Master', icon: Droplets },
   ];
 
   const toggleSection = (sectionId: string) => {

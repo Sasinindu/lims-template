@@ -171,19 +171,7 @@ const InstrumentCategories: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Instrument Categories
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Manage instrument categories and classifications
-        </p>
-      </motion.div>
+ 
 
       {/* Category Stats */}
       <motion.div

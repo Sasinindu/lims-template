@@ -29,12 +29,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       'customers/edit': 'customers',
       'customers/view': 'customers',
       'tests': 'tests',
-      'test-types': 'test-types',
-      'test-parameters': 'test-parameters',
-      'commodities': 'commodities',
       'chemicals': 'chemicals',
-      'instrument-categories': 'instrument-categories',
-      'instruments': 'instruments',
+      'commodities': 'commodities',
+      'instrument-master': 'instrument-master',
     };
     return pathMap[path] || 'dashboard'; // Default to dashboard
   };
@@ -51,12 +48,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       'settings': '/settings',
       'customers': '/customers',
       'tests': '/tests',
-      'test-types': '/test-types',
-      'test-parameters': '/test-parameters',
-      'commodities': '/commodities',
       'chemicals': '/chemicals',
-      'instrument-categories': '/instrument-categories',
-      'instruments': '/instruments',
+      'commodities': '/commodities',
+      'instrument-master': '/instrument-master',
     };
     const path = routeMap[pageId];
     if (path) {
