@@ -27,7 +27,6 @@ import CustomSelect from '../components/CustomSelect';
 import Label from '../components/Label';
 import Input from '../components/Input';
 import SimpleTable from '../components/SimpleTable';
-import ReturnOrderModal from '../components/ReturnOrderModal';
 
 const OrderApproval: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -35,10 +34,6 @@ const OrderApproval: React.FC = () => {
   const [editingOrder, setEditingOrder] = useState<any>(null);
   const [loading] = useState(false);
   const [selectedSampleForTest, setSelectedSampleForTest] = useState<any>(null);
-  
-  // Reject modal state
-  const [isReturnModalOpen, setIsRejectModalOpen] = useState(false);
-  const [returnLoading, setRejectLoading] = useState(false);
 
   const [orders, setOrders] = useState([
     {
@@ -112,7 +107,7 @@ const OrderApproval: React.FC = () => {
         return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
       case 'Approved':
         return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
-      case 'Returned':
+      case 'Rejected':
         return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
@@ -256,49 +251,6 @@ const OrderApproval: React.FC = () => {
     setCurrentStep(3); // Switch to Tests step
   };
 
-  // Reject order handlers
-  const handleReturnOrder = () => {
-    setIsRejectModalOpen(true);
-  };
-
-  const handleCancelReturn = () => {
-    setIsRejectModalOpen(false);
-  };
-
-  const handleConfirmReturn = async (remark: string) => {
-    setRejectLoading(true);
-    
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Update order status to rejected
-      if (editingOrder) {
-        setOrders(prev =>
-          prev.map(order =>
-            order.id === editingOrder.id 
-              ? { ...order, status: 'Returned', returnReason: remark, returnedAt: new Date().toISOString() }
-              : order
-          )
-        );
-      }
-      
-      // Close modal and drawer
-      setIsRejectModalOpen(false);
-      setIsDrawerOpen(false);
-      setEditingOrder(null);
-      
-      // Show success message (you can add a toast notification here)
-      console.log(`Order returned with reason: ${remark}`);
-      
-    } catch (error) {
-      console.error('Error returning order:', error);
-      // Handle error (show error message)
-    } finally {
-      setRejectLoading(false);
-    }
-  };
-
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
@@ -366,13 +318,13 @@ const OrderApproval: React.FC = () => {
                 Approve Order
               </motion.button><motion.button
                 type="button"
-                onClick={handleReturnOrder}
+                onClick={handleRejectOrder}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors duration-200"
               >
                   <X className="w-4 h-4 mr-2" />
-                  Return Order
+                  Reject Order
                 </motion.button></>
           )}
         </div>
@@ -472,14 +424,64 @@ const OrderApproval: React.FC = () => {
         </div>
       </Drawer>
 
-      {/* Return Order Modal */}
-      <ReturnOrderModal
-        isOpen={isReturnModalOpen}
-        onClose={handleCancelReturn}
-        onConfirm={handleConfirmReturn}
-        orderId={editingOrder?.orderId}
-        loading={returnLoading}
-      />
+      {/* Reject Order Confirmation Modal */}
+      {isRejectModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Reject Order
+              </h3>
+              <button
+                onClick={handleCancelReject}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                Are you sure you want to reject this order? Please provide a reason for rejection.
+              </p>
+              <Label htmlFor="rejectRemark" required>Reason for Rejection</Label>
+              <textarea
+                id="rejectRemark"
+                value={rejectRemark}
+                onChange={(e) => setRejectRemark(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200"
+                rows={4}
+                placeholder="Enter reason for rejection..."
+                required
+              />
+            </div>
+            
+            <div className="flex items-center justify-end space-x-3">
+              <motion.button
+                type="button"
+                onClick={handleCancelReject}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Cancel
+              </motion.button>
+              <motion.button
+                type="button"
+                onClick={handleConfirmReject}
+                disabled={!rejectRemark.trim()}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg transition-colors duration-200"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Reject Order
+              </motion.button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -568,6 +570,17 @@ const OrderInformationStep: React.FC<{ isViewMode?: boolean }> = ({ isViewMode =
           </div>
         </div>
       </div>
+
+      {/* Site Details Section */}
+      {/* <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
+          <MapPin className="w-5 h-5 mr-2 text-primary-600" />
+          Site Details
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+        </div>
+      </div> */}
 
       {/* Contact Information Section */}
       <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
@@ -917,6 +930,9 @@ const SamplesStep: React.FC<{ onAddTestForSample: (sample: any) => void }> = ({ 
         <p className="text-gray-600 dark:text-gray-400">Add sample information and conditions. Click "Add Tests" to assign tests to specific samples.</p>
       </div>
 
+
+      {/* Add/Edit Sample Form */}
+
       {/* View Sample Form */}
       {viewingSample && (
         <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
@@ -942,6 +958,7 @@ const SamplesStep: React.FC<{ onAddTestForSample: (sample: any) => void }> = ({ 
 
       {/* Samples List */}
       <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
             <Package className="w-5 h-5 mr-2 text-primary-600" />
@@ -962,7 +979,10 @@ const SamplesStep: React.FC<{ onAddTestForSample: (sample: any) => void }> = ({ 
             <p>No samples added yet. Click "Add Sample" to get started.</p>
           </div>
         )}
+
       </div>
+
+
     </div>
   );
 };
@@ -1131,6 +1151,8 @@ const TestsStep: React.FC<{ selectedSample?: any; onTestAdded: () => void }> = (
         </p>
       </div>
 
+      {/* Add/Edit Test Form */}
+
       {/* View Test Form */}
       {viewingTest && (
         <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
@@ -1163,6 +1185,7 @@ const TestsStep: React.FC<{ selectedSample?: any; onTestAdded: () => void }> = (
             <TestTube className="w-5 h-5 mr-2 text-primary-600" />
             Tests List
           </h3>
+
         </div>
 
         {tests.length > 0 ? (
@@ -1361,6 +1384,10 @@ const ReviewStep: React.FC = () => {
               </div>
             </div>
           </div>
+
+
+        
+          
         </div>
       </div>
     </div>
@@ -1589,6 +1616,7 @@ const SampleForm: React.FC<{
           <X className="w-4 h-4 mr-2" />
           Cancel
         </motion.button>
+
       </div>
     </form>
   );
@@ -1763,6 +1791,7 @@ const TestForm: React.FC<{
           rows={3}
           placeholder="Enter specification or reference"
           disabled={isViewMode}
+        // error={errors.specification}
         />
       </div>
 
@@ -1777,6 +1806,7 @@ const TestForm: React.FC<{
           <X className="w-4 h-4 mr-2" />
           Cancel
         </motion.button>
+
       </div>
     </form>
   );
