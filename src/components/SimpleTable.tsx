@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trash2, Edit } from 'lucide-react';
+import { Trash2, Edit, Eye } from 'lucide-react';
 
 interface SimpleTableColumn {
   key: string;
@@ -12,6 +12,7 @@ interface SimpleTableProps {
   data: any[];
   onRemove?: (index: number) => void;
   onEdit?: (index: number) => void;
+  onView?: (index: number) => void;
   showActions?: boolean;
   emptyMessage?: string;
 }
@@ -21,6 +22,7 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
   data,
   onRemove,
   onEdit,
+  onView,
   showActions = true,
   emptyMessage = 'No data available'
 }) => {
@@ -32,7 +34,7 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
     );
   }
 
-  const hasActions = showActions && (onRemove || onEdit);
+  const hasActions = showActions && (onRemove || onEdit || onView);
 
   return (
     <div className="overflow-x-auto">
@@ -68,6 +70,17 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
               {hasActions && (
                 <td className="px-4 py-3 text-sm text-center">
                   <div className="flex items-center justify-center space-x-2">
+                    {onView && (
+                      <button
+                        type="button"
+                        onClick={() => onView(index)}
+                        className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 p-1 rounded hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors duration-200"
+                        title="View"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                    )}
+
                     {onEdit && (
                       <button
                         type="button"

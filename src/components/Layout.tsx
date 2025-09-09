@@ -18,6 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const pathMap: { [key: string]: string } = {
       'dashboard': 'dashboard',
       'order-registration': 'order-registration',
+      'order-approval': 'order-approval',
       'lab-tests': 'lab-tests',
       'reports': 'reports',
       'analytics': 'analytics',
@@ -38,6 +39,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const routeMap: { [key: string]: string } = {
       'dashboard': '/dashboard',
       'order-registration': '/order-registration',
+      'order-approval': '/order-approval',
       'lab-tests': '/lab-tests',
       'reports': '/reports',
       'analytics': '/analytics',

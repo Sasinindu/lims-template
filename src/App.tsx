@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import OrderRegistration from './pages/OrderRegistration';
+import OrderApproval from './pages/OrderApproval';
 import LabTests from './pages/LabTests';
 import Reports from './pages/Reports';
 import UsersPage from './pages/Users';
@@ -52,6 +53,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/order-registration" element={<OrderRegistration />} />
+            <Route path="/order-approval" element={<OrderApproval />} />
             <Route path="/lab-tests" element={<LabTests />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/analytics" element={<Analytics />} />

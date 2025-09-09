@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  LayoutDashboard, 
-  TestTube, 
-  FileText, 
-  BarChart3, 
-  Calendar, 
-  Database, 
-  Users, 
+import {
+  motion, AnimatePresence
+} from 'framer-motion';
+import {
+  LayoutDashboard,
+  TestTube,
+  FileText,
+  BarChart3,
+  Calendar,
+  Database,
+  Users,
   Settings,
   ChevronRight,
   Building2,
@@ -20,7 +22,8 @@ import {
   ShoppingCart,
   Box,
   UserCheck,
-  ClipboardList
+  ClipboardList,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -37,6 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
   const mainMenuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'order-registration', label: 'Order Registration', icon: ClipboardList },
+    { id: 'order-approval', label: 'Order Approval', icon: CheckCircle2 },
     // { id: 'lab-tests', label: 'Lab Tests', icon: TestTube },
     // { id: 'reports', label: 'Reports', icon: FileText },
     // { id: 'analytics', label: 'Analytics', icon: BarChart3 },
@@ -69,9 +73,8 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
       initial={{ x: -300 }}
       animate={{ x: 0 }}
       transition={{ duration: 0.3 }}
-      className={`bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ${
-        collapsed ? 'w-16' : 'w-80'
-      }`}
+      className={`bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ${collapsed ? 'w-16' : 'w-80'
+        }`}
     >
       <div className="flex flex-col h-full">
         {/* Toggle Button - Same height as header */}
@@ -95,26 +98,22 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
               whileHover={{ scale: collapsed ? 1.05 : 1.02, x: collapsed ? 0 : 4 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => onPageChange(item.id)}
-              className={`w-full flex items-center rounded-lg transition-all duration-200 ${
-                collapsed 
-                  ? 'justify-center px-2 py-3' 
-                  : 'space-x-3 px-4 py-3'
-              } ${
-                isActive(item.id) 
-                  ? 'bg-primary-100 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' 
+              className={`w-full flex items-center rounded-lg transition-all duration-200 ${collapsed
+                ? 'justify-center px-2 py-3'
+                : 'space-x-3 px-4 py-3'
+                } ${isActive(item.id)
+                  ? 'bg-primary-100 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
+                }`}
               title={collapsed ? item.label : undefined}
             >
-              <div className={`rounded-lg ${
-                collapsed 
-                  ? 'p-2' 
-                  : 'p-2'
-              } ${
-                isActive(item.id) 
-                  ? 'bg-primary-500/20 dark:bg-primary-500/30 text-primary-600 dark:text-primary-400' 
+              <div className={`rounded-lg ${collapsed
+                ? 'p-2'
+                : 'p-2'
+                } ${isActive(item.id)
+                  ? 'bg-primary-500/20 dark:bg-primary-500/30 text-primary-600 dark:text-primary-400'
                   : 'text-gray-600 dark:text-gray-400'
-              }`}>
+                }`}>
                 <item.icon className={`${collapsed ? 'w-5 h-5' : 'w-5 h-5'}`} />
               </div>
               {!collapsed && (
@@ -122,11 +121,10 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`text-sm font-medium ${
-                    isActive(item.id) 
-                      ? 'text-primary-600 dark:text-primary-400' 
-                      : 'text-gray-700 dark:text-gray-300'
-                  }`}
+                  className={`text-sm font-medium ${isActive(item.id)
+                    ? 'text-primary-600 dark:text-primary-400'
+                    : 'text-gray-700 dark:text-gray-300'
+                    }`}
                 >
                   {item.label}
                 </motion.span>
@@ -179,28 +177,25 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
                         whileHover={{ scale: 1.02, x: 4 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => onPageChange(item.id)}
-                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                          isActive(item.id) 
-                            ? 'bg-primary-100 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' 
-                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                        }`}
+                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive(item.id)
+                          ? 'bg-primary-100 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
+                          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                          }`}
                       >
-                        <div className={`p-2 rounded-lg ${
-                          isActive(item.id) 
-                            ? 'bg-primary-500/20 dark:bg-primary-500/30 text-primary-600 dark:text-primary-400' 
-                            : 'text-gray-600 dark:text-gray-400'
-                        }`}>
+                        <div className={`p-2 rounded-lg ${isActive(item.id)
+                          ? 'bg-primary-500/20 dark:bg-primary-500/30 text-primary-600 dark:text-primary-400'
+                          : 'text-gray-600 dark:text-gray-400'
+                          }`}>
                           <item.icon className="w-4 h-4" />
                         </div>
                         <motion.span
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          className={`text-sm font-medium ${
-                            isActive(item.id) 
-                              ? 'text-primary-600 dark:text-primary-400' 
-                              : 'text-gray-700 dark:text-gray-300'
-                          }`}
+                          className={`text-sm font-medium ${isActive(item.id)
+                            ? 'text-primary-600 dark:text-primary-400'
+                            : 'text-gray-700 dark:text-gray-300'
+                            }`}
                         >
                           {item.label}
                         </motion.span>
@@ -224,18 +219,16 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => onPageChange(item.id)}
-                  className={`w-full flex justify-center px-2 py-3 rounded-lg transition-all duration-200 mb-1 ${
-                    isActive(item.id) 
-                      ? 'bg-primary-100 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' 
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
+                  className={`w-full flex justify-center px-2 py-3 rounded-lg transition-all duration-200 mb-1 ${isActive(item.id)
+                    ? 'bg-primary-100 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
                   title={item.label}
                 >
-                  <div className={`p-2 rounded-lg ${
-                    isActive(item.id) 
-                      ? 'bg-primary-500/20 dark:bg-primary-500/30 text-primary-600 dark:text-primary-400' 
-                      : 'text-gray-600 dark:text-gray-400'
-                  }`}>
+                  <div className={`p-2 rounded-lg ${isActive(item.id)
+                    ? 'bg-primary-500/20 dark:bg-primary-500/30 text-primary-600 dark:text-primary-400'
+                    : 'text-gray-600 dark:text-gray-400'
+                    }`}>
                     <item.icon className="w-4 h-4" />
                   </div>
                 </motion.button>
