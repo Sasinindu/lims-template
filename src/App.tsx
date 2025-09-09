@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import OrderRegistration from './pages/OrderRegistration';
 import OrderApproval from './pages/OrderApproval';
 import LabTests from './pages/LabTests';
+import TestAllocation from './pages/TestAllocation';
 import Reports from './pages/Reports';
 import UsersPage from './pages/Users';
 import Settings from './pages/Settings';
@@ -54,6 +55,7 @@ const App: React.FC = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/order-registration" element={<OrderRegistration />} />
             <Route path="/order-approval" element={<OrderApproval />} />
+            <Route path="/test-allocation" element={<TestAllocation />} />
             <Route path="/lab-tests" element={<LabTests />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/analytics" element={<Analytics />} />

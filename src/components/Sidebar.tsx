@@ -24,6 +24,7 @@ import {
   UserCheck,
   ClipboardList,
   CheckCircle2,
+  UserPlus,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -41,6 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'order-registration', label: 'Order Registration', icon: ClipboardList },
     { id: 'order-approval', label: 'Order Approval', icon: CheckCircle2 },
+    { id: 'test-allocation', label: 'Test Allocation', icon: UserPlus },
     // { id: 'lab-tests', label: 'Lab Tests', icon: TestTube },
     // { id: 'reports', label: 'Reports', icon: FileText },
     // { id: 'analytics', label: 'Analytics', icon: BarChart3 },
