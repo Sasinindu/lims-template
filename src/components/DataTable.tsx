@@ -183,7 +183,7 @@ const DataTable: React.FC<DataTableProps> = ({
             </motion.button>
           )}
           
-          {exportable && (
+          {!exportable && (
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

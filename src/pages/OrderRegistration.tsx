@@ -671,7 +671,7 @@ const OrderInformationStep: React.FC = () => {
               </label>
               <label className="flex items-center">
                 <input type="checkbox" className="mr-2" />
-                <span className="text-sm">Hard Copy</span>
+                <span className="text-sm">Hard copy</span>
               </label>
               <label className="flex items-center">
                 <input type="checkbox" className="mr-2" />
@@ -883,6 +883,7 @@ const SamplesStep: React.FC<{ onAddTestForSample: (sample: any) => void }> = ({ 
           <SimpleTable
             columns={sampleColumns}
             data={samples}
+            onEdit={handleEditSample}
             onRemove={handleRemoveSample}
             showActions={true}
             emptyMessage="No samples added yet."

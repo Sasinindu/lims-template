@@ -12,7 +12,7 @@ import {
 import { useTheme } from '../contexts/ThemeContext';
 
 const Header: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
+  // const { theme, toggleTheme } = useTheme();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -44,7 +44,7 @@ const Header: React.FC = () => {
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
             {/* Theme Toggle */}
-            <motion.button
+            {/* <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={toggleTheme}
@@ -55,7 +55,7 @@ const Header: React.FC = () => {
               ) : (
                 <Sun className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               )}
-            </motion.button>
+            </motion.button> */}
 
             {/* Notifications */}
             <div className="relative">

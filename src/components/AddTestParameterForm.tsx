@@ -262,7 +262,7 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
     { 
       key: 'price', 
       title: 'Price',
-      render: (value: number) => `$${value}`
+      render: (value: number) => `Rs. ${value}`
     }
   ];
 
@@ -395,7 +395,7 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
             </div>
             {newChemical.name && (
               <div className="flex-1">
-                <Label htmlFor="unit">Unit</Label>
+                <Label htmlFor="unit">UOM</Label>
                 <CustomSelect
                   value={newChemical.unit}
                   onChange={() => {}} // Disabled - no onChange handler
@@ -508,16 +508,11 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
               <Label htmlFor="instrument" required>
                 Instruments
               </Label>
-              <Input
+              <CustomSelect
                 value={newInstrument}
-                onChange={(e) => setNewInstrument(e.target.value)}
-                placeholder="Enter instrument name"
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddInstrument();
-                  }
-                }}
+                onChange={(value) => setNewInstrument(value)}
+                options={instrumentOptions}
+                placeholder="Select instrument"
               />
             </div>
             <motion.button

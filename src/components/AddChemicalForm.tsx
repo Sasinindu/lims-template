@@ -116,7 +116,7 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
           <div className="space-y-2">
 
             <CustomSelect
-              label="Unit"
+              label="Unit of Measure"
               value={formData.unit}
               onChange={(value) => handleInputChange('unit', value)}
               options={unitOptions}

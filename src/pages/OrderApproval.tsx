@@ -42,6 +42,11 @@ const OrderApproval: React.FC = () => {
   const [isReturnModalOpen, setIsRejectModalOpen] = useState(false);
   const [returnLoading, setRejectLoading] = useState(false);
 
+  // Assign order drawer state
+  const [isAssignOrderDrawerOpen, setIsAssignOrderDrawerOpen] = useState(false);
+  const [selectedOrderForAssignment, setSelectedOrderForAssignment] = useState<any>(null);
+  const [assignOrderLoading, setAssignOrderLoading] = useState(false);
+
   const [orders, setOrders] = useState([
     {
       id: 'ORD001',
@@ -114,6 +119,8 @@ const OrderApproval: React.FC = () => {
         return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
       case 'Approved':
         return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'Assigned':
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400';
       case 'Returned':
         return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
       default:
@@ -201,14 +208,26 @@ const OrderApproval: React.FC = () => {
       key: 'actions',
       title: 'Actions',
       render: (value: string, record: any) => (
-        <button
-          type="button"
-          onClick={() => handleViewOrder(record)}
-          className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 p-1 rounded hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors duration-200"
-          title="View"
-        >
-          <Eye className="w-4 h-4" />
-        </button>
+        <div className="flex items-center space-x-2">
+          <button
+            type="button"
+            onClick={() => handleViewOrder(record)}
+            className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 p-1 rounded hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors duration-200"
+            title="View"
+          >
+            <Eye className="w-4 h-4" />
+          </button>
+          {record.status === 'Approved' && (
+            <button
+              type="button"
+              onClick={() => handleAssignOrder(record)}
+              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 p-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200"
+              title="Assign Order"
+            >
+              <UserCheck className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       )
     }
   ];
@@ -312,6 +331,50 @@ const OrderApproval: React.FC = () => {
       // Handle error (show error message)
     } finally {
       setRejectLoading(false);
+    }
+  };
+
+  // Assign order handlers
+  const handleAssignOrder = (record: any) => {
+    setSelectedOrderForAssignment(record);
+    setIsAssignOrderDrawerOpen(true);
+  };
+
+  const handleCloseAssignOrderDrawer = () => {
+    setIsAssignOrderDrawerOpen(false);
+    setSelectedOrderForAssignment(null);
+  };
+
+  const handleConfirmAssignOrder = async (analystHead: string) => {
+    setAssignOrderLoading(true);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Update order status to assigned
+      if (selectedOrderForAssignment) {
+        setOrders(prev =>
+          prev.map(order =>
+            order.id === selectedOrderForAssignment.id 
+              ? { ...order, status: 'Assigned', analystHead: analystHead, assignedAt: new Date().toISOString() }
+              : order
+          )
+        );
+      }
+      
+      // Close drawer
+      setIsAssignOrderDrawerOpen(false);
+      setSelectedOrderForAssignment(null);
+      
+      // Show success message (you can add a toast notification here)
+      console.log(`Order assigned to: ${analystHead}`);
+      
+    } catch (error) {
+      console.error('Error assigning order:', error);
+      // Handle error (show error message)
+    } finally {
+      setAssignOrderLoading(false);
     }
   };
 
@@ -553,6 +616,15 @@ const OrderApproval: React.FC = () => {
         onConfirm={handleConfirmReturn}
         orderId={editingOrder?.orderId}
         loading={returnLoading}
+      />
+
+      {/* Assign Order Drawer */}
+      <AssignOrderDrawer
+        isOpen={isAssignOrderDrawerOpen}
+        onClose={handleCloseAssignOrderDrawer}
+        onConfirm={handleConfirmAssignOrder}
+        orderId={selectedOrderForAssignment?.orderId || ''}
+        loading={assignOrderLoading}
       />
     </div>
   );
@@ -810,7 +882,7 @@ const OrderInformationStep: React.FC<{ isViewMode?: boolean }> = ({ isViewMode =
               <label className="flex items-center">
                 <input type="checkbox" className="mr-2"
                   disabled={isViewMode} />
-                <span className="text-sm">Hard Copy</span>
+                <span className="text-sm">Hard copy</span>
               </label>
               <label className="flex items-center">
                 <input type="checkbox" className="mr-2"
@@ -1853,5 +1925,140 @@ const TestForm: React.FC<{
         </motion.button>
       </div>
     </form>
+  );
+};
+
+// AssignOrderDrawer Component
+const AssignOrderDrawer: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: (analystHead: string) => void;
+  orderId: string;
+  loading: boolean;
+}> = ({ isOpen, onClose, onConfirm, orderId, loading }) => {
+  const [formData, setFormData] = useState({
+    orderId: orderId,
+    analystHead: '',
+    dueDate: ''
+  });
+  
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const analystHeadOptions = [
+    { value: 'Dr. John Smith', label: 'Dr. John Smith' },
+    { value: 'Dr. Jane Doe', label: 'Dr. Jane Doe' },
+    { value: 'Dr. Michael Johnson', label: 'Dr. Michael Johnson' },
+    { value: 'Dr. Sarah Wilson', label: 'Dr. Sarah Wilson' }
+  ];
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.analystHead.trim()) {
+      newErrors.analystHead = 'Analyst Head is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateForm()) {
+      onConfirm(formData.analystHead);
+    }
+  };
+
+  // Reset form when orderId changes
+  React.useEffect(() => {
+    setFormData({
+      orderId: orderId,
+      analystHead: '',
+      dueDate: ''
+    });
+    setErrors({});
+  }, [orderId]);
+
+  // Drawer Footer Component
+  const drawerFooter = (
+    <div className="p-4">
+      <div className="flex items-center justify-end space-x-3">
+        <motion.button
+          type="button"
+          onClick={onClose}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Cancel
+        </motion.button>
+        <motion.button
+          type="submit"
+          form="assign-order-form"
+          disabled={!formData.analystHead || loading}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors duration-200"
+        >
+          {loading ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              Assigning...
+            </>
+          ) : (
+            <>
+              <UserCheck className="w-4 h-4 mr-2" />
+              Assign Order
+            </>
+          )}
+        </motion.button>
+      </div>
+    </div>
+  );
+
+  return (
+    <Drawer
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Assign Orders"
+      size="md"
+      footer={drawerFooter}
+    >
+      <form id="assign-order-form" onSubmit={handleSubmit} className="space-y-6 p-6">
+        <div>
+          <Label htmlFor="orderId">Order ID</Label>
+          <Input 
+            value={formData.orderId} 
+            onChange={() => {}} 
+            placeholder="Auto Selected Value" 
+            disabled 
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="analystHead" required>Analyst Head</Label>
+          <CustomSelect
+            value={formData.analystHead}
+            onChange={(value) => handleInputChange('analystHead', value)}
+            options={analystHeadOptions}
+            placeholder="Select Analyst Head"
+            error={errors.analystHead}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="dueDate">Due Date</Label>
+          <Input type="date" value={formData.dueDate} onChange={(e) => handleInputChange('dueDate', e.target.value)} />
+        </div>
+      </form>
+    </Drawer>
   );
 };
