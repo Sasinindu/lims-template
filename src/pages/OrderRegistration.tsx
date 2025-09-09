@@ -308,8 +308,8 @@ const OrderRegistration: React.FC = () => {
               whileTap={{ scale: 0.98 }}
               className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
             >
-              <Save className="w-4 h-4" />
-              <span>{editingOrder ? 'Update Order' : 'Submit Order'}</span>
+              <Save className="w-4 h-4 mr-2" />
+              {editingOrder ? 'Update Order' : 'Submit Order'}
             </motion.button>
           )}
         </div>
@@ -966,7 +966,7 @@ const TestsStep: React.FC<{ selectedSample?: any; onTestAdded: () => void }> = (
     },
     {
       key: 'testMethod',
-      title: 'Test Method',
+      title: 'Test Protocol',
       render: (value: string) => (
         <span className="text-sm text-gray-600 dark:text-gray-400">{value}</span>
       )
@@ -1098,6 +1098,42 @@ const TestsStep: React.FC<{ selectedSample?: any; onTestAdded: () => void }> = (
 
 // Review Step Component
 const ReviewStep: React.FC = () => {
+  // Mock test data with pricing - Order level urgency applied
+  const testPricing = [
+    {
+      testId: 'TST-001',
+      sampleId: 'SMP-001',
+      testParameter: 'Microbiological Analysis',
+      testMethod: 'ISO 4833-1:2013',
+      basePrice: 150.00,
+      finalPrice: 150.00
+    },
+    {
+      testId: 'TST-002',
+      sampleId: 'SMP-001',
+      testParameter: 'Chemical Analysis',
+      testMethod: 'AOAC 991.25',
+      basePrice: 200.00,
+      finalPrice: 200.00
+    },
+    {
+      testId: 'TST-003',
+      sampleId: 'SMP-002',
+      testParameter: 'Pathogen Detection',
+      testMethod: 'ISO 6579:2017',
+      basePrice: 300.00,
+      finalPrice: 300.00
+    }
+  ];
+
+  const baseSubtotal = testPricing.reduce((sum, test) => sum + test.finalPrice, 0);
+  const urgencyRate = 0.5; // 50% urgency surcharge
+  const urgencyFee = baseSubtotal * urgencyRate;
+  const subtotal = baseSubtotal + urgencyFee;
+  const taxRate = 0.15; // 15% tax
+  const taxAmount = subtotal * taxRate;
+  const totalAmount = subtotal + taxAmount;
+
   return (
     <div className="space-y-8">
       <div>
@@ -1126,8 +1162,138 @@ const ReviewStep: React.FC = () => {
               <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                 <div>Total Samples: 2</div>
                 <div>Total Tests: 3</div>
-                <div>Test Basis: Normal</div>
+                <div>Test Basis: Urgent</div>
                 <div>Sampling: Client</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Estimated Price Section */}
+      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
+          <span className="w-5 h-5 mr-2 text-primary-600 bg-primary-100 dark:bg-primary-900/20 rounded-full flex items-center justify-center text-xs font-bold">Rs</span>
+          Estimated Price Breakdown
+        </h3>
+        
+        {/* Test-wise Price Details */}
+        <div className="space-y-4">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200 dark:border-gray-700">
+                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Test ID</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Sample ID</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Test Parameter</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Test Method</th>
+                  <th className="text-right py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Price</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                {testPricing.map((test, index) => (
+                  <tr key={test.testId} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                    <td className="py-3 px-4">
+                      <div className="flex items-center">
+                        <TestTube className="w-4 h-4 text-primary-600 mr-2" />
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">{test.testId}</span>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center">
+                        <Package className="w-4 h-4 text-blue-500 mr-2" />
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{test.sampleId}</span>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className="text-sm text-gray-900 dark:text-white">{test.testParameter}</span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">{test.testMethod}</span>
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">Rs. {test.finalPrice.toFixed(2)}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Price Summary */}
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+  <div className="flex justify-end">
+    <div className="w-full max-w-md space-y-2">
+      {/* Base Price */}
+      <div className="flex justify-between text-sm">
+        <span className="text-gray-600 dark:text-gray-400">
+          Base Price ({testPricing.length} tests):
+        </span>
+        <span className="text-gray-900 dark:text-white">
+          Rs. {baseSubtotal.toFixed(2)}
+        </span>
+      </div>
+
+      {/* Urgency Fee */}
+      <div className="flex justify-between text-sm">
+        <span className="text-gray-600 dark:text-gray-400">
+          Urgency Fee (50% surcharge):
+        </span>
+        <span className="text-orange-600 dark:text-orange-400 font-medium">
+          +Rs. {urgencyFee.toFixed(2)}
+        </span>
+      </div>
+
+      {/* Subtotal */}
+      <div className="flex justify-between text-sm font-medium">
+        <span className="text-gray-600 dark:text-gray-400">Subtotal:</span>
+        <span className="text-gray-900 dark:text-white">
+          Rs. {subtotal.toFixed(2)}
+        </span>
+      </div>
+
+      {/* Tax */}
+      <div className="flex justify-between text-sm">
+        <span className="text-gray-600 dark:text-gray-400">Tax (15%):</span>
+        <span className="text-gray-900 dark:text-white">
+          Rs. {taxAmount.toFixed(2)}
+        </span>
+      </div>
+
+      {/* Total */}
+      <div className="border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">
+        <div className="flex justify-between items-center">
+          <span className="text-base font-semibold text-gray-900 dark:text-white">
+            Total Amount:
+          </span>
+          <span className="text-lg font-bold text-primary-600 dark:text-primary-400">
+            Rs. {totalAmount.toFixed(2)}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+          {/* Price Notes */}
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <span className="w-5 h-5 text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center text-xs font-bold">i</span>
+              </div>
+              <div className="ml-3">
+                <h4 className="text-sm font-medium text-blue-900 dark:text-blue-100">Price Information</h4>
+                <div className="mt-1 text-sm text-blue-700 dark:text-blue-300">
+                  <ul className="list-disc list-inside space-y-1">
+                    <li>Prices are estimates and may vary based on actual testing requirements</li>
+                    <li>Urgent orders may incur additional charges (50% surcharge)</li>
+                    <li>Normal orders are processed within standard timeframes (5-7 business days)</li>
+                    <li>Urgent orders are processed within 24-48 hours</li>
+                    <li>Final invoice will be generated upon test completion</li>
+                    <li>Payment terms: Net 30 days from invoice date</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -1495,13 +1661,13 @@ const TestForm: React.FC<{
 
         <div>
           <Label htmlFor="testMethod" required>
-            Test Method
+            Test Protocol
           </Label>
           <CustomSelect
             value={formData.testMethod}
             onChange={(value) => handleInputChange('testMethod', value)}
             options={testMethodOptions}
-            placeholder="Select test method"
+            placeholder="Select test protocol"
             error={errors.testMethod}
           />
         </div>
@@ -1528,7 +1694,7 @@ const TestForm: React.FC<{
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
           rows={3}
           placeholder="Enter specification or reference"
-          error={errors.specification}
+          // error={errors.specification}
         />
       </div>
 
