@@ -269,7 +269,7 @@ const OrderRegistration: React.FC = () => {
           onClick={handleCloseDrawer}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="btn-secondary flex items-center space-x-2"
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
         >
           <X className="w-4 h-4" />
           <span>Cancel</span>
@@ -282,7 +282,7 @@ const OrderRegistration: React.FC = () => {
               onClick={() => setCurrentStep(prev => prev - 1)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="btn-secondary flex items-center space-x-2"
+              className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"    
             >
               <ChevronRight className="w-4 h-4 rotate-180" />
               <span>Previous</span>
@@ -295,7 +295,7 @@ const OrderRegistration: React.FC = () => {
               onClick={() => setCurrentStep(prev => prev + 1)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="btn-primary flex items-center space-x-2"
+              className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"    
             >
               <span>Next</span>
               <ChevronRight className="w-4 h-4" />
@@ -305,8 +305,8 @@ const OrderRegistration: React.FC = () => {
               type="button"
               onClick={() => handleSaveOrder({})}
               whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-primary flex items-center space-x-2"
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
             >
               <Save className="w-4 h-4" />
               <span>{editingOrder ? 'Update Order' : 'Submit Order'}</span>
@@ -378,7 +378,7 @@ const OrderRegistration: React.FC = () => {
                         isActive
                           ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
                           : isCompleted
-                          ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                          ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
                           : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
                       }`}
                     >
@@ -386,7 +386,7 @@ const OrderRegistration: React.FC = () => {
                         isActive
                           ? 'bg-primary-500/20 dark:bg-primary-500/30'
                           : isCompleted
-                          ? 'bg-green-500/20 dark:bg-green-500/30'
+                          ? 'bg-primary-500/20 dark:bg-primary-500/30'
                           : 'bg-gray-100 dark:bg-gray-700'
                       }`}>
                         {isCompleted ? (
@@ -452,20 +452,6 @@ const OrderInformationStep: React.FC = () => {
             />
           </div>
           <div>
-            <Label htmlFor="registrationNo">Registration No</Label>
-            <Input value="" onChange={() => {}} placeholder="Enter registration number" />
-          </div>
-        </div>
-      </div>
-
-      {/* Site Details Section */}
-      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
-          <MapPin className="w-5 h-5 mr-2 text-primary-600" />
-          Site Details
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
             <Label htmlFor="siteName" required>Site Name</Label>
             <CustomSelect
               value=""
@@ -517,6 +503,17 @@ const OrderInformationStep: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Site Details Section */}
+      {/* <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
+          <MapPin className="w-5 h-5 mr-2 text-primary-600" />
+          Site Details
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+        </div>
+      </div> */}
 
       {/* Contact Information Section */}
       <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
@@ -849,21 +846,21 @@ const SamplesStep: React.FC<{ onAddTestForSample: (sample: any) => void }> = ({ 
         <p className="text-gray-600 dark:text-gray-400">Add sample information and conditions. Click "Add Tests" to assign tests to specific samples.</p>
       </div>
 
-      {/* Samples Management */}
+      {/* Samples List */}
       <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
             <Package className="w-5 h-5 mr-2 text-primary-600" />
-            Samples Management
+            Samples List
           </h3>
           <motion.button
             onClick={handleAddSample}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="btn-primary flex items-center space-x-2"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Sample</span>
+            whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
+            >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Sample
           </motion.button>
         </div>
 
