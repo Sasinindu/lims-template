@@ -11,6 +11,7 @@ import {
   CheckCircle,
   Clock,
   User,
+  UserCheck,
   Mail,
   Phone,
   Calendar,
@@ -19,6 +20,7 @@ import {
   Trash2,
   Edit,
   X,
+  XCircle,
   Eye
 } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
@@ -193,6 +195,20 @@ const OrderApproval: React.FC = () => {
         <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}>
           {value}
         </span>
+      )
+    },
+    {
+      key: 'actions',
+      title: 'Actions',
+      render: (value: string, record: any) => (
+        <button
+          type="button"
+          onClick={() => handleViewOrder(record)}
+          className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 p-1 rounded hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors duration-200"
+          title="View"
+        >
+          <Eye className="w-4 h-4" />
+        </button>
       )
     }
   ];
@@ -396,13 +412,71 @@ const OrderApproval: React.FC = () => {
         </p>
       </motion.div>
 
+
+      {/* Order Summary Cards */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+      >
+        <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Orders</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{orders.length}</p>
+            </div>
+            <div className="p-3 bg-blue-500 rounded-full">
+              <FileText className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Pending Approval</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {orders.filter(order => order.status === 'Pending Approval').length}
+              </p>
+            </div>
+            <div className="p-3 bg-yellow-500 rounded-full">
+              <Clock className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Approved Orders</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {orders.filter(order => order.status === 'Approved').length}
+              </p>
+            </div>
+            <div className="p-3 bg-green-500 rounded-full">
+              <CheckCircle className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Returned Orders</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {orders.filter(order => order.status === 'Returned').length}
+              </p>
+            </div>
+            <div className="p-3 bg-red-500 rounded-full">
+              <XCircle className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+      </motion.div>
       {/* Orders Data Table */}
       <DataTable
         columns={columns}
         data={orders}
         loading={loading}
         searchPlaceholder="Search orders..."
-        onView={handleViewOrder}
         searchable={true}
         exportable={true}
         pagination={true}
