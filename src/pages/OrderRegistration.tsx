@@ -1042,40 +1042,6 @@ const TestsStep: React.FC<{ selectedSample?: any; onTestAdded: () => void }> = (
         </p>
       </div>
 
-      {/* Tests Management */}
-      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-            <TestTube className="w-5 h-5 mr-2 text-primary-600" />
-            Tests Management
-          </h3>
-          <motion.button
-            onClick={handleAddTest}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="btn-primary flex items-center space-x-2"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Test Parameters</span>
-          </motion.button>
-        </div>
-
-        {tests.length > 0 ? (
-          <SimpleTable
-            columns={testColumns}
-            data={tests}
-            onRemove={handleRemoveTest}
-            showActions={true}
-            emptyMessage="No tests added yet."
-          />
-        ) : (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-            <TestTube className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <p>No tests added yet. Click "Add Test Parameters" to get started.</p>
-          </div>
-        )}
-      </div>
-
       {/* Add/Edit Test Form */}
       {isAddTestOpen && (
         <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
@@ -1088,6 +1054,44 @@ const TestsStep: React.FC<{ selectedSample?: any; onTestAdded: () => void }> = (
           />
         </div>
       )}
+
+      {/* Tests List */}
+      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+            <TestTube className="w-5 h-5 mr-2 text-primary-600" />
+            Tests List
+          </h3>
+
+          {!isAddTestOpen && (
+            <motion.button
+              onClick={handleAddTest}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Test Parameters
+            </motion.button>
+          )}
+        </div>
+
+        {tests.length > 0 ? (
+          <SimpleTable
+            columns={testColumns}
+            data={tests}
+            onEdit={handleEditTest}
+            onRemove={handleRemoveTest}
+            showActions={true}
+            emptyMessage="No tests added yet."
+          />
+        ) : (
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <TestTube className="w-12 h-12 mx-auto mb-4 opacity-50" />
+            <p>No tests added yet. Click "Add Test Parameters" to get started.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -1534,19 +1538,19 @@ const TestForm: React.FC<{
           onClick={onCancel}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="btn-secondary flex items-center space-x-2"
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"    
         >
-          <X className="w-4 h-4" />
-          <span>Cancel</span>
+          <X className="w-4 h-4 mr-2" />
+          Cancel
         </motion.button>
         <motion.button
           type="submit"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="btn-primary flex items-center space-x-2"
+          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
         >
-          <Save className="w-4 h-4" />
-          <span>{isEditing ? 'Update Test' : 'Add Test'}</span>
+          <Save className="w-4 h-4 mr-2" />
+          {isEditing ? 'Update Test' : 'Add Test'}
         </motion.button>
       </div>
     </form>
