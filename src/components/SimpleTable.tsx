@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Edit } from 'lucide-react';
 
 interface SimpleTableColumn {
   key: string;
@@ -11,6 +11,7 @@ interface SimpleTableProps {
   columns: SimpleTableColumn[];
   data: any[];
   onRemove?: (index: number) => void;
+  onEdit?: (index: number) => void;
   showActions?: boolean;
   emptyMessage?: string;
 }
@@ -19,6 +20,7 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
   columns,
   data,
   onRemove,
+  onEdit,
   showActions = true,
   emptyMessage = 'No data available'
 }) => {
@@ -29,6 +31,8 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
       </div>
     );
   }
+
+  const hasActions = showActions && (onRemove || onEdit);
 
   return (
     <div className="overflow-x-auto">
@@ -43,7 +47,7 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
                 {column.title}
               </th>
             ))}
-            {showActions && onRemove && (
+            {hasActions && (
               <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 Actions
               </th>
@@ -61,15 +65,30 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
                   }
                 </td>
               ))}
-              {showActions && onRemove && (
+              {hasActions && (
                 <td className="px-4 py-3 text-sm text-center">
-                  <button
-                    type="button"
-                    onClick={() => onRemove(index)}
-                    className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center justify-center space-x-2">
+                    {onEdit && (
+                      <button
+                        type="button"
+                        onClick={() => onEdit(index)}
+                        className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 p-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200"
+                        title="Edit"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                    )}
+                    {onRemove && (
+                      <button
+                        type="button"
+                        onClick={() => onRemove(index)}
+                        className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
+                        title="Remove"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </td>
               )}
             </tr>

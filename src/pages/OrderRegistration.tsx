@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  FileText, 
-  Building2, 
-  MapPin, 
-  ShoppingCart, 
-  TestTube, 
+import {
+  FileText,
+  Building2,
+  MapPin,
+  ShoppingCart,
+  TestTube,
   Package,
   ChevronRight,
   CheckCircle,
@@ -209,8 +209,8 @@ const OrderRegistration: React.FC = () => {
 
   const handleSaveOrder = (orderData: any) => {
     if (editingOrder) {
-      setOrders(prev => 
-        prev.map(order => 
+      setOrders(prev =>
+        prev.map(order =>
           order.id === editingOrder.id ? { ...orderData, id: editingOrder.id } : order
         )
       );
@@ -271,10 +271,10 @@ const OrderRegistration: React.FC = () => {
           whileTap={{ scale: 0.98 }}
           className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
         >
-          <X className="w-4 h-4" />
-          <span>Cancel</span>
+          <X className="w-4 h-4 mr-2" />
+          Cancel
         </motion.button>
-        
+
         <div className="flex items-center space-x-3">
           {currentStep > 1 && (
             <motion.button
@@ -282,20 +282,20 @@ const OrderRegistration: React.FC = () => {
               onClick={() => setCurrentStep(prev => prev - 1)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"    
+              className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
             >
               <ChevronRight className="w-4 h-4 rotate-180" />
               <span>Previous</span>
             </motion.button>
           )}
-          
+
           {currentStep < 4 ? (
             <motion.button
               type="button"
               onClick={() => setCurrentStep(prev => prev + 1)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"    
+              className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
             >
               <span>Next</span>
               <ChevronRight className="w-4 h-4" />
@@ -305,8 +305,8 @@ const OrderRegistration: React.FC = () => {
               type="button"
               onClick={() => handleSaveOrder({})}
               whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
             >
               <Save className="w-4 h-4" />
               <span>{editingOrder ? 'Update Order' : 'Submit Order'}</span>
@@ -367,28 +367,26 @@ const OrderRegistration: React.FC = () => {
                 const Icon = step.icon;
                 const isActive = currentStep === step.id;
                 const isCompleted = currentStep > step.id;
-                
+
                 return (
                   <div key={step.id} className="flex items-center">
                     <motion.button
                       onClick={() => handleStepChange(step.id)}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                        isActive
-                          ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
-                          : isCompleted
+                      className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive
+                        ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
+                        : isCompleted
                           ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
                           : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
-                      }`}
+                        }`}
                     >
-                      <div className={`p-2 rounded-lg ${
-                        isActive
-                          ? 'bg-primary-500/20 dark:bg-primary-500/30'
-                          : isCompleted
+                      <div className={`p-2 rounded-lg ${isActive
+                        ? 'bg-primary-500/20 dark:bg-primary-500/30'
+                        : isCompleted
                           ? 'bg-primary-500/20 dark:bg-primary-500/30'
                           : 'bg-gray-100 dark:bg-gray-700'
-                      }`}>
+                        }`}>
                         {isCompleted ? (
                           <CheckCircle className="w-5 h-5" />
                         ) : (
@@ -429,7 +427,7 @@ const OrderInformationStep: React.FC = () => {
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Order Information</h2>
         <p className="text-gray-600 dark:text-gray-400">Complete the order details and company information.</p>
       </div>
-      
+
       {/* Company Details Section */}
       <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
@@ -441,7 +439,7 @@ const OrderInformationStep: React.FC = () => {
             <Label htmlFor="companyName" required>Company Name</Label>
             <CustomSelect
               value=""
-              onChange={() => {}}
+              onChange={() => { }}
               options={[
                 { value: 'ABC Corporation', label: 'ABC Corporation' },
                 { value: 'XYZ Industries', label: 'XYZ Industries' },
@@ -455,7 +453,7 @@ const OrderInformationStep: React.FC = () => {
             <Label htmlFor="siteName" required>Site Name</Label>
             <CustomSelect
               value=""
-              onChange={() => {}}
+              onChange={() => { }}
               options={[
                 { value: 'Head Office', label: 'Head Office' },
                 { value: 'Branch Office', label: 'Branch Office' },
@@ -467,17 +465,17 @@ const OrderInformationStep: React.FC = () => {
           </div>
           <div>
             <Label htmlFor="addressLine1" required>Address Line 1</Label>
-            <Input value="" onChange={() => {}} placeholder="Enter address line 1" />
+            <Input value="" onChange={() => { }} placeholder="Enter address line 1" />
           </div>
           <div>
             <Label htmlFor="addressLine2">Address Line 2</Label>
-            <Input value="" onChange={() => {}} placeholder="Enter address line 2" />
+            <Input value="" onChange={() => { }} placeholder="Enter address line 2" />
           </div>
           <div>
             <Label htmlFor="city" required>City</Label>
             <CustomSelect
               value=""
-              onChange={() => {}}
+              onChange={() => { }}
               options={[
                 { value: 'New York', label: 'New York' },
                 { value: 'Los Angeles', label: 'Los Angeles' },
@@ -491,7 +489,7 @@ const OrderInformationStep: React.FC = () => {
             <Label htmlFor="country" required>Country</Label>
             <CustomSelect
               value=""
-              onChange={() => {}}
+              onChange={() => { }}
               options={[
                 { value: 'USA', label: 'USA' },
                 { value: 'Canada', label: 'Canada' },
@@ -524,15 +522,15 @@ const OrderInformationStep: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <Label htmlFor="contactPersonName" required>Contact Person Name</Label>
-            <Input value="" onChange={() => {}} placeholder="Enter contact person name" />
+            <Input value="" onChange={() => { }} placeholder="Enter contact person name" />
           </div>
           <div>
             <Label htmlFor="phoneNumber" required>Phone Number</Label>
-            <Input type="tel" value="" onChange={() => {}} placeholder="Enter phone number" />
+            <Input type="tel" value="" onChange={() => { }} placeholder="Enter phone number" />
           </div>
           <div>
             <Label htmlFor="email" required>Email</Label>
-            <Input type="email" value="" onChange={() => {}} placeholder="Enter email address" />
+            <Input type="email" value="" onChange={() => { }} placeholder="Enter email address" />
           </div>
         </div>
       </div>
@@ -552,15 +550,15 @@ const OrderInformationStep: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <Label htmlFor="invoiceContactPersonName" required>Contact Person Name</Label>
-            <Input value="" onChange={() => {}} placeholder="Enter contact person name" />
+            <Input value="" onChange={() => { }} placeholder="Enter contact person name" />
           </div>
           <div>
             <Label htmlFor="invoicePhoneNumber" required>Phone Number</Label>
-            <Input type="tel" value="" onChange={() => {}} placeholder="Enter phone number" />
+            <Input type="tel" value="" onChange={() => { }} placeholder="Enter phone number" />
           </div>
           <div>
             <Label htmlFor="invoiceEmail" required>Email</Label>
-            <Input type="email" value="" onChange={() => {}} placeholder="Enter email address" />
+            <Input type="email" value="" onChange={() => { }} placeholder="Enter email address" />
           </div>
         </div>
       </div>
@@ -574,15 +572,15 @@ const OrderInformationStep: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <Label htmlFor="orderId">Order ID</Label>
-            <Input value="ORD-2024-001" onChange={() => {}} disabled />
+            <Input value="ORD-2024-001" onChange={() => { }} disabled />
           </div>
           <div>
             <Label htmlFor="poNumber">PO Number</Label>
-            <Input value="" onChange={() => {}} placeholder="Enter PO number" />
+            <Input value="" onChange={() => { }} placeholder="Enter PO number" />
           </div>
           <div>
             <Label htmlFor="quotationNumber">Quotation Number (Optional)</Label>
-            <Input value="" onChange={() => {}} placeholder="Enter quotation number" />
+            <Input value="" onChange={() => { }} placeholder="Enter quotation number" />
           </div>
           <div>
             <Label htmlFor="samplingBy" required>Sampling by</Label>
@@ -599,7 +597,7 @@ const OrderInformationStep: React.FC = () => {
           </div>
           <div>
             <Label htmlFor="dateCollected" required>Date Sample Collected/Submitted</Label>
-            <Input type="date" value="" onChange={() => {}} />
+            <Input type="date" value="" onChange={() => { }} />
           </div>
           <div>
             <Label htmlFor="storageRequirements">Storage Requirements/Handling Requirement</Label>
@@ -611,15 +609,15 @@ const OrderInformationStep: React.FC = () => {
           </div>
           <div>
             <Label htmlFor="receivedBy">Received By</Label>
-            <Input value="" onChange={() => {}} placeholder="Enter receiver name" />
+            <Input value="" onChange={() => { }} placeholder="Enter receiver name" />
           </div>
           <div>
             <Label htmlFor="dateOfReceipt">Date of Receipt</Label>
-            <Input type="date" value="" onChange={() => {}} />
+            <Input type="date" value="" onChange={() => { }} />
           </div>
           <div>
             <Label htmlFor="timeOfReceipt">Time of Receipt</Label>
-            <Input type="time" value="" onChange={() => {}} />
+            <Input type="time" value="" onChange={() => { }} />
           </div>
           <div>
             <Label htmlFor="packing">Packing</Label>
@@ -646,7 +644,7 @@ const OrderInformationStep: React.FC = () => {
             <Label htmlFor="testBasis" required>Test Basis</Label>
             <CustomSelect
               value=""
-              onChange={() => {}}
+              onChange={() => { }}
               options={[
                 { value: 'Normal', label: 'Normal' },
                 { value: 'Urgent', label: 'Urgent' }
@@ -687,7 +685,7 @@ const OrderInformationStep: React.FC = () => {
           </div>
           <div>
             <Label htmlFor="emailReport">Email for report</Label>
-            <Input type="email" value="" onChange={() => {}} placeholder="Enter email address" />
+            <Input type="email" value="" onChange={() => { }} placeholder="Enter email address" />
           </div>
           <div>
             <Label htmlFor="remarks">Remarks / Other Instructions</Label>
@@ -774,11 +772,10 @@ const SamplesStep: React.FC<{ onAddTestForSample: (sample: any) => void }> = ({ 
       key: 'statementOfConformity',
       title: 'Statement Required',
       render: (value: string) => (
-        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-          value === 'Yes' 
-            ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-            : 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
-        }`}>
+        <span className={`px-2 py-1 text-xs font-medium rounded-full ${value === 'Yes'
+          ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+          : 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
+          }`}>
           {value}
         </span>
       )
@@ -817,8 +814,8 @@ const SamplesStep: React.FC<{ onAddTestForSample: (sample: any) => void }> = ({ 
 
   const handleSaveSample = (sampleData: any) => {
     if (editingSample) {
-      setSamples(prev => 
-        prev.map((sample, index) => 
+      setSamples(prev =>
+        prev.map((sample, index) =>
           sample.id === editingSample.id ? { ...sampleData, id: editingSample.id } : sample
         )
       );
@@ -846,22 +843,40 @@ const SamplesStep: React.FC<{ onAddTestForSample: (sample: any) => void }> = ({ 
         <p className="text-gray-600 dark:text-gray-400">Add sample information and conditions. Click "Add Tests" to assign tests to specific samples.</p>
       </div>
 
+
+      {/* Add/Edit Sample Form */}
+      {isAddSampleOpen && (
+        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+          <SampleForm
+            onSave={handleSaveSample}
+            onCancel={handleCloseAddSample}
+            isEditing={!!editingSample}
+            initialData={editingSample}
+          />
+        </div>
+      )}
+
       {/* Samples List */}
       <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
             <Package className="w-5 h-5 mr-2 text-primary-600" />
             Samples List
           </h3>
-          <motion.button
-            onClick={handleAddSample}
-            whileHover={{ scale: 1.02 }}
+
+          {!isAddSampleOpen && (
+            <motion.button
+              onClick={handleAddSample}
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
             >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Sample
-          </motion.button>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Sample
+            </motion.button>
+          )}
+
         </div>
 
         {samples.length > 0 ? (
@@ -878,19 +893,10 @@ const SamplesStep: React.FC<{ onAddTestForSample: (sample: any) => void }> = ({ 
             <p>No samples added yet. Click "Add Sample" to get started.</p>
           </div>
         )}
+
       </div>
 
-      {/* Add/Edit Sample Form */}
-      {isAddSampleOpen && (
-        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-          <SampleForm
-            onSave={handleSaveSample}
-            onCancel={handleCloseAddSample}
-            isEditing={!!editingSample}
-            initialData={editingSample}
-          />
-        </div>
-      )}
+
     </div>
   );
 };
@@ -993,8 +999,8 @@ const TestsStep: React.FC<{ selectedSample?: any; onTestAdded: () => void }> = (
 
   const handleSaveTest = (testData: any) => {
     if (editingTest) {
-      setTests(prev => 
-        prev.map((test, index) => 
+      setTests(prev =>
+        prev.map((test, index) =>
           test.id === editingTest.id ? { ...testData, id: editingTest.id } : test
         )
       );
@@ -1029,7 +1035,7 @@ const TestsStep: React.FC<{ selectedSample?: any; onTestAdded: () => void }> = (
       <div>
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Tests</h2>
         <p className="text-gray-600 dark:text-gray-400">
-          {selectedSample 
+          {selectedSample
             ? `Adding tests for sample: ${selectedSample.sampleId} (${selectedSample.commodity})`
             : 'Assign tests to samples. Tests are linked to specific samples.'
           }
@@ -1094,7 +1100,7 @@ const ReviewStep: React.FC = () => {
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Review & Submit</h2>
         <p className="text-gray-600 dark:text-gray-400">Review all information before submitting the order.</p>
       </div>
-      
+
       <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
           <CheckCircle className="w-5 h-5 mr-2 text-primary-600" />
@@ -1219,7 +1225,7 @@ const SampleForm: React.FC<{
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Sample Details</h4>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <Label htmlFor="commodityCategory" required>
@@ -1291,24 +1297,24 @@ const SampleForm: React.FC<{
           </Label>
           <div className="flex space-x-4 mt-2">
             <label className="flex items-center">
-              <input 
-                type="radio" 
-                name="statementOfConformity" 
-                value="Yes" 
+              <input
+                type="radio"
+                name="statementOfConformity"
+                value="Yes"
                 checked={formData.statementOfConformity === 'Yes'}
                 onChange={(e) => handleInputChange('statementOfConformity', e.target.value)}
-                className="mr-2" 
+                className="mr-2"
               />
               <span className="text-sm">Yes</span>
             </label>
             <label className="flex items-center">
-              <input 
-                type="radio" 
-                name="statementOfConformity" 
-                value="No" 
+              <input
+                type="radio"
+                name="statementOfConformity"
+                value="No"
                 checked={formData.statementOfConformity === 'No'}
                 onChange={(e) => handleInputChange('statementOfConformity', e.target.value)}
-                className="mr-2" 
+                className="mr-2"
               />
               <span className="text-sm">No</span>
             </label>
@@ -1335,19 +1341,19 @@ const SampleForm: React.FC<{
           onClick={onCancel}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="btn-secondary flex items-center space-x-2"
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
         >
-          <X className="w-4 h-4" />
-          <span>Cancel</span>
+          <X className="w-4 h-4 mr-2" />
+          Cancel
         </motion.button>
         <motion.button
           type="submit"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="btn-primary flex items-center space-x-2"
+          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
         >
-          <Save className="w-4 h-4" />
-          <span>{isEditing ? 'Update Sample' : 'Add Sample'}</span>
+          <Save className="w-4 h-4 mr-2" />
+          {isEditing ? 'Update Sample' : 'Add Sample'}
         </motion.button>
       </div>
     </form>
@@ -1433,7 +1439,7 @@ const TestForm: React.FC<{
       <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
         {selectedSample ? `Test Details for ${selectedSample.sampleId}` : 'Test Details'}
       </h4>
-      
+
       {selectedSample && (
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
           <div className="flex items-center">
@@ -1449,7 +1455,7 @@ const TestForm: React.FC<{
           </div>
         </div>
       )}
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <Label htmlFor="sampleId" required>
