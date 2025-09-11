@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Settings, FlaskConical, DollarSign, Microscope, Plus } from 'lucide-react';
+import { Settings, FlaskConical, Microscope, Plus } from 'lucide-react';
 import CustomSelect from './CustomSelect';
 import Label from './Label';
 import Input from './Input';
@@ -20,12 +20,11 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
   initialData = null
 }) => {
   const [formData, setFormData] = useState({
-    testType: initialData?.testType || initialData?.testName || '',
+    testName: initialData?.testName || initialData?.testType || '',
     protocol: initialData?.protocol || '',
     analytes: initialData?.analytes || [],
     reference: initialData?.reference || '',
     chemicals: initialData?.chemicals || [],
-    costGroups: initialData?.costGroups || [],
     instruments: initialData?.instruments || [],
     status: initialData?.status || 'Active',
     ...(initialData || {})
@@ -33,19 +32,10 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [newChemical, setNewChemical] = useState({ name: '', quantity: '', unit: '' });
-  const [newCostGroup, setNewCostGroup] = useState({ group: '', price: '' });
   const [newAnalyte, setNewAnalyte] = useState('');
   const [newInstrument, setNewInstrument] = useState('');
 
   // Mock data for dropdowns
-  const testTypeOptions = [
-    { value: 'Blood Chemistry Panel', label: 'Blood Chemistry Panel' },
-    { value: 'Microbiology Culture', label: 'Microbiology Culture' },
-    { value: 'Immunology Test', label: 'Immunology Test' },
-    { value: 'Hematology Test', label: 'Hematology Test' },
-    { value: 'Pathology Test', label: 'Pathology Test' }
-  ];
-
   const chemicalOptions = [
     { value: 'EDTA', label: 'EDTA' },
     { value: 'Sodium Citrate', label: 'Sodium Citrate' },
@@ -84,14 +74,6 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
     };
     return unitMap[chemicalName] || 'mL';
   };
-
-  const customerGroupOptions = [
-    { value: 'Standard', label: 'Standard' },
-    { value: 'Premium', label: 'Premium' },
-    { value: 'VIP', label: 'VIP' },
-    { value: 'Government', label: 'Government' },
-    { value: 'Research', label: 'Research' }
-  ];
 
   const instrumentOptions = [
     { value: 'Hematology Analyzer', label: 'Hematology Analyzer' },
@@ -177,28 +159,11 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
     }));
   };
 
-  const handleAddCostGroup = () => {
-    if (newCostGroup.group && newCostGroup.price) {
-      setFormData(prev => ({
-        ...prev,
-        costGroups: [...prev.costGroups, { ...newCostGroup, price: parseFloat(newCostGroup.price) }]
-      }));
-      setNewCostGroup({ group: '', price: '' });
-    }
-  };
-
-  const handleRemoveCostGroup = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      costGroups: prev.costGroups.filter((_: any, i: number) => i !== index)
-    }));
-  };
-
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.testType) {
-      newErrors.testType = 'Test type is required';
+    if (!formData.testName.trim()) {
+      newErrors.testName = 'Test name is required';
     }
     if (!formData.protocol.trim()) {
       newErrors.protocol = 'Protocol is required';
@@ -212,11 +177,8 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
     if (formData.chemicals.length === 0) {
       newErrors.chemicals = 'At least one chemical is required';
     }
-    if (formData.costGroups.length === 0) {
-      newErrors.costGroups = 'At least one cost group is required';
-    }
     if (formData.instruments.length === 0) {
-      newErrors.instruments = 'At least one instrument is required';
+      newErrors.instruments = 'At least one instrument category is required';
     }
     if (!formData.status) {
       newErrors.status = 'Status is required';
@@ -232,7 +194,7 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
     if (validateForm()) {
       const testParameterData = {
         ...formData,
-        testName: formData.testType, // Keep testName for backward compatibility
+        testName: formData.testName, // Keep testName for backward compatibility
         id: isEditing ? formData.id : `TP${String(Date.now()).slice(-3)}`
       };
       onSave(testParameterData);
@@ -245,7 +207,7 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
   ];
 
   const instrumentColumns = [
-    { key: 'name', title: 'Instrument Name' }
+    { key: 'name', title: 'Instrument Category Name' }
   ];
 
   const chemicalColumns = [
@@ -254,15 +216,6 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
       key: 'quantity', 
       title: 'Quantity',
       render: (value: string, record: any) => `${value} ${record.unit}`
-    }
-  ];
-
-  const costGroupColumns = [
-    { key: 'group', title: 'Customer Group' },
-    { 
-      key: 'price', 
-      title: 'Price',
-      render: (value: number) => `Rs. ${value}`
     }
   ];
 
@@ -276,17 +229,16 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Test Type */}
+          {/* Test Name */}
           <div className="space-y-2">
-            <Label htmlFor="testType" required>
-              Test Type
+            <Label htmlFor="testName" required>
+              Test Name
             </Label>
-            <CustomSelect
-              value={formData.testType}
-              onChange={(value) => handleInputChange('testType', value)}
-              options={testTypeOptions}
-              placeholder="Select test type"
-              error={errors.testType}
+            <Input
+              value={formData.testName}
+              onChange={(e) => handleInputChange('testName', e.target.value)}
+              placeholder="Enter test name"
+              error={errors.testName}
             />
           </div>
 
@@ -441,78 +393,24 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
         </div>
       </div>
 
-      {/* Cost by Groups */}
-      <div className="space-y-6">
-        <h3 className="flex items-center text-lg font-semibold text-gray-900 dark:text-white">
-          <DollarSign className="w-5 h-5 mr-2 text-primary-600" />
-          Cost by Groups
-        </h3>
-        
-        <div className="space-y-4">
-          <div className="flex items-end space-x-4">
-            <div className="flex-1">
-              <Label htmlFor="customerGroup">Customer Group</Label>
-              <CustomSelect
-                value={newCostGroup.group}
-                onChange={(value) => setNewCostGroup(prev => ({ ...prev, group: value }))}
-                options={customerGroupOptions}
-                placeholder="Customer Group"
-              />
-            </div>
-            <div className="flex-1">
-              <Label htmlFor="price">Price</Label>
-              <Input
-                type="number"
-                min="0"
-                step="0.01"
-                value={newCostGroup.price}
-                onChange={(e) => setNewCostGroup(prev => ({ ...prev, price: e.target.value }))}
-                placeholder="Enter price"
-              />
-            </div>
-            <motion.button
-              type="button"
-              onClick={handleAddCostGroup}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add
-            </motion.button>
-          </div>
-
-          {/* Cost Groups Table */}
-          <SimpleTable
-            columns={costGroupColumns}
-            data={formData.costGroups}
-            onRemove={handleRemoveCostGroup}
-            emptyMessage="No cost groups added yet"
-          />
-          {errors.costGroups && (
-            <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.costGroups}</p>
-          )}
-        </div>
-      </div>
-
       {/* Instruments */}
       <div className="space-y-6">
         <h3 className="flex items-center text-lg font-semibold text-gray-900 dark:text-white">
           <Microscope className="w-5 h-5 mr-2 text-primary-600" />
-          Instruments
+          Instrument Categories
         </h3>
         
         <div className="space-y-4">
           <div className="flex items-end space-x-4">
             <div className="flex-1">
               <Label htmlFor="instrument" required>
-                Instruments
+                Instrument Categories
               </Label>
               <CustomSelect
                 value={newInstrument}
                 onChange={(value) => setNewInstrument(value)}
                 options={instrumentOptions}
-                placeholder="Select instrument"
+                placeholder="Select instrument category"
               />
             </div>
             <motion.button
@@ -527,12 +425,12 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
             </motion.button>
           </div>
 
-          {/* Instruments Table */}
+          {/* Instrument Categories Table */}
           <SimpleTable
             columns={instrumentColumns}
             data={formData.instruments.map((instrument: string) => ({ name: instrument }))}
             onRemove={handleRemoveInstrument}
-            emptyMessage="No instruments added yet"
+            emptyMessage="No instrument categories added yet"
           />
           {errors.instruments && (
             <p className="text-red-600 dark:text-red-400 text-sm">{errors.instruments}</p>
