@@ -126,6 +126,15 @@ const Customers: React.FC = () => {
       )
     },
     {
+      key: 'group',
+      title: 'Group',
+      dataIndex: 'group',
+      sortable: true,
+      render: (value) => (
+        <span className="text-sm text-gray-600 dark:text-gray-400">{value}</span>
+      )
+    },
+    {
       key: 'sites',
       title: 'Sites',
       dataIndex: 'sites',
@@ -332,7 +341,9 @@ const Customers: React.FC = () => {
       >
         <CustomerForm
           onSave={handleSaveCustomer}
-          
+          onCancel={handleCloseDrawer}
+          isEditing={!!editingCustomer}
+          initialData={editingCustomer}
         />
       </Drawer>
 
@@ -491,7 +502,7 @@ const SiteForm: React.FC<{
   onCancel: () => void;
   isEditing?: boolean;
   initialData?: any;
-}> = ({ onSave, onCancel, isEditing = false, initialData = null }) => {
+}> = ({ onSave, initialData = null }) => {
   const [formData, setFormData] = useState({
     siteName: initialData?.siteName || '',
     addressLine1: initialData?.addressLine1 || '',
@@ -682,6 +693,8 @@ const SiteForm: React.FC<{
 // Customer Form Component
 const CustomerForm: React.FC<{
   onSave: (data: any) => void;
+  onCancel: () => void;
+  isEditing?: boolean;
   initialData?: any;
 }> = ({ onSave, initialData = null }) => {
   const [formData, setFormData] = useState({
@@ -722,6 +735,9 @@ const CustomerForm: React.FC<{
     if (!formData.registrationNo.trim()) {
       newErrors.registrationNo = 'Registration number is required';
     }
+    if (!formData.group) {
+      newErrors.group = 'Group is required';
+    }
     if (!formData.status) {
       newErrors.status = 'Status is required';
     }
@@ -760,6 +776,18 @@ const CustomerForm: React.FC<{
           onChange={(e) => handleInputChange('registrationNo', e.target.value)}
           placeholder="Enter Registration No"
           error={errors.registrationNo}
+        />
+      </div>
+      <div>
+        <Label htmlFor="group" required>
+          Group
+        </Label>
+        <CustomSelect
+          value={formData.group}
+          onChange={(value) => handleInputChange('group', value)}
+          options={groupOptions}
+          placeholder="Select group"
+          error={errors.group}
         />
       </div>
       <div>

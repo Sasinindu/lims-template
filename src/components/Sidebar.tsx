@@ -55,9 +55,9 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
   const masterDataItems = [
     { id: 'customer-master', label: 'Customer Master', icon: UserCheck },
     { id: 'instrument-master', label: 'Instrument Master', icon: Microscope },
-    { id: 'tests', label: 'Tests', icon: TestTube },
-    { id: 'commodities', label: 'Commodities', icon: ShoppingCart },
-    { id: 'chemicals', label: 'Chemicals', icon: Droplets },
+    { id: 'tests', label: 'Test Master', icon: TestTube },
+    { id: 'commodities', label: 'Commodity Master', icon: ShoppingCart },
+    { id: 'chemicals', label: 'Chemical Master', icon: Droplets },
   ];
 
   const toggleSection = (sectionId: string) => {

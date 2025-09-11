@@ -59,7 +59,7 @@ const Header: React.FC = () => {
 
             {/* Notifications */}
             <div className="relative">
-              <motion.button
+              {/* <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowNotifications(!showNotifications)}
@@ -71,7 +71,7 @@ const Header: React.FC = () => {
                     {notifications.filter(n => n.unread).length}
                   </span>
                 )}
-              </motion.button>
+              </motion.button> */}
 
               {/* Notifications Dropdown */}
               <AnimatePresence>
