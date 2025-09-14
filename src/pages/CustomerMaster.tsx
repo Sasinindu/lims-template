@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Users, CheckCircle, Save, X, MapPin, Eye, Edit, MoreVertical, Trash2, Building2 } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
@@ -47,9 +47,25 @@ const Customers: React.FC = () => {
   const [isSitesDrawerOpen, setIsSitesDrawerOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [showActions, setShowActions] = useState<Record<string, boolean>>({});
+  const [dropdownPositions, setDropdownPositions] = useState<{ [key: string]: 'bottom' | 'top' }>({});
 
   // Use confirmation hook
   const { confirmDelete } = useConfirmation();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('[data-dropdown-container]')) {
+        setShowActions({});
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const [customers, setCustomers] = useState([
     { 
@@ -126,11 +142,31 @@ const Customers: React.FC = () => {
     }
   };
 
-  const toggleActions = (id: string) => {
+  const toggleActions = (id: string, event?: React.MouseEvent) => {
+    const isCurrentlyOpen = showActions[id];
+    
     setShowActions(prev => ({
       ...prev,
       [id]: !prev[id]
     }));
+
+    // Calculate dropdown position when opening
+    if (!isCurrentlyOpen && event) {
+      const target = event.currentTarget as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const dropdownHeight = 120; // Estimated dropdown height (2 items * ~50px each + padding)
+      const spaceBelow = viewportHeight - rect.bottom - 10; // 10px buffer
+      const spaceAbove = rect.top - 10; // 10px buffer
+
+      // Open upward if there's not enough space below but enough space above
+      const shouldOpenUpward = spaceBelow < dropdownHeight && spaceAbove >= dropdownHeight;
+      
+      setDropdownPositions(prev => ({
+        ...prev,
+        [id]: shouldOpenUpward ? 'top' : 'bottom'
+      }));
+    }
   };
 
   const handleAddCustomer = () => {
@@ -273,9 +309,9 @@ const Customers: React.FC = () => {
           </motion.button>
 
           {/* More Options - Vertical Ellipsis */}
-          <div className="relative">
+          <div className="relative" data-dropdown-container>
             <motion.button
-              onClick={() => toggleActions(record.id)}
+              onClick={(e) => toggleActions(record.id, e)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
@@ -290,7 +326,9 @@ const Customers: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="absolute right-0 top-8 z-10 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1"
+                className={`absolute right-0 z-10 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 ${
+                  dropdownPositions[record.id] === 'top' ? 'bottom-8' : 'top-8'
+                }`}
               >
                 <button
                   onClick={() => {
@@ -523,9 +561,25 @@ const SitesManagement: React.FC<{
   const [isViewMode, setIsViewMode] = useState(false);
   const [loading] = useState(false);
   const [showActions, setShowActions] = useState<Record<string, boolean>>({});
+  const [dropdownPositions, setDropdownPositions] = useState<{ [key: string]: 'bottom' | 'top' }>({});
   
   // Use confirmation hook for site deletion
   const { confirmDelete } = useConfirmation();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('[data-dropdown-container]')) {
+        setShowActions({});
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Update the data attribute when sites change
   React.useEffect(() => {
@@ -535,11 +589,31 @@ const SitesManagement: React.FC<{
     }
   }, [sites]);
 
-  const toggleActions = (id: string) => {
+  const toggleActions = (id: string, event?: React.MouseEvent) => {
+    const isCurrentlyOpen = showActions[id];
+    
     setShowActions(prev => ({
       ...prev,
       [id]: !prev[id]
     }));
+
+    // Calculate dropdown position when opening
+    if (!isCurrentlyOpen && event) {
+      const target = event.currentTarget as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const dropdownHeight = 80; // Estimated dropdown height (1 item * ~50px + padding)
+      const spaceBelow = viewportHeight - rect.bottom - 10; // 10px buffer
+      const spaceAbove = rect.top - 10; // 10px buffer
+
+      // Open upward if there's not enough space below but enough space above
+      const shouldOpenUpward = spaceBelow < dropdownHeight && spaceAbove >= dropdownHeight;
+      
+      setDropdownPositions(prev => ({
+        ...prev,
+        [id]: shouldOpenUpward ? 'top' : 'bottom'
+      }));
+    }
   };
 
   const handleAddSite = () => {

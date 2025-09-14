@@ -1,14 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Settings, CheckCircle, XCircle, Save, X } from 'lucide-react';
+import { Settings, CheckCircle, XCircle, Save, X, Eye, Edit, MoreVertical, Trash2 } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
 import Drawer from '../components/Drawer';
 import AddTestParameterForm from '../components/AddTestParameterForm';
+import { useConfirmation } from '../hooks/useConfirmation';
 
 const TestParameters: React.FC = () => {
   const [loading] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingTestParameter, setEditingTestParameter] = useState<any>(null);
+  const [viewingTestParameter, setViewingTestParameter] = useState<any>(null);
+  const [isViewMode, setIsViewMode] = useState(false);
+  const [showActions, setShowActions] = useState<{ [key: string]: boolean }>({});
+  const [dropdownPositions, setDropdownPositions] = useState<{ [key: string]: 'bottom' | 'top' }>({});
+
+  // Use confirmation hook
+  const { confirmDelete } = useConfirmation();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('[data-dropdown-container]')) {
+        setShowActions({});
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const toggleActions = (rowId: string, event?: React.MouseEvent) => {
+    const isCurrentlyOpen = showActions[rowId];
+    
+    setShowActions(prev => ({
+      ...prev,
+      [rowId]: !prev[rowId]
+    }));
+
+    // Calculate dropdown position when opening
+    if (!isCurrentlyOpen && event) {
+      const target = event.currentTarget as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const dropdownHeight = 120; // Estimated dropdown height (2 items * ~50px each + padding)
+      const spaceBelow = viewportHeight - rect.bottom - 10; // 10px buffer
+      const spaceAbove = rect.top - 10; // 10px buffer
+
+      // Open upward if there's not enough space below but enough space above
+      const shouldOpenUpward = spaceBelow < dropdownHeight && spaceAbove >= dropdownHeight;
+      
+      setDropdownPositions(prev => ({
+        ...prev,
+        [rowId]: shouldOpenUpward ? 'top' : 'bottom'
+      }));
+    }
+  };
 
   // Mock test parameter data
   const [testParameters, setTestParameters] = useState([
@@ -145,25 +195,77 @@ const TestParameters: React.FC = () => {
           {value}
         </span>
       )
+    },
+    {
+      key: 'actions',
+      title: 'Actions',
+      dataIndex: 'actions',
+      width: '120px',
+      render: (_, record) => (
+        <div className="flex items-center space-x-1">
+          {/* View Action - Eye Icon */}
+          <motion.button
+            onClick={() => handleViewTestParameter(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="View Test Parameter"
+          >
+            <Eye className="w-4 h-4" />
+          </motion.button>
+
+          {/* Edit Action - Pencil Icon */}
+          <motion.button
+            onClick={() => handleEditTestParameter(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="Edit Test Parameter"
+          >
+            <Edit className="w-4 h-4" />
+          </motion.button>
+
+          <motion.button
+            onClick={() => handleDeleteTestParameter(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="Delete "
+          >
+            <Trash2 className="w-4 h-4" />
+          </motion.button>
+
+          {/* More Options - Vertical Ellipsis */}
+          
+        </div>
+      )
     }
   ];
 
   const handleAddTestParameter = () => {
     setEditingTestParameter(null);
+    setViewingTestParameter(null);
+    setIsViewMode(false);
     setIsDrawerOpen(true);
   };
 
   const handleEditTestParameter = (record: any) => {
     setEditingTestParameter(record);
+    setViewingTestParameter(null);
+    setIsViewMode(false);
     setIsDrawerOpen(true);
   };
 
   const handleViewTestParameter = (record: any) => {
-    console.log('View test parameter:', record.id);
+    setViewingTestParameter(record);
+    setEditingTestParameter(null);
+    setIsViewMode(true);
+    setIsDrawerOpen(true);
   };
 
-  const handleDeleteTestParameter = (record: any) => {
-    if (window.confirm(`Are you sure you want to delete test parameter "${record.testName}"?`)) {
+  const handleDeleteTestParameter = async (record: any) => {
+    const confirmed = await confirmDelete(record.testName, 'test');
+    if (confirmed) {
       setTestParameters(prev => prev.filter(testParam => testParam.id !== record.id));
     }
   };
@@ -191,10 +293,26 @@ const TestParameters: React.FC = () => {
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
     setEditingTestParameter(null);
+    setViewingTestParameter(null);
+    setIsViewMode(false);
   };
 
   // Footer component for the drawer
-  const drawerFooter = (
+  const drawerFooter = isViewMode ? (
+    <div className="p-4">
+      <div className="flex justify-end">
+        <motion.button
+          onClick={handleCloseDrawer}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Close
+        </motion.button>
+      </div>
+    </div>
+  ) : (
     <div className="p-4">
       <div className="flex items-center justify-end space-x-3">
         <motion.button
@@ -279,21 +397,22 @@ const TestParameters: React.FC = () => {
         searchPlaceholder="Search test parameters..."
         addButtonText="Add Test Parameter"
         onAdd={handleAddTestParameter}
-        onEdit={handleEditTestParameter}
-        onView={handleViewTestParameter}
-        onDelete={handleDeleteTestParameter}
         searchable={true}
-        filterable={true}
-        exportable={true}
         pagination={true}
         pageSize={10}
       />
 
-      {/* Add/Edit Test Parameter Drawer */}
+      {/* Add/Edit/View Test Parameter Drawer */}
       <Drawer
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}
-        title={editingTestParameter ? 'Edit Test Parameter' : 'Add New Test Parameter'}
+        title={
+          isViewMode 
+            ? `View Test Parameter - ${viewingTestParameter?.testName || 'Test Parameter'}`
+            : editingTestParameter 
+              ? 'Edit Test Parameter' 
+              : 'Add New Test Parameter'
+        }
         size="xl"
         footer={drawerFooter}
       >
@@ -301,7 +420,8 @@ const TestParameters: React.FC = () => {
           onSave={handleSaveTestParameter}
           onCancel={handleCloseDrawer}
           isEditing={!!editingTestParameter}
-          initialData={editingTestParameter}
+          initialData={editingTestParameter || viewingTestParameter}
+          isViewMode={isViewMode}
         />
       </Drawer>
     </div>

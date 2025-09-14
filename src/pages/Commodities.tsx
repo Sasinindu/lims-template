@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Package, ChevronRight, CheckCircle, XCircle, Save, X } from 'lucide-react';
+import { Package, ChevronRight, CheckCircle, XCircle, Save, X, Eye, Edit, MoreVertical, Trash2 } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
 import Drawer from '../components/Drawer';
 import CustomSelect from '../components/CustomSelect';
 import Label from '../components/Label';
 import Input from '../components/Input';
+import { useConfirmation } from '../hooks/useConfirmation';
 
 const Commodities: React.FC = () => {
   const [activeSection, setActiveSection] = useState('categories');
@@ -118,6 +119,55 @@ const CommodityCategories: React.FC = () => {
   const [loading] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<any>(null);
+  const [viewingCategory, setViewingCategory] = useState<any>(null);
+  const [isViewMode, setIsViewMode] = useState(false);
+  const [showActions, setShowActions] = useState<{ [key: string]: boolean }>({});
+  const [dropdownPositions, setDropdownPositions] = useState<{ [key: string]: 'bottom' | 'top' }>({});
+
+  // Use confirmation hook
+  const { confirmDelete } = useConfirmation();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('[data-dropdown-container]')) {
+        setShowActions({});
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const toggleActions = (rowId: string, event?: React.MouseEvent) => {
+    const isCurrentlyOpen = showActions[rowId];
+    
+    setShowActions(prev => ({
+      ...prev,
+      [rowId]: !prev[rowId]
+    }));
+
+    // Calculate dropdown position when opening
+    if (!isCurrentlyOpen && event) {
+      const target = event.currentTarget as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const dropdownHeight = 80; // Estimated dropdown height (1 item * ~50px + padding)
+      const spaceBelow = viewportHeight - rect.bottom - 10; // 10px buffer
+      const spaceAbove = rect.top - 10; // 10px buffer
+
+      // Open upward if there's not enough space below but enough space above
+      const shouldOpenUpward = spaceBelow < dropdownHeight && spaceAbove >= dropdownHeight;
+      
+      setDropdownPositions(prev => ({
+        ...prev,
+        [rowId]: shouldOpenUpward ? 'top' : 'bottom'
+      }));
+    }
+  };
 
   const [categories, setCategories] = useState([
     { id: 'CC001', name: 'Food & Beverages', status: 'Active' },
@@ -162,25 +212,76 @@ const CommodityCategories: React.FC = () => {
           {value}
         </span>
       )
+    },
+    {
+      key: 'actions',
+      title: 'Actions',
+      dataIndex: 'actions',
+      width: '120px',
+      render: (_, record) => (
+        <div className="flex items-center space-x-1">
+          {/* View Action - Eye Icon */}
+          <motion.button
+            onClick={() => handleViewCategory(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="View Category"
+          >
+            <Eye className="w-4 h-4" />
+          </motion.button>
+
+          {/* Edit Action - Pencil Icon */}
+          <motion.button
+            onClick={() => handleEditCategory(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="Edit Category"
+          >
+            <Edit className="w-4 h-4" />
+          </motion.button>
+
+          <motion.button
+            onClick={() => handleDeleteCategory(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="Delete Category"
+          >
+            <Trash2 className="w-4 h-4" />
+          </motion.button>
+
+          
+        </div>
+      )
     }
   ];
 
   const handleAddCategory = () => {
     setEditingCategory(null);
+    setViewingCategory(null);
+    setIsViewMode(false);
     setIsDrawerOpen(true);
   };
 
   const handleEditCategory = (record: any) => {
     setEditingCategory(record);
+    setViewingCategory(null);
+    setIsViewMode(false);
     setIsDrawerOpen(true);
   };
 
   const handleViewCategory = (record: any) => {
-    console.log('View category:', record.id);
+    setViewingCategory(record);
+    setEditingCategory(null);
+    setIsViewMode(true);
+    setIsDrawerOpen(true);
   };
 
-  const handleDeleteCategory = (record: any) => {
-    if (window.confirm(`Are you sure you want to delete category "${record.name}"?`)) {
+  const handleDeleteCategory = async (record: any) => {
+    const confirmed = await confirmDelete(record.name, 'generic');
+    if (confirmed) {
       setCategories(prev => prev.filter(cat => cat.id !== record.id));
     }
   };
@@ -206,10 +307,26 @@ const CommodityCategories: React.FC = () => {
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
     setEditingCategory(null);
+    setViewingCategory(null);
+    setIsViewMode(false);
   };
 
   // Footer component for the drawer
-  const drawerFooter = (
+  const drawerFooter = isViewMode ? (
+    <div className="p-4">
+      <div className="flex justify-end">
+        <motion.button
+          onClick={handleCloseDrawer}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Close
+        </motion.button>
+      </div>
+    </div>
+  ) : (
     <div className="p-4">
       <div className="flex items-center justify-end space-x-3">
         <motion.button
@@ -292,21 +409,22 @@ const CommodityCategories: React.FC = () => {
         searchPlaceholder="Search categories..."
         addButtonText="Add Category"
         onAdd={handleAddCategory}
-        onEdit={handleEditCategory}
-        onView={handleViewCategory}
-        onDelete={handleDeleteCategory}
         searchable={true}
-        filterable={true}
-        exportable={true}
         pagination={true}
         pageSize={10}
       />
 
-      {/* Add/Edit Category Drawer */}
+      {/* Add/Edit/View Category Drawer */}
       <Drawer
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}
-        title={editingCategory ? 'Edit Category' : 'Add New Category'}
+        title={
+          isViewMode 
+            ? `View Category - ${viewingCategory?.name || 'Category'}`
+            : editingCategory 
+              ? 'Edit Category' 
+              : 'Add New Category'
+        }
         size="md"
         footer={drawerFooter}
       >
@@ -314,7 +432,8 @@ const CommodityCategories: React.FC = () => {
           onSave={handleSaveCategory}
           onCancel={handleCloseDrawer}
           isEditing={!!editingCategory}
-          initialData={editingCategory}
+          initialData={editingCategory || viewingCategory}
+          isViewMode={isViewMode}
         />
       </Drawer>
     </div>
@@ -326,6 +445,11 @@ const CommoditySubCategories: React.FC = () => {
   const [loading] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingSubCategory, setEditingSubCategory] = useState<any>(null);
+  const [viewingSubCategory, setViewingSubCategory] = useState<any>(null);
+  const [isViewMode, setIsViewMode] = useState(false);
+
+  // Use confirmation hook
+  const { confirmDelete } = useConfirmation();
 
   const [subCategories, setSubCategories] = useState([
     { id: 'CSC001', name: 'Dairy Products', category: 'Food & Beverages', status: 'Active' },
@@ -379,25 +503,75 @@ const CommoditySubCategories: React.FC = () => {
           {value}
         </span>
       )
+    },
+    {
+      key: 'actions',
+      title: 'Actions',
+      dataIndex: 'actions',
+      width: '120px',
+      render: (_, record) => (
+        <div className="flex items-center space-x-1">
+          {/* View Action - Eye Icon */}
+          <motion.button
+            onClick={() => handleViewSubCategory(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="View Sub Category"
+          >
+            <Eye className="w-4 h-4" />
+          </motion.button>
+
+          {/* Edit Action - Pencil Icon */}
+          <motion.button
+            onClick={() => handleEditSubCategory(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="Edit Sub Category"
+          >
+            <Edit className="w-4 h-4" />
+          </motion.button>
+
+          {/* Delete Action - Trash Icon */}
+          <motion.button
+            onClick={() => handleDeleteSubCategory(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="Delete Sub Category"
+          >
+            <Trash2 className="w-4 h-4" />
+          </motion.button>
+        </div>
+      )
     }
   ];
 
   const handleAddSubCategory = () => {
     setEditingSubCategory(null);
+    setViewingSubCategory(null);
+    setIsViewMode(false);
     setIsDrawerOpen(true);
   };
 
   const handleEditSubCategory = (record: any) => {
     setEditingSubCategory(record);
+    setViewingSubCategory(null);
+    setIsViewMode(false);
     setIsDrawerOpen(true);
   };
 
   const handleViewSubCategory = (record: any) => {
-    console.log('View sub category:', record.id);
+    setViewingSubCategory(record);
+    setEditingSubCategory(null);
+    setIsViewMode(true);
+    setIsDrawerOpen(true);
   };
 
-  const handleDeleteSubCategory = (record: any) => {
-    if (window.confirm(`Are you sure you want to delete sub category "${record.name}"?`)) {
+  const handleDeleteSubCategory = async (record: any) => {
+    const confirmed = await confirmDelete(record.name, 'generic');
+    if (confirmed) {
       setSubCategories(prev => prev.filter(sub => sub.id !== record.id));
     }
   };
@@ -423,10 +597,26 @@ const CommoditySubCategories: React.FC = () => {
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
     setEditingSubCategory(null);
+    setViewingSubCategory(null);
+    setIsViewMode(false);
   };
 
   // Footer component for the drawer
-  const drawerFooter = (
+  const drawerFooter = isViewMode ? (
+    <div className="p-4">
+      <div className="flex justify-end">
+        <motion.button
+          onClick={handleCloseDrawer}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Close
+        </motion.button>
+      </div>
+    </div>
+  ) : (
     <div className="p-4">
       <div className="flex items-center justify-end space-x-3">
         <motion.button
@@ -509,21 +699,22 @@ const CommoditySubCategories: React.FC = () => {
         searchPlaceholder="Search sub categories..."
         addButtonText="Add Sub Category"
         onAdd={handleAddSubCategory}
-        onEdit={handleEditSubCategory}
-        onView={handleViewSubCategory}
-        onDelete={handleDeleteSubCategory}
         searchable={true}
-        filterable={true}
-        exportable={true}
         pagination={true}
         pageSize={10}
       />
 
-      {/* Add/Edit Sub Category Drawer */}
+      {/* Add/Edit/View Sub Category Drawer */}
       <Drawer
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}
-        title={editingSubCategory ? 'Edit Sub Category' : 'Add New Sub Category'}
+        title={
+          isViewMode 
+            ? `View Sub Category - ${viewingSubCategory?.name || 'Sub Category'}`
+            : editingSubCategory 
+              ? 'Edit Sub Category' 
+              : 'Add New Sub Category'
+        }
         size="md"
         footer={drawerFooter}
       >
@@ -531,7 +722,8 @@ const CommoditySubCategories: React.FC = () => {
           onSave={handleSaveSubCategory}
           onCancel={handleCloseDrawer}
           isEditing={!!editingSubCategory}
-          initialData={editingSubCategory}
+          initialData={editingSubCategory || viewingSubCategory}
+          isViewMode={isViewMode}
         />
       </Drawer>
     </div>
@@ -543,6 +735,11 @@ const CommoditiesForm: React.FC = () => {
   const [loading] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingCommodity, setEditingCommodity] = useState<any>(null);
+  const [viewingCommodity, setViewingCommodity] = useState<any>(null);
+  const [isViewMode, setIsViewMode] = useState(false);
+
+  // Use confirmation hook
+  const { confirmDelete } = useConfirmation();
 
   const [commodities, setCommodities] = useState([
     { id: 'C001', category: 'Food & Beverages', subCategory: 'Dairy Products', commodity: 'Milk', status: 'Active' },
@@ -605,25 +802,75 @@ const CommoditiesForm: React.FC = () => {
           {value}
         </span>
       )
+    },
+    {
+      key: 'actions',
+      title: 'Actions',
+      dataIndex: 'actions',
+      width: '120px',
+      render: (_, record) => (
+        <div className="flex items-center space-x-1">
+          {/* View Action - Eye Icon */}
+          <motion.button
+            onClick={() => handleViewCommodity(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="View Commodity"
+          >
+            <Eye className="w-4 h-4" />
+          </motion.button>
+
+          {/* Edit Action - Pencil Icon */}
+          <motion.button
+            onClick={() => handleEditCommodity(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="Edit Commodity"
+          >
+            <Edit className="w-4 h-4" />
+          </motion.button>
+
+          {/* Delete Action - Trash Icon */}
+          <motion.button
+            onClick={() => handleDeleteCommodity(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="Delete Commodity"
+          >
+            <Trash2 className="w-4 h-4" />
+          </motion.button>
+        </div>
+      )
     }
   ];
 
   const handleAddCommodity = () => {
     setEditingCommodity(null);
+    setViewingCommodity(null);
+    setIsViewMode(false);
     setIsDrawerOpen(true);
   };
 
   const handleEditCommodity = (record: any) => {
     setEditingCommodity(record);
+    setViewingCommodity(null);
+    setIsViewMode(false);
     setIsDrawerOpen(true);
   };
 
   const handleViewCommodity = (record: any) => {
-    console.log('View commodity:', record.id);
+    setViewingCommodity(record);
+    setEditingCommodity(null);
+    setIsViewMode(true);
+    setIsDrawerOpen(true);
   };
 
-  const handleDeleteCommodity = (record: any) => {
-    if (window.confirm(`Are you sure you want to delete commodity "${record.commodity}"?`)) {
+  const handleDeleteCommodity = async (record: any) => {
+    const confirmed = await confirmDelete(record.commodity, 'generic');
+    if (confirmed) {
       setCommodities(prev => prev.filter(com => com.id !== record.id));
     }
   };
@@ -649,10 +896,26 @@ const CommoditiesForm: React.FC = () => {
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
     setEditingCommodity(null);
+    setViewingCommodity(null);
+    setIsViewMode(false);
   };
 
   // Footer component for the drawer
-  const drawerFooter = (
+  const drawerFooter = isViewMode ? (
+    <div className="p-4">
+      <div className="flex justify-end">
+        <motion.button
+          onClick={handleCloseDrawer}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Close
+        </motion.button>
+      </div>
+    </div>
+  ) : (
     <div className="p-4">
       <div className="flex items-center justify-end space-x-3">
         <motion.button
@@ -735,21 +998,22 @@ const CommoditiesForm: React.FC = () => {
         searchPlaceholder="Search commodities..."
         addButtonText="Add Commodity"
         onAdd={handleAddCommodity}
-        onEdit={handleEditCommodity}
-        onView={handleViewCommodity}
-        onDelete={handleDeleteCommodity}
         searchable={true}
-        filterable={true}
-        exportable={true}
         pagination={true}
         pageSize={10}
       />
 
-      {/* Add/Edit Commodity Drawer */}
+      {/* Add/Edit/View Commodity Drawer */}
       <Drawer
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}
-        title={editingCommodity ? 'Edit Commodity' : 'Add New Commodity'}
+        title={
+          isViewMode 
+            ? `View Commodity - ${viewingCommodity?.commodity || 'Commodity'}`
+            : editingCommodity 
+              ? 'Edit Commodity' 
+              : 'Add New Commodity'
+        }
         size="md"
         footer={drawerFooter}
       >
@@ -757,7 +1021,8 @@ const CommoditiesForm: React.FC = () => {
           onSave={handleSaveCommodity}
           onCancel={handleCloseDrawer}
           isEditing={!!editingCommodity}
-          initialData={editingCommodity}
+          initialData={editingCommodity || viewingCommodity}
+          isViewMode={isViewMode}
         />
       </Drawer>
     </div>
@@ -770,7 +1035,8 @@ const CategoryForm: React.FC<{
   onCancel: () => void;
   isEditing?: boolean;
   initialData?: any;
-}> = ({ onSave, onCancel, isEditing = false, initialData = null }) => {
+  isViewMode?: boolean;
+}> = ({ onSave, onCancel, isEditing = false, initialData = null, isViewMode = false }) => {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     status: initialData?.status || 'Active'
@@ -806,7 +1072,7 @@ const CategoryForm: React.FC<{
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
+    if (!isViewMode && validateForm()) {
       onSave(formData);
     }
   };
@@ -822,6 +1088,7 @@ const CategoryForm: React.FC<{
           onChange={(e) => handleInputChange('name', e.target.value)}
           placeholder="Enter category name"
           error={errors.name}
+          disabled={isViewMode}
         />
       </div>
       <div>
@@ -834,6 +1101,7 @@ const CategoryForm: React.FC<{
           options={statusOptions}
           placeholder="Select status"
           error={errors.status}
+          disabled={isViewMode}
         />
       </div>
     </form>
@@ -845,7 +1113,8 @@ const SubCategoryForm: React.FC<{
   onCancel: () => void;
   isEditing?: boolean;
   initialData?: any;
-}> = ({ onSave, onCancel, isEditing = false, initialData = null }) => {
+  isViewMode?: boolean;
+}> = ({ onSave, onCancel, isEditing = false, initialData = null, isViewMode = false }) => {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     category: initialData?.category || '',
@@ -893,7 +1162,7 @@ const SubCategoryForm: React.FC<{
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
+    if (!isViewMode && validateForm()) {
       onSave(formData);
     }
   };
@@ -909,6 +1178,7 @@ const SubCategoryForm: React.FC<{
           onChange={(e) => handleInputChange('name', e.target.value)}
           placeholder="Enter sub category name"
           error={errors.name}
+          disabled={isViewMode}
         />
       </div>
       <div>
@@ -921,6 +1191,7 @@ const SubCategoryForm: React.FC<{
           options={categoryOptions}
           placeholder="Select category"
           error={errors.category}
+          disabled={isViewMode}
         />
       </div>
       <div>
@@ -933,6 +1204,7 @@ const SubCategoryForm: React.FC<{
           options={statusOptions}
           placeholder="Select status"
           error={errors.status}
+          disabled={isViewMode}
         />
       </div>
     </form>
@@ -944,7 +1216,8 @@ const CommodityForm: React.FC<{
   onCancel: () => void;
   isEditing?: boolean;
   initialData?: any;
-}> = ({ onSave, onCancel, isEditing = false, initialData = null }) => {
+  isViewMode?: boolean;
+}> = ({ onSave, onCancel, isEditing = false, initialData = null, isViewMode = false }) => {
   const [formData, setFormData] = useState({
     category: initialData?.category || '',
     subCategory: initialData?.subCategory || '',
@@ -1004,7 +1277,7 @@ const CommodityForm: React.FC<{
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
+    if (!isViewMode && validateForm()) {
       onSave(formData);
     }
   };
@@ -1021,6 +1294,7 @@ const CommodityForm: React.FC<{
           options={categoryOptions}
           placeholder="Select category"
           error={errors.category}
+          disabled={isViewMode}
         />
       </div>
       <div>
@@ -1033,6 +1307,7 @@ const CommodityForm: React.FC<{
           options={subCategoryOptions}
           placeholder="Select sub category"
           error={errors.subCategory}
+          disabled={isViewMode}
         />
       </div>
       <div>
@@ -1044,6 +1319,7 @@ const CommodityForm: React.FC<{
           onChange={(e) => handleInputChange('commodity', e.target.value)}
           placeholder="Enter commodity name"
           error={errors.commodity}
+          disabled={isViewMode}
         />
       </div>
       <div>
@@ -1056,6 +1332,7 @@ const CommodityForm: React.FC<{
           options={statusOptions}
           placeholder="Select status"
           error={errors.status}
+          disabled={isViewMode}
         />
       </div>
     </form>

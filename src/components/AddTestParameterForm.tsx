@@ -11,13 +11,15 @@ interface AddTestParameterFormProps {
   onCancel: () => void;
   isEditing?: boolean;
   initialData?: any;
+  isViewMode?: boolean;
 }
 
 const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
   onSave,
   onCancel,
   isEditing = false,
-  initialData = null
+  initialData = null,
+  isViewMode = false
 }) => {
   const [formData, setFormData] = useState({
     testName: initialData?.testName || initialData?.testType || '',
@@ -313,17 +315,7 @@ const AddTestParameterForm: React.FC<AddTestParameterFormProps> = ({
             </div>
           </div>
 
-          {/* Reference */}
-          <div className="md:col-span-2">
-            <Input
-              label="Reference"
-              required
-              value={formData.reference}
-              onChange={(e) => handleInputChange('reference', e.target.value)}
-              placeholder="Enter reference"
-              error={errors.reference}
-            />
-          </div>
+          
         </div>
       </div>
 
