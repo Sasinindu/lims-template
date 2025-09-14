@@ -17,19 +17,23 @@ interface AddInstrumentFormProps {
   onCancel: () => void;
   isEditing?: boolean;
   initialData?: any;
+  isViewMode?: boolean;
 }
 
 const AddInstrumentForm: React.FC<AddInstrumentFormProps> = ({
   onSave,
   onCancel,
   isEditing = false,
-  initialData = null
+  initialData = null,
+  isViewMode = false
 }) => {
   const [formData, setFormData] = useState({
     instrumentName: initialData?.instrumentName || '',
     instrumentCategory: initialData?.instrumentCategory || '',
     serialNumber: initialData?.serialNumber || '',
     status: initialData?.status || '',
+    purchasedDate: initialData?.purchasedDate || '',
+    calibrationCycle: initialData?.calibrationCycle || '',
     ...(initialData || {})
   });
 
@@ -46,6 +50,14 @@ const AddInstrumentForm: React.FC<AddInstrumentFormProps> = ({
   const statusOptions = [
     { value: 'Active', label: 'Active' },
     { value: 'Inactive', label: 'Inactive' }
+  ];
+
+  const calibrationCycleOptions = [
+    { value: 'Monthly', label: 'Monthly' },
+    { value: 'Quarterly', label: 'Quarterly' },
+    { value: 'Semi-Annually', label: 'Semi-Annually' },
+    { value: 'Annually', label: 'Annually' },
+    { value: 'Bi-Annually', label: 'Bi-Annually' }
   ];
 
   const handleInputChange = (field: string, value: string) => {
@@ -71,6 +83,12 @@ const AddInstrumentForm: React.FC<AddInstrumentFormProps> = ({
     if (!formData.status) {
       newErrors.status = 'Status is required';
     }
+    if (!formData.purchasedDate.trim()) {
+      newErrors.purchasedDate = 'Purchased date is required';
+    }
+    if (!formData.calibrationCycle) {
+      newErrors.calibrationCycle = 'Calibration cycle is required';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -79,7 +97,7 @@ const AddInstrumentForm: React.FC<AddInstrumentFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (validateForm()) {
+    if (!isViewMode && validateForm()) {
       const instrumentData = {
         ...formData,
         id: isEditing ? formData.id : `I${String(Date.now()).slice(-3)}`
@@ -101,6 +119,7 @@ const AddInstrumentForm: React.FC<AddInstrumentFormProps> = ({
             onChange={(e) => handleInputChange('instrumentName', e.target.value)}
             placeholder="Enter instrument name"
             error={errors.instrumentName}
+            disabled={isViewMode}
           />
 
           {/* Instrument Category */}
@@ -112,6 +131,7 @@ const AddInstrumentForm: React.FC<AddInstrumentFormProps> = ({
               onChange={(value) => handleInputChange('instrumentCategory', value)}
               options={categoryOptions}
               placeholder="Select instrument category"
+              disabled={isViewMode}
             />
           </div>
 
@@ -123,6 +143,7 @@ const AddInstrumentForm: React.FC<AddInstrumentFormProps> = ({
             onChange={(e) => handleInputChange('serialNumber', e.target.value)}
             placeholder="Enter serial number"
             error={errors.serialNumber}
+            disabled={isViewMode}
           />
 
           {/* Status */}
@@ -134,6 +155,31 @@ const AddInstrumentForm: React.FC<AddInstrumentFormProps> = ({
               onChange={(value) => handleInputChange('status', value)}
               options={statusOptions}
               placeholder="Select status"
+              disabled={isViewMode}
+            />
+          </div>
+
+          {/* Purchased Date */}
+          <Input
+            label="Purchased Date"
+            required
+            type="date"
+            value={formData.purchasedDate}
+            onChange={(e) => handleInputChange('purchasedDate', e.target.value)}
+            error={errors.purchasedDate}
+            disabled={isViewMode}
+          />
+
+          {/* Calibration Cycle */}
+          <div className="space-y-2">
+            <CustomSelect
+              label="Calibration Cycle"
+              value={formData.calibrationCycle}
+              onChange={(value) => handleInputChange('calibrationCycle', value)}
+              options={calibrationCycleOptions}
+              placeholder="Select calibration cycle"
+              error={errors.calibrationCycle}
+              disabled={isViewMode}
             />
           </div>
         </div>

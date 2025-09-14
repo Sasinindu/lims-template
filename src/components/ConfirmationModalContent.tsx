@@ -64,7 +64,7 @@ const ConfirmationModalContent: React.FC<ConfirmationModalContentProps> = ({
         };
       default:
         return {
-          bg: 'bg-red-50 dark:bg-red-900/10',
+          bg: 'bg-red-20 dark:bg-red-900/10',
           iconBg: 'bg-red-100 dark:bg-red-900/20',
           iconColor: 'text-red-600 dark:text-red-400',
           button: 'bg-red-600 hover:bg-red-700 focus:ring-red-500',

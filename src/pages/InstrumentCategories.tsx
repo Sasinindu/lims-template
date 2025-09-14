@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Building2, Plus, Edit, Eye, Trash2, Save, X, Check, CircleXIcon } from 'lucide-react';
+import { Building2, Plus, Edit, Eye, Trash2, Save, X, Check, CircleXIcon, MoreVertical } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
 import Drawer from '../components/Drawer';
 import AddInstrumentCategoryForm from '../components/AddInstrumentCategoryForm';
+import { useConfirmation } from '../hooks/useConfirmation';
 
 const InstrumentCategories: React.FC = () => {
   const [loading] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<any>(null);
+  const [viewingCategory, setViewingCategory] = useState<any>(null);
+  const [isViewMode, setIsViewMode] = useState(false);
+  const [showActions, setShowActions] = useState<Record<string, boolean>>({});
+
+  // Use confirmation hook
+  const { confirmDelete } = useConfirmation();
 
   // Mock instrument category data
   const [categories, setCategories] = useState([
@@ -55,6 +62,13 @@ const InstrumentCategories: React.FC = () => {
     }
   };
 
+  const toggleActions = (id: string) => {
+    setShowActions(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
   const columns: Column[] = [
     {
       key: 'id',
@@ -97,25 +111,78 @@ const InstrumentCategories: React.FC = () => {
           {value}
         </span>
       )
+    },
+    {
+      key: 'actions',
+      title: 'Actions',
+      width: '200px',
+      sortable: false,
+      render: (_, record) => (
+        <div className="flex items-center space-x-2">
+          {/* View Action - Eye Icon */}
+          <motion.button
+            onClick={() => handleViewCategory(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="View Category"
+          >
+            <Eye className="w-4 h-4" />
+          </motion.button>
+
+          {/* Edit Action - Pencil Icon */}
+          <motion.button
+            onClick={() => handleEditCategory(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="Edit Category"
+          >
+            <Edit className="w-4 h-4" />
+          </motion.button>
+
+          <motion.button
+            onClick={() => handleDeleteCategory(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="Delete Category"
+          >
+            <Trash2 className="w-4 h-4" />
+          </motion.button>
+        </div>
+      )
     }
   ];
 
   const handleAddCategory = () => {
     setEditingCategory(null);
+    setViewingCategory(null);
+    setIsViewMode(false);
     setIsDrawerOpen(true);
   };
 
   const handleEditCategory = (record: any) => {
     setEditingCategory(record);
+    setViewingCategory(null);
+    setIsViewMode(false);
     setIsDrawerOpen(true);
   };
 
   const handleViewCategory = (record: any) => {
-    console.log('View category:', record.id);
+    setViewingCategory(record);
+    setEditingCategory(null);
+    setIsViewMode(true);
+    setIsDrawerOpen(true);
   };
 
-  const handleDeleteCategory = (record: any) => {
-    if (window.confirm(`Are you sure you want to delete category "${record.categoryName}"?`)) {
+  const handleDeleteCategory = async (record: any) => {
+    console.log('Delete category button clicked for:', record.categoryName); // Debug log
+    
+    const confirmed = await confirmDelete(record.categoryName, 'instrument');
+    
+    if (confirmed) {
+      console.log('Delete category:', record.id);
       setCategories(prev => prev.filter(cat => cat.id !== record.id));
     }
   };
@@ -139,10 +206,27 @@ const InstrumentCategories: React.FC = () => {
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
     setEditingCategory(null);
+    setViewingCategory(null);
+    setIsViewMode(false);
   };
 
   // Footer component for the drawer
-  const drawerFooter = (
+  const drawerFooter = isViewMode ? (
+    <div className="p-4">
+      <div className="flex items-center justify-end space-x-3">
+        <motion.button
+          type="button"
+          onClick={handleCloseDrawer}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Close
+        </motion.button>
+      </div>
+    </div>
+  ) : (
     <div className="p-4">
       <div className="flex items-center justify-end space-x-3">
         <motion.button
@@ -227,21 +311,22 @@ const InstrumentCategories: React.FC = () => {
         searchPlaceholder="Search categories..."
         addButtonText="Add Category"
         onAdd={handleAddCategory}
-        onEdit={handleEditCategory}
-        onView={handleViewCategory}
-        onDelete={handleDeleteCategory}
         searchable={true}
-        filterable={true}
-        exportable={true}
         pagination={true}
         pageSize={10}
       />
 
-      {/* Add/Edit Category Drawer */}
+      {/* Add/Edit/View Category Drawer */}
       <Drawer
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}
-        title={editingCategory ? 'Edit Category' : 'Add New Category'}
+        title={
+          isViewMode 
+            ? `View Category - ${viewingCategory?.categoryName || ''}` 
+            : editingCategory 
+              ? 'Edit Category' 
+              : 'Add New Category'
+        }
         size="md"
         footer={drawerFooter}
       >
@@ -249,7 +334,8 @@ const InstrumentCategories: React.FC = () => {
           onSave={handleSaveCategory}
           onCancel={handleCloseDrawer}
           isEditing={!!editingCategory}
-          initialData={editingCategory}
+          initialData={isViewMode ? viewingCategory : editingCategory}
+          isViewMode={isViewMode}
         />
       </Drawer>
     </div>

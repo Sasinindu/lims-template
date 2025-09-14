@@ -1,18 +1,27 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Microscope, Plus, Edit, Eye, Trash2, Save, X, Check, CircleXIcon, MoreVertical, Calendar } from 'lucide-react';
+import { Microscope, Plus, Edit, Eye, Trash2, Save, X, Check, CircleXIcon, MoreVertical, Calendar, History } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
 import Drawer from '../components/Drawer';
 import AddInstrumentForm from '../components/AddInstrumentForm';
 import AddCalibrationForm from '../components/AddCalibrationForm';
+import CalibrationHistoryView from '../components/CalibrationHistoryView';
+import { useConfirmation } from '../hooks/useConfirmation';
 
 const Instruments: React.FC = () => {
   const [loading] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingInstrument, setEditingInstrument] = useState<any>(null);
+  const [viewingInstrument, setViewingInstrument] = useState<any>(null);
+  const [isViewMode, setIsViewMode] = useState(false);
   const [showActions, setShowActions] = useState<{ [key: string]: boolean }>({});
   const [isCalibrationDrawerOpen, setIsCalibrationDrawerOpen] = useState(false);
   const [selectedInstrumentForCalibration, setSelectedInstrumentForCalibration] = useState<any>(null);
+  const [isHistoryDrawerOpen, setIsHistoryDrawerOpen] = useState(false);
+  const [selectedInstrumentForHistory, setSelectedInstrumentForHistory] = useState<any>(null);
+
+  // Use confirmation hook
+  const { confirmDelete } = useConfirmation();
 
   const toggleActions = (rowId: string) => {
     setShowActions(prev => ({
@@ -209,7 +218,7 @@ const Instruments: React.FC = () => {
     {
       key: 'actions',
       title: 'Actions',
-      width: '200px',
+      width: '130px',
       sortable: false,
       render: (_, record) => (
         <div className="flex items-center space-x-2">
@@ -234,6 +243,8 @@ const Instruments: React.FC = () => {
           >
             <Edit className="w-4 h-4" />
           </motion.button>
+
+          
 
           {/* More Options - Vertical Ellipsis */}
           <div className="relative">
@@ -267,6 +278,16 @@ const Instruments: React.FC = () => {
                 </button>
                 <button
                   onClick={() => {
+                    handleViewCalibrationHistory(record);
+                    setShowActions(prev => ({ ...prev, [record.id]: false }));
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                >
+                  <History className="w-4 h-4" />
+                  Calibration History
+                </button>
+                <button
+                  onClick={() => {
                     handleDeleteInstrument(record);
                     setShowActions(prev => ({ ...prev, [record.id]: false }));
                   }}
@@ -285,21 +306,32 @@ const Instruments: React.FC = () => {
 
   const handleAddInstrument = () => {
     setEditingInstrument(null);
+    setViewingInstrument(null);
+    setIsViewMode(false);
     setIsDrawerOpen(true);
   };
 
   const handleEditInstrument = (record: any) => {
     setEditingInstrument(record);
+    setViewingInstrument(null);
+    setIsViewMode(false);
     setIsDrawerOpen(true);
   };
 
   const handleViewInstrument = (record: any) => {
-    console.log('View instrument:', record.id);
-    // You can implement view functionality here
+    setViewingInstrument(record);
+    setEditingInstrument(null);
+    setIsViewMode(true);
+    setIsDrawerOpen(true);
   };
 
-  const handleDeleteInstrument = (record: any) => {
-    if (window.confirm(`Are you sure you want to delete instrument "${record.instrumentName}"?`)) {
+  const handleDeleteInstrument = async (record: any) => {
+    console.log('Delete instrument button clicked for:', record.instrumentName); // Debug log
+    
+    const confirmed = await confirmDelete(record.instrumentName, 'instrument');
+    
+    if (confirmed) {
+      console.log('Delete instrument:', record.id);
       setInstruments(prev => prev.filter(inst => inst.id !== record.id));
     }
   };
@@ -307,6 +339,11 @@ const Instruments: React.FC = () => {
   const handleAddCalibration = (record: any) => {
     setSelectedInstrumentForCalibration(record);
     setIsCalibrationDrawerOpen(true);
+  };
+
+  const handleViewCalibrationHistory = (record: any) => {
+    setSelectedInstrumentForHistory(record);
+    setIsHistoryDrawerOpen(true);
   };
 
   const handleSaveCalibration = (calibrationData: any) => {
@@ -340,6 +377,56 @@ const Instruments: React.FC = () => {
     setSelectedInstrumentForCalibration(null);
   };
 
+  const handleCloseHistoryDrawer = () => {
+    setIsHistoryDrawerOpen(false);
+    setSelectedInstrumentForHistory(null);
+  };
+
+  // Footer for calibration drawer
+  const calibrationDrawerFooter = (
+    <div className="p-4">
+      <div className="flex items-center justify-end space-x-3">
+        <motion.button
+          type="button"
+          onClick={handleCloseCalibrationDrawer}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Cancel
+        </motion.button>
+        <motion.button
+          type="submit"
+          form="calibration-form"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
+        >
+          <Save className="w-4 h-4 mr-2" />
+          Add Calibration
+        </motion.button>
+      </div>
+    </div>
+  );
+
+  // Footer for calibration history drawer
+  const historyDrawerFooter = (
+    <div className="p-4">
+      <div className="flex justify-end">
+        <motion.button
+          onClick={handleCloseHistoryDrawer}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Close
+        </motion.button>
+      </div>
+    </div>
+  );
+
   const handleSaveInstrument = (instrumentData: any) => {
     if (editingInstrument) {
       // Update existing instrument
@@ -366,30 +453,49 @@ const Instruments: React.FC = () => {
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
     setEditingInstrument(null);
+    setViewingInstrument(null);
+    setIsViewMode(false);
   };
 
-  const drawerFooter = (
-    <div className="flex justify-end space-x-2">
-      <motion.button
-        onClick={handleCloseDrawer}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
-      >
-        <X className="w-4 h-4 mr-2" />
-        Cancel
-      </motion.button>
-      <motion.button
-        onClick={() => {
-          // This will be handled by the form's onSave
-        }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-md hover:bg-primary-700"
-      >
-        <Save className="w-4 h-4 mr-2" />
-        {editingInstrument ? 'Update' : 'Save'}
-      </motion.button>
+  const drawerFooter = isViewMode ? (
+    <div className="p-4">
+      <div className="flex items-center justify-end space-x-3">
+        <motion.button
+          type="button"
+          onClick={handleCloseDrawer}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Close
+        </motion.button>
+      </div>
+    </div>
+  ) : (
+    <div className="p-4">
+      <div className="flex items-center justify-end space-x-3">
+        <motion.button
+          type="button"
+          onClick={handleCloseDrawer}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Cancel
+        </motion.button>
+        <motion.button
+          type="submit"
+          form="instrument-form"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
+        >
+          <Save className="w-4 h-4 mr-2" />
+          {editingInstrument ? 'Update Instrument' : 'Add Instrument'}
+        </motion.button>
+      </div>
     </div>
   );
 
@@ -470,17 +576,21 @@ const Instruments: React.FC = () => {
         addButtonText="Add Instrument"
         onAdd={handleAddInstrument}
         searchable={true}
-        filterable={true}
-        exportable={true}
         pagination={true}
         pageSize={10}
       />
 
-      {/* Add/Edit Instrument Drawer */}
+      {/* Add/Edit/View Instrument Drawer */}
       <Drawer
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}
-        title={editingInstrument ? 'Edit Instrument' : 'Add New Instrument'}
+        title={
+          isViewMode 
+            ? `View Instrument - ${viewingInstrument?.instrumentName || ''}` 
+            : editingInstrument 
+              ? 'Edit Instrument' 
+              : 'Add New Instrument'
+        }
         size="md"
         footer={drawerFooter}
       >
@@ -488,7 +598,8 @@ const Instruments: React.FC = () => {
           onSave={handleSaveInstrument}
           onCancel={handleCloseDrawer}
           isEditing={!!editingInstrument}
-          initialData={editingInstrument}
+          initialData={isViewMode ? viewingInstrument : editingInstrument}
+          isViewMode={isViewMode}
         />
       </Drawer>
 
@@ -497,11 +608,25 @@ const Instruments: React.FC = () => {
         isOpen={isCalibrationDrawerOpen}
         onClose={handleCloseCalibrationDrawer}
         title={`Add Calibration - ${selectedInstrumentForCalibration?.instrumentName || 'Instrument'}`}
-        size="md"
+        size="lg"
+        footer={calibrationDrawerFooter}
       >
         <AddCalibrationForm
           onSave={handleSaveCalibration}
           instrument={selectedInstrumentForCalibration}
+        />
+      </Drawer>
+
+      {/* Calibration History Drawer */}
+      <Drawer
+        isOpen={isHistoryDrawerOpen}
+        onClose={handleCloseHistoryDrawer}
+        title={`Calibration History - ${selectedInstrumentForHistory?.instrumentName || 'Instrument'}`}
+        size="3xl"
+        footer={historyDrawerFooter}
+      >
+        <CalibrationHistoryView
+          instrument={selectedInstrumentForHistory}
         />
       </Drawer>
     </div>

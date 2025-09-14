@@ -15,13 +15,15 @@ interface AddInstrumentCategoryFormProps {
   onCancel: () => void;
   isEditing?: boolean;
   initialData?: any;
+  isViewMode?: boolean;
 }
 
 const AddInstrumentCategoryForm: React.FC<AddInstrumentCategoryFormProps> = ({
   onSave,
   onCancel,
   isEditing = false,
-  initialData = null
+  initialData = null,
+  isViewMode = false
 }) => {
   const [formData, setFormData] = useState({
     categoryName: initialData?.categoryName || '',
@@ -62,7 +64,7 @@ const AddInstrumentCategoryForm: React.FC<AddInstrumentCategoryFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (validateForm()) {
+    if (!isViewMode && validateForm()) {
       const categoryData = {
         ...formData,
         id: isEditing ? formData.id : `IC${String(Date.now()).slice(-3)}`
@@ -84,6 +86,7 @@ const AddInstrumentCategoryForm: React.FC<AddInstrumentCategoryFormProps> = ({
             onChange={(e) => handleInputChange('categoryName', e.target.value)}
             placeholder="Enter category name"
             error={errors.categoryName}
+            disabled={isViewMode}
           />
 
           {/* Status */}
@@ -96,6 +99,7 @@ const AddInstrumentCategoryForm: React.FC<AddInstrumentCategoryFormProps> = ({
               onChange={(value) => handleInputChange('status', value)}
               options={statusOptions}
               placeholder="Select status"
+              disabled={isViewMode}
             />
           </div>
 
@@ -112,6 +116,7 @@ const AddInstrumentCategoryForm: React.FC<AddInstrumentCategoryFormProps> = ({
                 rows={3}
                 className="w-full px-3 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-300 dark:border-gray-600/50 rounded-lg shadow-sm shadow-black/5 dark:shadow-black/20 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-300 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm resize-none"
                 placeholder="Enter category description"
+                disabled={isViewMode}
               />
             </div>
           </div>

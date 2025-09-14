@@ -43,7 +43,7 @@ export const useConfirmation = () => {
   const confirmDelete = (itemName: string, itemType?: ConfirmationOptions['itemType']): Promise<boolean> => {
     return confirm({
       title: 'Delete Item',
-      message: `Are you sure you want to delete "${itemName}"? This action cannot be undone and will permanently remove the item from the system.`,
+      message: `Are you sure you want to delete "${itemName} ?`,
       type: 'delete',
       itemType: itemType || 'generic',
       itemName,
