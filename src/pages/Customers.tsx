@@ -3,10 +3,22 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Building2, MapPin, Phone, Mail, Globe } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 const Customers: React.FC = () => {
   const navigate = useNavigate();
   const [loading] = useState(false);
+
+  // Confirmation modal state
+  const [confirmationModal, setConfirmationModal] = useState({
+    isOpen: false,
+    type: 'delete' as 'delete' | 'warning' | 'danger',
+    title: '',
+    message: '',
+    itemType: 'generic' as 'customer' | 'site' | 'chemical' | 'instrument' | 'order' | 'test' | 'generic',
+    itemName: '',
+    onConfirm: () => {}
+  });
 
   // Mock customer data - expanded to show pagination
   const [customers] = useState([
@@ -280,10 +292,22 @@ const Customers: React.FC = () => {
   };
 
   const handleDeleteCustomer = (record: any) => {
-    if (window.confirm(`Are you sure you want to delete customer ${record.name}?`)) {
-      // Handle delete logic here
-      console.log('Delete customer:', record.id);
-    }
+    console.log('Delete button clicked for:', record.name); // Debug log
+    setConfirmationModal({
+      isOpen: true,
+      type: 'delete',
+      title: 'Delete Customer',
+      message: `Are you sure you want to delete the customer "${record.name}"? This action cannot be undone and will permanently remove the customer and all associated data from the system.`,
+      itemType: 'customer',
+      itemName: record.name,
+      onConfirm: () => {
+        // Handle delete logic here
+        console.log('Delete customer:', record.id);
+        setConfirmationModal(prev => ({ ...prev, isOpen: false }));
+        // Add your deletion logic here
+      }
+    });
+    console.log('Modal state set to open'); // Debug log
   };
 
   return (
@@ -375,6 +399,18 @@ const Customers: React.FC = () => {
         exportable={true}
         pagination={true}
         pageSize={5}
+      />
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmationModal.isOpen}
+        onClose={() => setConfirmationModal(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmationModal.onConfirm}
+        title={confirmationModal.title}
+        message={confirmationModal.message}
+        type={confirmationModal.type}
+        itemType={confirmationModal.itemType}
+        itemName={confirmationModal.itemName}
       />
     </div>
   );

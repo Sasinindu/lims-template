@@ -6,6 +6,7 @@ import Drawer from '../components/Drawer';
 import CustomSelect from '../components/CustomSelect';
 import Label from '../components/Label';
 import Input from '../components/Input';
+import { useConfirmation } from '../hooks/useConfirmation';
 
 const CustomerMaster: React.FC = () => {
   return (
@@ -46,6 +47,9 @@ const Customers: React.FC = () => {
   const [isSitesDrawerOpen, setIsSitesDrawerOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [showActions, setShowActions] = useState<Record<string, boolean>>({});
+
+  // Use confirmation hook
+  const { confirmDelete } = useConfirmation();
 
   const [customers, setCustomers] = useState([
     { 
@@ -150,8 +154,13 @@ const Customers: React.FC = () => {
     setIsDrawerOpen(true);
   };
 
-  const handleDeleteCustomer = (record: any) => {
-    if (window.confirm(`Are you sure you want to delete customer "${record.customerName}"?`)) {
+  const handleDeleteCustomer = async (record: any) => {
+    console.log('Delete button clicked for:', record.customerName); // Debug log
+    
+    const confirmed = await confirmDelete(record.customerName, 'customer');
+    
+    if (confirmed) {
+      console.log('Delete customer:', record.id);
       setCustomers(prev => prev.filter(customer => customer.id !== record.id));
     }
   };
@@ -435,13 +444,13 @@ const Customers: React.FC = () => {
         <div className="card p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Sites</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Inactive Customers</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {customers.reduce((total, customer) => total + (customer.sites?.length || 0), 0)}
+                {customers.filter(c => c.status === 'Inactive').length}
               </p>
             </div>
-            <div className="p-3 bg-purple-500 rounded-full">
-              <MapPin className="w-6 h-6 text-white" />
+            <div className="p-3 bg-red-500 rounded-full">
+              <X className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
@@ -456,10 +465,9 @@ const Customers: React.FC = () => {
         addButtonText="Add Customer"
         onAdd={handleAddCustomer}
         searchable={true}
-        filterable={true}
-        exportable={true}
         pagination={true}
         pageSize={10}
+        
       />
 
       {/* Add/Edit/View Customer Drawer */}
@@ -496,6 +504,8 @@ const Customers: React.FC = () => {
           onCancel={handleCloseSitesDrawer}
         />
       </Drawer>
+
+
     </div>
   );
 };
@@ -513,6 +523,9 @@ const SitesManagement: React.FC<{
   const [isViewMode, setIsViewMode] = useState(false);
   const [loading] = useState(false);
   const [showActions, setShowActions] = useState<Record<string, boolean>>({});
+  
+  // Use confirmation hook for site deletion
+  const { confirmDelete } = useConfirmation();
 
   // Update the data attribute when sites change
   React.useEffect(() => {
@@ -550,8 +563,13 @@ const SitesManagement: React.FC<{
     setIsAddSiteOpen(true);
   };
 
-  const handleDeleteSite = (record: any) => {
-    if (window.confirm(`Are you sure you want to delete site "${record.siteName}"?`)) {
+  const handleDeleteSite = async (record: any) => {
+    console.log('Delete site button clicked for:', record.siteName); // Debug log
+    
+    const confirmed = await confirmDelete(record.siteName, 'site');
+    
+    if (confirmed) {
+      console.log('Delete site:', record.id);
       setSites((prev: any[]) => prev.filter((site: any) => site.id !== record.id));
     }
   };

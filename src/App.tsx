@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { ModalProvider } from './contexts/ModalContext';
 import LoginPage from './pages/LoginPage';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
@@ -41,38 +42,42 @@ const App: React.FC = () => {
   if (!isAuthenticated) {
     return (
       <ThemeProvider>
-        <LoginPage onLogin={handleLogin} />
+        <ModalProvider>
+          <LoginPage onLogin={handleLogin} />
+        </ModalProvider>
       </ThemeProvider>
     );
   }
 
   return (
     <ThemeProvider>
-      <Router>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/order-registration" element={<OrderRegistration />} />
-            <Route path="/order-approval" element={<OrderApproval />} />
-            <Route path="/test-allocation" element={<TestAllocation />} />
-            <Route path="/lab-tests" element={<LabTests />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/database" element={<DatabasePage />} />
-            <Route path="/users" element={<UsersPage />} />
-            <Route path="/settings" element={<Settings />} />
-            
-            {/* Master Data Routes */}
-            <Route path="/customer-master" element={<CustomerMaster />} />
-            <Route path="/tests" element={<Tests />} />
-            <Route path="/chemicals" element={<Chemicals />} />
-            <Route path="/commodities" element={<Commodities />} />
-            <Route path="/instrument-master" element={<InstrumentMaster />} />
-          </Routes>
-        </Layout>
-      </Router>
+      <ModalProvider>
+        <Router>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/order-registration" element={<OrderRegistration />} />
+              <Route path="/order-approval" element={<OrderApproval />} />
+              <Route path="/test-allocation" element={<TestAllocation />} />
+              <Route path="/lab-tests" element={<LabTests />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/database" element={<DatabasePage />} />
+              <Route path="/users" element={<UsersPage />} />
+              <Route path="/settings" element={<Settings />} />
+              
+              {/* Master Data Routes */}
+              <Route path="/customer-master" element={<CustomerMaster />} />
+              <Route path="/tests" element={<Tests />} />
+              <Route path="/chemicals" element={<Chemicals />} />
+              <Route path="/commodities" element={<Commodities />} />
+              <Route path="/instrument-master" element={<InstrumentMaster />} />
+            </Routes>
+          </Layout>
+        </Router>
+      </ModalProvider>
     </ThemeProvider>
   );
 };
