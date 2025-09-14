@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FlaskConical, Package, CheckCircle, AlertCircle, Save, X } from 'lucide-react';
+import { FlaskConical, Package, CheckCircle, AlertCircle, Save, X, Eye, Edit, MoreVertical, Trash2, ShoppingCart } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
 import Drawer from '../components/Drawer';
 import AddChemicalForm from '../components/AddChemicalForm';
@@ -9,6 +9,7 @@ const Chemicals: React.FC = () => {
   const [loading] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingChemical, setEditingChemical] = useState<any>(null);
+  const [showActions, setShowActions] = useState<Record<string, boolean>>({});
 
   // Mock chemical data with new structure
   const [chemicals, setChemicals] = useState([
@@ -80,6 +81,39 @@ const Chemicals: React.FC = () => {
     }
   };
 
+  const toggleActions = (id: string) => {
+    setShowActions(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
+  const handleAddChemical = () => {
+    setEditingChemical(null);
+    setIsDrawerOpen(true);
+  };
+
+  const handleEditChemical = (record: any) => {
+    setEditingChemical(record);
+    setIsDrawerOpen(true);
+  };
+
+  const handleViewChemical = (record: any) => {
+    console.log('View chemical:', record.id);
+    // You can implement view logic here
+  };
+
+  const handleDeleteChemical = (record: any) => {
+    if (window.confirm(`Are you sure you want to delete chemical ${record.name}?`)) {
+      setChemicals(prev => prev.filter(chem => chem.id !== record.id));
+    }
+  };
+
+  const handleOrderChemical = (record: any) => {
+    console.log('Order chemical:', record.id);
+    // You can implement order logic here
+  };
+
   const columns: Column[] = [
     {
       key: 'name',
@@ -140,28 +174,49 @@ const Chemicals: React.FC = () => {
           {value}
         </span>
       )
+    },
+    {
+      key: 'actions',
+      title: 'Actions',
+      width: '200px',
+      sortable: false,
+      render: (_, record) => (
+        <div className="flex items-center space-x-2">
+          {/* View Action - Eye Icon */}
+          <motion.button
+            onClick={() => handleViewChemical(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="View Chemical"
+          >
+            <Eye className="w-4 h-4" />
+          </motion.button>
+
+          {/* Edit Action - Pencil Icon */}
+          <motion.button
+            onClick={() => handleEditChemical(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="Edit Chemical"
+          >
+            <Edit className="w-4 h-4" />
+          </motion.button>
+
+          <motion.button
+            onClick={() => handleDeleteChemical(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="Edit Chemical"
+          >
+            <Trash2 className="w-4 h-4" />
+          </motion.button>
+        </div>
+      )
     }
   ];
-
-  const handleAddChemical = () => {
-    setEditingChemical(null);
-    setIsDrawerOpen(true);
-  };
-
-  const handleEditChemical = (record: any) => {
-    setEditingChemical(record);
-    setIsDrawerOpen(true);
-  };
-
-  const handleViewChemical = (record: any) => {
-    console.log('View chemical:', record.id);
-  };
-
-  const handleDeleteChemical = (record: any) => {
-    if (window.confirm(`Are you sure you want to delete chemical ${record.name}?`)) {
-      setChemicals(prev => prev.filter(chem => chem.id !== record.id));
-    }
-  };
 
   const handleSaveChemical = (chemicalData: any) => {
     if (editingChemical) {
@@ -299,9 +354,6 @@ const Chemicals: React.FC = () => {
         searchPlaceholder="Search chemicals..."
         addButtonText="Add Chemical"
         onAdd={handleAddChemical}
-        onEdit={handleEditChemical}
-        onView={handleViewChemical}
-        onDelete={handleDeleteChemical}
         searchable={true}
         filterable={true}
         exportable={true}

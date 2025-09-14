@@ -37,6 +37,7 @@ export interface DataTableProps {
   onView?: (row: any) => void;
   addButtonText?: string;
   searchPlaceholder?: string;
+  hideAddButton?: boolean;
 }
 
 const DataTable: React.FC<DataTableProps> = ({
@@ -47,6 +48,7 @@ const DataTable: React.FC<DataTableProps> = ({
   filterable = false,
   exportable = false,
   pagination = true,
+  hideAddButton = false,
   pageSize = 10,
   onAdd,
   onEdit,
@@ -183,7 +185,7 @@ const DataTable: React.FC<DataTableProps> = ({
             </motion.button>
           )}
           
-          {!exportable && (
+          {exportable && (
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -193,7 +195,7 @@ const DataTable: React.FC<DataTableProps> = ({
             </motion.button>
           )}
           
-          {onAdd && (
+          {onAdd && !hideAddButton && (
             <motion.button
               onClick={onAdd}
               whileHover={{ scale: 1.05 }}

@@ -1,72 +1,142 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Microscope, Plus, Edit, Eye, Trash2, Save, X, Check, CircleXIcon } from 'lucide-react';
+import { Microscope, Plus, Edit, Eye, Trash2, Save, X, Check, CircleXIcon, MoreVertical, Calendar } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
 import Drawer from '../components/Drawer';
 import AddInstrumentForm from '../components/AddInstrumentForm';
+import AddCalibrationForm from '../components/AddCalibrationForm';
 
 const Instruments: React.FC = () => {
   const [loading] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingInstrument, setEditingInstrument] = useState<any>(null);
+  const [showActions, setShowActions] = useState<{ [key: string]: boolean }>({});
+  const [isCalibrationDrawerOpen, setIsCalibrationDrawerOpen] = useState(false);
+  const [selectedInstrumentForCalibration, setSelectedInstrumentForCalibration] = useState<any>(null);
 
-  // Mock instrument data
+  const toggleActions = (rowId: string) => {
+    setShowActions(prev => ({
+      ...prev,
+      [rowId]: !prev[rowId]
+    }));
+  };
+
+  // Mock instrument data with calibration history
   const [instruments, setInstruments] = useState([
     {
       id: 'I001',
       instrumentName: 'High Performance Liquid Chromatograph',
       instrumentCategory: 'Analytical Instruments',
       serialNumber: 'HPLC-2024-001',
-      status: 'Active'
+      status: 'Active',
+      calibrationCycle: 'Quarterly',
+      lastCalibrationDate: '2024-11-01',
+      calibrationHistory: [
+        {
+          id: 'CAL001',
+          calibrationDate: '2024-11-01',
+          nextCalibrationDate: '2025-02-01',
+          status: 'Passed',
+          performedBy: 'John Smith',
+          notes: 'All parameters within acceptable limits'
+        },
+        {
+          id: 'CAL002',
+          calibrationDate: '2024-08-01',
+          nextCalibrationDate: '2024-11-01',
+          status: 'Passed',
+          performedBy: 'Jane Doe',
+          notes: 'Minor adjustment made to flow rate'
+        }
+      ]
     },
     {
       id: 'I002',
       instrumentName: 'Gas Chromatograph Mass Spectrometer',
       instrumentCategory: 'Analytical Instruments',
       serialNumber: 'GCMS-2024-002',
-      status: 'Active'
+      status: 'Active',
+      calibrationCycle: 'Monthly',
+      lastCalibrationDate: '2024-11-15',
+      calibrationHistory: [
+        {
+          id: 'CAL003',
+          calibrationDate: '2024-11-15',
+          nextCalibrationDate: '2024-12-15',
+          status: 'Passed',
+          performedBy: 'Mike Johnson',
+          notes: 'System operating within specifications'
+        }
+      ]
     },
     {
       id: 'I003',
       instrumentName: 'Atomic Absorption Spectrophotometer',
       instrumentCategory: 'Analytical Instruments',
       serialNumber: 'AAS-2024-003',
-      status: 'Active'
+      status: 'Active',
+      calibrationCycle: 'Annually',
+      lastCalibrationDate: '2024-10-01',
+      calibrationHistory: [
+        {
+          id: 'CAL004',
+          calibrationDate: '2024-10-01',
+          nextCalibrationDate: '2025-10-01',
+          status: 'Passed',
+          performedBy: 'Sarah Wilson',
+          notes: 'Annual calibration completed successfully'
+        }
+      ]
     },
     {
       id: 'I004',
       instrumentName: 'Digital Balance',
       instrumentCategory: 'Measurement Equipment',
       serialNumber: 'BAL-2024-004',
-      status: 'Active'
+      status: 'Active',
+      calibrationCycle: 'Monthly',
+      lastCalibrationDate: '2024-11-20',
+      calibrationHistory: []
     },
     {
       id: 'I005',
       instrumentName: 'pH Meter',
       instrumentCategory: 'Measurement Equipment',
       serialNumber: 'PHM-2024-005',
-      status: 'Inactive'
+      status: 'Inactive',
+      calibrationCycle: 'Quarterly',
+      lastCalibrationDate: '2024-09-15',
+      calibrationHistory: []
     },
     {
       id: 'I006',
       instrumentName: 'Centrifuge',
       instrumentCategory: 'Sample Preparation',
       serialNumber: 'CEN-2024-006',
-      status: 'Active'
+      status: 'Active',
+      calibrationCycle: 'Semi-Annually',
+      lastCalibrationDate: '2024-08-01',
+      calibrationHistory: []
     },
     {
       id: 'I007',
       instrumentName: 'Environmental Monitor',
       instrumentCategory: 'Environmental Monitoring',
       serialNumber: 'ENV-2024-007',
-      status: 'Active'
+      status: 'Active',
+      calibrationCycle: 'Monthly',
+      lastCalibrationDate: '2024-11-25',
+      calibrationHistory: []
     },
     {
       id: 'I008',
       instrumentName: 'Safety Cabinet',
       instrumentCategory: 'Safety Equipment',
       serialNumber: 'SAF-2024-008',
-      status: 'Active'
+      status: 'Active',
+      calibrationCycle: 'Annually',
+      lastCalibrationDate: '2024-06-01',
+      calibrationHistory: []
     }
   ]);
 
@@ -135,6 +205,81 @@ const Instruments: React.FC = () => {
           {value}
         </span>
       )
+    },
+    {
+      key: 'actions',
+      title: 'Actions',
+      width: '200px',
+      sortable: false,
+      render: (_, record) => (
+        <div className="flex items-center space-x-2">
+          {/* View Action - Eye Icon */}
+          <motion.button
+            onClick={() => handleViewInstrument(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="View Instrument"
+          >
+            <Eye className="w-4 h-4" />
+          </motion.button>
+
+          {/* Edit Action - Pencil Icon */}
+          <motion.button
+            onClick={() => handleEditInstrument(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="Edit Instrument"
+          >
+            <Edit className="w-4 h-4" />
+          </motion.button>
+
+          {/* More Options - Vertical Ellipsis */}
+          <div className="relative">
+            <motion.button
+              onClick={() => toggleActions(record.id)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              title="More Options"
+            >
+              <MoreVertical className="w-4 h-4" />
+            </motion.button>
+
+            {/* Dropdown Menu */}
+            {showActions[record.id] && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="absolute right-0 top-8 z-10 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1"
+              >
+                <button
+                  onClick={() => {
+                    handleAddCalibration(record);
+                    setShowActions(prev => ({ ...prev, [record.id]: false }));
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                >
+                  <Calendar className="w-4 h-4" />
+                  Add Calibration
+                </button>
+                <button
+                  onClick={() => {
+                    handleDeleteInstrument(record);
+                    setShowActions(prev => ({ ...prev, [record.id]: false }));
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete Instrument
+                </button>
+              </motion.div>
+            )}
+          </div>
+        </div>
+      )
     }
   ];
 
@@ -150,6 +295,7 @@ const Instruments: React.FC = () => {
 
   const handleViewInstrument = (record: any) => {
     console.log('View instrument:', record.id);
+    // You can implement view functionality here
   };
 
   const handleDeleteInstrument = (record: any) => {
@@ -158,17 +304,60 @@ const Instruments: React.FC = () => {
     }
   };
 
+  const handleAddCalibration = (record: any) => {
+    setSelectedInstrumentForCalibration(record);
+    setIsCalibrationDrawerOpen(true);
+  };
+
+  const handleSaveCalibration = (calibrationData: any) => {
+    if (selectedInstrumentForCalibration) {
+      const newCalibration = {
+        id: `CAL-${Date.now()}`,
+        ...calibrationData,
+        instrumentId: selectedInstrumentForCalibration.id
+      };
+
+      setInstruments(prev =>
+        prev.map(inst => {
+          if (inst.id === selectedInstrumentForCalibration.id) {
+            return {
+              ...inst,
+              calibrationHistory: [...(inst.calibrationHistory || []), newCalibration],
+              lastCalibrationDate: calibrationData.calibrationDate
+            };
+          }
+          return inst;
+        })
+      );
+
+      setIsCalibrationDrawerOpen(false);
+      setSelectedInstrumentForCalibration(null);
+    }
+  };
+
+  const handleCloseCalibrationDrawer = () => {
+    setIsCalibrationDrawerOpen(false);
+    setSelectedInstrumentForCalibration(null);
+  };
+
   const handleSaveInstrument = (instrumentData: any) => {
     if (editingInstrument) {
       // Update existing instrument
-      setInstruments(prev => 
-        prev.map(inst => 
+      setInstruments(prev =>
+        prev.map(inst =>
           inst.id === editingInstrument.id ? { ...instrumentData, id: editingInstrument.id } : inst
         )
       );
     } else {
       // Add new instrument
-      setInstruments(prev => [...prev, instrumentData]);
+      const newInstrument = {
+        ...instrumentData,
+        id: `I${String(instruments.length + 1).padStart(3, '0')}`,
+        calibrationCycle: 'Quarterly',
+        lastCalibrationDate: '',
+        calibrationHistory: []
+      };
+      setInstruments(prev => [...prev, newInstrument]);
     }
     setIsDrawerOpen(false);
     setEditingInstrument(null);
@@ -179,57 +368,66 @@ const Instruments: React.FC = () => {
     setEditingInstrument(null);
   };
 
-  // Footer component for the drawer
   const drawerFooter = (
-    <div className="p-4">
-      <div className="flex items-center justify-end space-x-3">
-        <motion.button
-          type="button"
-          onClick={handleCloseDrawer}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
-        >
-          <X className="w-4 h-4 mr-2" />
-          Cancel
-        </motion.button>
-        <motion.button
-          type="submit"
-          form="instrument-form"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
-        >
-          <Save className="w-4 h-4 mr-2" />
-          {editingInstrument ? 'Update Instrument' : 'Add Instrument'}
-        </motion.button>
-      </div>
+    <div className="flex justify-end space-x-2">
+      <motion.button
+        onClick={handleCloseDrawer}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+      >
+        <X className="w-4 h-4 mr-2" />
+        Cancel
+      </motion.button>
+      <motion.button
+        onClick={() => {
+          // This will be handled by the form's onSave
+        }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-md hover:bg-primary-700"
+      >
+        <Save className="w-4 h-4 mr-2" />
+        {editingInstrument ? 'Update' : 'Save'}
+      </motion.button>
     </div>
   );
 
   return (
     <div className="space-y-6">
-   
+ 
 
-      {/* Instrument Stats */}
+      {/* Category Stats */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
         className="grid grid-cols-1 md:grid-cols-3 gap-6"
       >
-        <div className="card p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Instruments</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{instruments.length}</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {instruments.length}
+              </p>
             </div>
             <div className="p-3 bg-blue-500 rounded-full">
               <Microscope className="w-6 h-6 text-white" />
             </div>
           </div>
-        </div>
-        <div className="card p-6">
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Instruments</p>
@@ -241,8 +439,14 @@ const Instruments: React.FC = () => {
               <Check className="w-6 h-6 text-white" />
             </div>
           </div>
-        </div>
-        <div className="card p-6">
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Inactive Instruments</p>
@@ -254,7 +458,7 @@ const Instruments: React.FC = () => {
               <CircleXIcon className="w-6 h-6 text-white" />
             </div>
           </div>
-        </div>
+        </motion.div>
       </motion.div>
 
       {/* Instrument Data Table */}
@@ -265,9 +469,6 @@ const Instruments: React.FC = () => {
         searchPlaceholder="Search instruments..."
         addButtonText="Add Instrument"
         onAdd={handleAddInstrument}
-        onEdit={handleEditInstrument}
-        onView={handleViewInstrument}
-        onDelete={handleDeleteInstrument}
         searchable={true}
         filterable={true}
         exportable={true}
@@ -288,6 +489,19 @@ const Instruments: React.FC = () => {
           onCancel={handleCloseDrawer}
           isEditing={!!editingInstrument}
           initialData={editingInstrument}
+        />
+      </Drawer>
+
+      {/* Add Calibration Drawer */}
+      <Drawer
+        isOpen={isCalibrationDrawerOpen}
+        onClose={handleCloseCalibrationDrawer}
+        title={`Add Calibration - ${selectedInstrumentForCalibration?.instrumentName || 'Instrument'}`}
+        size="md"
+      >
+        <AddCalibrationForm
+          onSave={handleSaveCalibration}
+          instrument={selectedInstrumentForCalibration}
         />
       </Drawer>
     </div>

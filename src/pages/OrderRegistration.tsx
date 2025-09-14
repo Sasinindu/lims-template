@@ -18,7 +18,11 @@ import {
   Plus,
   Trash2,
   Edit,
-  X
+  X,
+  Eye,
+  MoreVertical,
+  Printer,
+  Download
 } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
 import Drawer from '../components/Drawer';
@@ -33,6 +37,7 @@ const OrderRegistration: React.FC = () => {
   const [editingOrder, setEditingOrder] = useState<any>(null);
   const [loading] = useState(false);
   const [selectedSampleForTest, setSelectedSampleForTest] = useState<any>(null);
+  const [showActions, setShowActions] = useState<Record<string, boolean>>({});
 
   const [orders, setOrders] = useState([
     {
@@ -107,6 +112,44 @@ const OrderRegistration: React.FC = () => {
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
     }
+  };
+
+  const toggleActions = (id: string) => {
+    setShowActions(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
+  const handleAddOrder = () => {
+    setEditingOrder(null);
+    setIsDrawerOpen(true);
+  };
+
+  const handleEditOrder = (record: any) => {
+    setEditingOrder(record);
+    setIsDrawerOpen(true);
+  };
+
+  const handleViewOrder = (record: any) => {
+    console.log('View order:', record.id);
+    // You can implement view logic here
+  };
+
+  const handleDeleteOrder = (record: any) => {
+    if (window.confirm(`Are you sure you want to delete order "${record.orderId}"?`)) {
+      setOrders(prev => prev.filter(order => order.id !== record.id));
+    }
+  };
+
+  const handlePrintOrder = (record: any) => {
+    console.log('Print order:', record.id);
+    // You can implement print logic here
+  };
+
+  const handleDownloadReport = (record: any) => {
+    console.log('Download report for order:', record.id);
+    // You can implement download logic here
   };
 
   const columns: Column[] = [
@@ -184,28 +227,49 @@ const OrderRegistration: React.FC = () => {
           {value}
         </span>
       )
+    },
+    {
+      key: 'actions',
+      title: 'Actions',
+      width: '200px',
+      sortable: false,
+      render: (_, record) => (
+        <div className="flex items-center space-x-2">
+          {/* View Action - Eye Icon */}
+          <motion.button
+            onClick={() => handleViewOrder(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="View Order"
+          >
+            <Eye className="w-4 h-4" />
+          </motion.button>
+
+          {/* Edit Action - Pencil Icon */}
+          <motion.button
+            onClick={() => handleEditOrder(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="Edit Order"
+          >
+            <Edit className="w-4 h-4" />
+          </motion.button>
+
+          <motion.button
+            onClick={() => handleDeleteOrder(record)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            title="Edit Chemical"
+          >
+            <Trash2 className="w-4 h-4" />
+          </motion.button>
+        </div>
+      )
     }
   ];
-
-  const handleAddOrder = () => {
-    setEditingOrder(null);
-    setIsDrawerOpen(true);
-  };
-
-  const handleEditOrder = (record: any) => {
-    setEditingOrder(record);
-    setIsDrawerOpen(true);
-  };
-
-  const handleViewOrder = (record: any) => {
-    console.log('View order:', record.id);
-  };
-
-  const handleDeleteOrder = (record: any) => {
-    if (window.confirm(`Are you sure you want to delete order "${record.orderId}"?`)) {
-      setOrders(prev => prev.filter(order => order.id !== record.id));
-    }
-  };
 
   const handleSaveOrder = (orderData: any) => {
     if (editingOrder) {
@@ -341,9 +405,6 @@ const OrderRegistration: React.FC = () => {
         searchPlaceholder="Search orders..."
         addButtonText="New Order"
         onAdd={handleAddOrder}
-        onEdit={handleEditOrder}
-        onView={handleViewOrder}
-        onDelete={handleDeleteOrder}
         searchable={true}
         filterable={true}
         exportable={true}
