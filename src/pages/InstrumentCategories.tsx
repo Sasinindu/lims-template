@@ -115,7 +115,7 @@ const InstrumentCategories: React.FC = () => {
     {
       key: 'actions',
       title: 'Actions',
-      width: '200px',
+      width: '130px',
       sortable: false,
       render: (_, record) => (
         <div className="flex items-center space-x-2">

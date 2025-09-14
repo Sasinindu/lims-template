@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Microscope, Plus, Edit, Eye, Trash2, Save, X, Check, CircleXIcon, MoreVertical, Calendar, History } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
@@ -15,6 +15,7 @@ const Instruments: React.FC = () => {
   const [viewingInstrument, setViewingInstrument] = useState<any>(null);
   const [isViewMode, setIsViewMode] = useState(false);
   const [showActions, setShowActions] = useState<{ [key: string]: boolean }>({});
+  const [dropdownPositions, setDropdownPositions] = useState<{ [key: string]: 'bottom' | 'top' }>({});
   const [isCalibrationDrawerOpen, setIsCalibrationDrawerOpen] = useState(false);
   const [selectedInstrumentForCalibration, setSelectedInstrumentForCalibration] = useState<any>(null);
   const [isHistoryDrawerOpen, setIsHistoryDrawerOpen] = useState(false);
@@ -23,11 +24,46 @@ const Instruments: React.FC = () => {
   // Use confirmation hook
   const { confirmDelete } = useConfirmation();
 
-  const toggleActions = (rowId: string) => {
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('[data-dropdown-container]')) {
+        setShowActions({});
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const toggleActions = (rowId: string, event?: React.MouseEvent) => {
+    const isCurrentlyOpen = showActions[rowId];
+    
     setShowActions(prev => ({
       ...prev,
       [rowId]: !prev[rowId]
     }));
+
+    // Calculate dropdown position when opening
+    if (!isCurrentlyOpen && event) {
+      const target = event.currentTarget as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const dropdownHeight = 160; // Estimated dropdown height (3 items * ~50px each + padding)
+      const spaceBelow = viewportHeight - rect.bottom - 10; // 10px buffer
+      const spaceAbove = rect.top - 10; // 10px buffer
+
+      // Open upward if there's not enough space below but enough space above
+      const shouldOpenUpward = spaceBelow < dropdownHeight && spaceAbove >= dropdownHeight;
+      
+      setDropdownPositions(prev => ({
+        ...prev,
+        [rowId]: shouldOpenUpward ? 'top' : 'bottom'
+      }));
+    }
   };
 
   // Mock instrument data with calibration history
@@ -165,7 +201,7 @@ const Instruments: React.FC = () => {
       key: 'id',
       title: 'Instrument ID',
       dataIndex: 'id',
-      width: '120px',
+      width: '140px',
       sortable: true,
       render: (value) => (
         <div className="flex items-center">
@@ -244,12 +280,10 @@ const Instruments: React.FC = () => {
             <Edit className="w-4 h-4" />
           </motion.button>
 
-          
-
           {/* More Options - Vertical Ellipsis */}
-          <div className="relative">
+          <div className="relative" data-dropdown-container>
             <motion.button
-              onClick={() => toggleActions(record.id)}
+              onClick={(e) => toggleActions(record.id, e)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
@@ -264,7 +298,9 @@ const Instruments: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="absolute right-0 top-8 z-10 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1"
+                className={`absolute right-0 z-10 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 ${
+                  dropdownPositions[record.id] === 'top' ? 'bottom-8' : 'top-8'
+                }`}
               >
                 <button
                   onClick={() => {
