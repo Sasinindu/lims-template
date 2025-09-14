@@ -10,19 +10,22 @@ interface AddChemicalFormProps {
   onCancel: () => void;
   isEditing?: boolean;
   initialData?: any;
+  isViewMode?: boolean;
 }
 
 const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
   onSave,
   onCancel,
   isEditing = false,
-  initialData = null
+  initialData = null,
+  isViewMode = false
 }) => {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     unit: initialData?.unit || '',
     availability: initialData?.availability || '',
     volume: initialData?.volume || '',
+    reorderQuantity: initialData?.reorderQuantity || '',
     status: initialData?.status || 'Active',
     ...(initialData || {})
   });
@@ -33,7 +36,8 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
     { value: 'mL', label: 'mL (Milliliters)' },
     { value: 'l', label: 'L (Liters)' },
     { value: 'g', label: 'g (Grams)' },
-    { value: 'kg', label: 'kg (Kilograms)' }
+    { value: 'kg', label: 'kg (Kilograms)' },
+    { value: 'unit', label: 'Unit' }
   ];
 
   const availabilityOptions = [
@@ -72,6 +76,9 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
     if (!formData.volume || formData.volume <= 0) {
       newErrors.volume = 'Volume must be greater than 0';
     }
+    if (!formData.reorderQuantity || formData.reorderQuantity <= 0) {
+      newErrors.reorderQuantity = 'Reorder quantity must be greater than 0';
+    }
     if (!formData.status) {
       newErrors.status = 'Status is required';
     }
@@ -83,10 +90,11 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (validateForm()) {
+    if (!isViewMode && validateForm()) {
       const chemicalData = {
         ...formData,
         volume: parseFloat(formData.volume.toString()),
+        reorderQuantity: parseFloat(formData.reorderQuantity.toString()),
         id: isEditing ? formData.id : `CH${String(Date.now()).slice(-3)}`
       };
       onSave(chemicalData);
@@ -109,6 +117,7 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
               onChange={(e) => handleInputChange('name', e.target.value)}
               placeholder="Enter chemical name"
               error={errors.name}
+              disabled={isViewMode}
             />
           </div>
 
@@ -122,6 +131,7 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
               options={unitOptions}
               placeholder="Select unit"
               error={errors.unit}
+              disabled={isViewMode}
             />
           </div>
 
@@ -134,6 +144,7 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
               options={availabilityOptions}
               placeholder="Select availability"
               error={errors.availability}
+              disabled={isViewMode}
             />
           </div>
 
@@ -148,6 +159,21 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
             onChange={(e) => handleInputChange('volume', e.target.value)}
             placeholder="Enter volume"
             error={errors.volume}
+            disabled={isViewMode}
+          />
+
+          {/* Reorder Quantity */}
+          <Input
+            label="Reorder Quantity"
+            required
+            type="number"
+            min="0"
+            step="0.1"
+            value={formData.reorderQuantity}
+            onChange={(e) => handleInputChange('reorderQuantity', e.target.value)}
+            placeholder="Enter reorder quantity"
+            error={errors.reorderQuantity}
+            disabled={isViewMode}
           />
 
           {/* Status */}
@@ -161,6 +187,7 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
               options={statusOptions}
               placeholder="Select status"
               error={errors.status}
+              disabled={isViewMode}
             />
           </div>
         </div>

@@ -155,8 +155,20 @@ const CalibrationHistoryView: React.FC<CalibrationHistoryViewProps> = ({ instrum
         </div>
       </div>
 
-      {/* Calibration Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+     
+
+      {/* Calibration History Table */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            Calibration Records
+          </h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Detailed history of all calibration activities
+          </p>
+
+           {/* Calibration Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -224,16 +236,6 @@ const CalibrationHistoryView: React.FC<CalibrationHistoryViewProps> = ({ instrum
           </div>
         </motion.div>
       </div>
-
-      {/* Calibration History Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Calibration Records
-          </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Detailed history of all calibration activities
-          </p>
         </div>
         
         <DataTable
