@@ -13,6 +13,7 @@ import Reports from './pages/Reports';
 import UsersPage from './pages/Users';
 import Settings from './pages/Settings';
 import CustomerMaster from './pages/CustomerMaster';
+import GroupMaster from './pages/GroupMaster';
 import Tests from './pages/Tests';
 import Chemicals from './pages/Chemicals';
 import Commodities from './pages/Commodities';
@@ -70,6 +71,7 @@ const App: React.FC = () => {
               
               {/* Master Data Routes */}
               <Route path="/customer-master" element={<CustomerMaster />} />
+              <Route path="/group-master" element={<GroupMaster />} />
               <Route path="/tests" element={<Tests />} />
               <Route path="/chemicals" element={<Chemicals />} />
               <Route path="/commodities" element={<Commodities />} />

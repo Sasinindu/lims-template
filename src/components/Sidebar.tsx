@@ -54,6 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
 
   const masterDataItems = [
     { id: 'customer-master', label: 'Customer Master', icon: UserCheck },
+    { id: 'group-master', label: '`Group Master`', icon: Users },
     { id: 'instrument-master', label: 'Instrument Master', icon: Microscope },
     { id: 'tests', label: 'Test Master', icon: TestTube },
     { id: 'commodities', label: 'Commodity Master', icon: ShoppingCart },
