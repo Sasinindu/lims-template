@@ -727,19 +727,19 @@ const OrderApproval: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className={`border border-gray-200 dark:border-gray-700 rounded-xl p-6 ${
+                  className={`border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden ${
                     index % 2 === 0 ? 'bg-gray-50/50 dark:bg-gray-800/50' : 'bg-white/50 dark:bg-gray-900/50'
                   }`}
                 >
-                  {/* Sample Header */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center">
+                  {/* Collapsed Sample Card - Minimal Information */}
+                  <div className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
                         <motion.button
                           onClick={() => toggleSampleExpansion(sample.id)}
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          className="p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 mr-3"
+                          className="p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
                         >
                           {expandedSamples.has(sample.id) ? (
                             <ChevronDown className="w-5 h-5 text-gray-600 dark:text-gray-400" />
@@ -747,155 +747,73 @@ const OrderApproval: React.FC = () => {
                             <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                           )}
                         </motion.button>
-                        <Package className="w-6 h-6 text-primary-600 mr-3" />
+                        <Package className="w-6 h-6 text-primary-600" />
                         <div>
                           <h4 className="text-lg font-semibold text-gray-900 dark:text-white">{sample.sampleId}</h4>
                           <p className="text-sm text-gray-600 dark:text-gray-400">{sample.sampleName}</p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(sample.priority)}`}>
-                          {sample.priority} Priority
-                        </span>
+                      <div className="flex items-center space-x-3">
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(sample.status)}`}>
                           {sample.status}
                         </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <motion.button
-                        onClick={() => handleViewSampleDetails(sample)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 rounded-lg transition-colors duration-200"
-                        title="View Sample Details"
-                      >
-                        <Info className="w-4 h-4 mr-1" />
-                        Details
-                      </motion.button>
-                    </div>
-                  </div>
-
-                  {/* Sample Basic Info */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div className="flex items-center">
-                      <TestTube className="w-4 h-4 text-green-500 mr-2" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Type:</span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-white ml-1">{sample.sampleType}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Package className="w-4 h-4 text-purple-500 mr-2" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Quantity:</span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-white ml-1">{sample.sampleQuantity}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <TestTube className="w-4 h-4 text-indigo-500 mr-2" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Tests:</span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-white ml-1">{sample.testsCount}</span>
-                    </div>
-                  </div>
-
-                  {/* Assignment Section */}
-                  <div className="bg-white dark:bg-gray-700 rounded-lg p-4 mb-4">
-                    <h5 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
-                      <Users className="w-4 h-4 mr-2 text-primary-600" />
-                      Assignment Details
-                    </h5>
-                    
-                    {editingSample === sample.id ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor={`divisionalHead-${sample.id}`} required>
-                            Assign to Divisional Head
-                          </Label>
-                          <CustomSelect
-                            value={sampleAssignments[sample.id]?.divisionalHead || sample.assignedDivisionalHead || ''}
-                            onChange={(value) => updateSampleAssignment(sample.id, 'divisionalHead', value)}
-                            options={getDivisionalHeadOptions()}
-                            placeholder="Select divisional head"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor={`dueDate-${sample.id}`} required>
-                            Set Due Date
-                          </Label>
-                          <Input
-                            type="date"
-                            value={sampleAssignments[sample.id]?.dueDate || sample.dueDate || ''}
-                            onChange={(e) => updateSampleAssignment(sample.id, 'dueDate', e.target.value)}
-                            className="w-full"
-                          />
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                          {sample.testsCount} tests
                         </div>
                       </div>
-                    ) : (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Assigned Divisional Head</div>
+                    </div>
+
+                    {/* Assignment Status Summary - Always Visible */}
+                    <div className="mt-3 flex items-center justify-between">
+                      <div className="flex items-center space-x-6">
+                        <div className="flex items-center space-x-2">
                           {sample.assignedDivisionalHead ? (
-                            <div className="flex items-center">
-                              <UserCheck className="w-4 h-4 text-green-500 mr-2" />
+                            <>
+                              <UserCheck className="w-4 h-4 text-green-500" />
                               <span className="text-sm font-medium text-gray-900 dark:text-white">{sample.assignedDivisionalHead}</span>
-                              <span className="text-xs text-gray-500 ml-2">
-                                ({divisionalHeads.find(h => h.name === sample.assignedDivisionalHead)?.department})
-                              </span>
-                            </div>
+                            </>
                           ) : (
-                            <div className="flex items-center">
-                              <AlertTriangle className="w-4 h-4 text-yellow-500 mr-2" />
+                            <>
+                              <AlertTriangle className="w-4 h-4 text-yellow-500" />
                               <span className="text-sm text-yellow-600 dark:text-yellow-400">Not assigned</span>
-                            </div>
+                            </>
                           )}
                         </div>
-                        <div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Due Date</div>
+                        <div className="flex items-center space-x-2">
                           {sample.dueDate ? (
-                            <div className="flex items-center">
-                              <CalendarIcon className="w-4 h-4 text-blue-500 mr-2" />
+                            <>
+                              <CalendarIcon className="w-4 h-4 text-blue-500" />
                               <span className="text-sm font-medium text-gray-900 dark:text-white">{sample.dueDate}</span>
-                            </div>
+                            </>
                           ) : (
-                            <div className="flex items-center">
-                              <AlertTriangle className="w-4 h-4 text-yellow-500 mr-2" />
-                              <span className="text-sm text-yellow-600 dark:text-yellow-400">Not set</span>
-                            </div>
+                            <>
+                              <AlertTriangle className="w-4 h-4 text-yellow-500" />
+                              <span className="text-sm text-yellow-600 dark:text-yellow-400">No due date</span>
+                            </>
                           )}
                         </div>
                       </div>
-                    )}
-
-                    {/* Action Buttons */}
-                    <div className="flex items-center justify-end space-x-2 mt-4 pt-3 border-t border-gray-200 dark:border-gray-600">
-                      {editingSample === sample.id ? (
-                        <>
-                          <motion.button
-                            onClick={handleCancelEdit}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-lg transition-colors duration-200"
-                          >
-                            Cancel
-                          </motion.button>
-                          <motion.button
-                            onClick={() => handleSaveAssignment(sample.id)}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="flex items-center px-3 py-1.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200"
-                          >
-                            <Save className="w-4 h-4 mr-1" />
-                            Save Assignment
-                          </motion.button>
-                        </>
-                      ) : (
+                      <div className="flex items-center space-x-2">
+                        <motion.button
+                          onClick={() => handleViewSampleDetails(sample)}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 rounded-lg transition-colors duration-200"
+                          title="View Sample Details"
+                        >
+                          <Info className="w-4 h-4 mr-1" />
+                          Details
+                        </motion.button>
                         <motion.button
                           onClick={() => handleEditSample(sample.id)}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                           className="flex items-center px-3 py-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 dark:bg-primary-900/20 dark:hover:bg-primary-900/30 rounded-lg transition-colors duration-200"
                         >
                           <Edit3 className="w-4 h-4 mr-1" />
-                          {sample.assignedDivisionalHead ? 'Update Assignment' : 'Assign Sample'}
+                          {sample.assignedDivisionalHead ? 'Update' : 'Assign'}
                         </motion.button>
-                      )}
+                      </div>
                     </div>
                   </div>
 
@@ -907,40 +825,173 @@ const OrderApproval: React.FC = () => {
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="border-t border-gray-200 dark:border-gray-600 pt-4"
+                        className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-700"
                       >
-                        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                          <h6 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Additional Sample Information</h6>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                            <div>
-                              <span className="text-gray-600 dark:text-gray-400">Description:</span>
+                        <div className="p-6 space-y-6">
+                          {/* Sample Details Grid */}
+                          <div>
+                            <h5 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                              <Package className="w-4 h-4 mr-2 text-primary-600" />
+                              Sample Information
+                            </h5>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                              <div>
+                                <span className="text-gray-600 dark:text-gray-400 font-medium">Type:</span>
+                                <p className="text-gray-900 dark:text-white mt-1">{sample.sampleType}</p>
+                              </div>
+                              <div>
+                                <span className="text-gray-600 dark:text-gray-400 font-medium">Quantity:</span>
+                                <p className="text-gray-900 dark:text-white mt-1">{sample.sampleQuantity}</p>
+                              </div>
+                              <div>
+                                <span className="text-gray-600 dark:text-gray-400 font-medium">Commodity:</span>
+                                <p className="text-gray-900 dark:text-white mt-1">{sample.commodity}</p>
+                              </div>
+                              <div>
+                                <span className="text-gray-600 dark:text-gray-400 font-medium">Category:</span>
+                                <p className="text-gray-900 dark:text-white mt-1">{sample.commodityCategory}</p>
+                              </div>
+                              <div>
+                                <span className="text-gray-600 dark:text-gray-400 font-medium">Collection Date:</span>
+                                <p className="text-gray-900 dark:text-white mt-1">{sample.collectionDate}</p>
+                              </div>
+                              <div>
+                                <span className="text-gray-600 dark:text-gray-400 font-medium">Collection Site:</span>
+                                <p className="text-gray-900 dark:text-white mt-1">{sample.collectionSite}</p>
+                              </div>
+                            </div>
+                            <div className="mt-4">
+                              <span className="text-gray-600 dark:text-gray-400 font-medium">Description:</span>
                               <p className="text-gray-900 dark:text-white mt-1">{sample.description}</p>
                             </div>
-                            <div>
-                              <span className="text-gray-600 dark:text-gray-400">Sample Condition:</span>
+                            <div className="mt-4">
+                              <span className="text-gray-600 dark:text-gray-400 font-medium">Sample Condition:</span>
                               <p className="text-gray-900 dark:text-white mt-1">{sample.sampleCondition}</p>
                             </div>
-                            <div>
-                              <span className="text-gray-600 dark:text-gray-400">Collection Date:</span>
-                              <p className="text-gray-900 dark:text-white mt-1">{sample.collectionDate}</p>
-                            </div>
-                            <div>
-                              <span className="text-gray-600 dark:text-gray-400">Collection Site:</span>
-                              <p className="text-gray-900 dark:text-white mt-1">{sample.collectionSite}</p>
-                            </div>
                           </div>
-                          
-                          {sample.tests.length > 0 && (
-                            <div className="mt-4">
-                              <span className="text-gray-600 dark:text-gray-400 text-sm">Associated Tests:</span>
-                              <div className="mt-2 flex flex-wrap gap-2">
-                                {sample.tests.map((test) => (
-                                  <span
-                                    key={test.id}
-                                    className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 rounded-full"
+
+                          {/* Assignment Section */}
+                          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                            <h5 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                              <Users className="w-4 h-4 mr-2 text-primary-600" />
+                              Assignment Management
+                            </h5>
+                            
+                            {editingSample === sample.id ? (
+                              <div className="space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <div>
+                                    <Label htmlFor={`divisionalHead-${sample.id}`} required>
+                                      Assign to Divisional Head
+                                    </Label>
+                                    <CustomSelect
+                                      value={sampleAssignments[sample.id]?.divisionalHead || sample.assignedDivisionalHead || ''}
+                                      onChange={(value) => updateSampleAssignment(sample.id, 'divisionalHead', value)}
+                                      options={getDivisionalHeadOptions()}
+                                      placeholder="Select divisional head"
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label htmlFor={`dueDate-${sample.id}`} required>
+                                      Set Due Date
+                                    </Label>
+                                    <Input
+                                      type="date"
+                                      value={sampleAssignments[sample.id]?.dueDate || sample.dueDate || ''}
+                                      onChange={(e) => updateSampleAssignment(sample.id, 'dueDate', e.target.value)}
+                                      className="w-full"
+                                    />
+                                  </div>
+                                </div>
+                                <div className="flex items-center justify-end space-x-2 pt-3 border-t border-gray-200 dark:border-gray-600">
+                                  <motion.button
+                                    onClick={handleCancelEdit}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-lg transition-colors duration-200"
                                   >
-                                    {test.testName}
-                                  </span>
+                                    Cancel
+                                  </motion.button>
+                                  <motion.button
+                                    onClick={() => handleSaveAssignment(sample.id)}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="flex items-center px-3 py-1.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200"
+                                  >
+                                    <Save className="w-4 h-4 mr-1" />
+                                    Save Assignment
+                                  </motion.button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">Assigned Divisional Head</div>
+                                  {sample.assignedDivisionalHead ? (
+                                    <div className="flex items-center">
+                                      <UserCheck className="w-4 h-4 text-green-500 mr-2" />
+                                      <div>
+                                        <span className="text-sm font-medium text-gray-900 dark:text-white">{sample.assignedDivisionalHead}</span>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                                          {divisionalHeads.find(h => h.name === sample.assignedDivisionalHead)?.department}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="flex items-center">
+                                      <AlertTriangle className="w-4 h-4 text-yellow-500 mr-2" />
+                                      <span className="text-sm text-yellow-600 dark:text-yellow-400">Not assigned</span>
+                                    </div>
+                                  )}
+                                </div>
+                                <div>
+                                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">Due Date</div>
+                                  {sample.dueDate ? (
+                                    <div className="flex items-center">
+                                      <CalendarIcon className="w-4 h-4 text-blue-500 mr-2" />
+                                      <span className="text-sm font-medium text-gray-900 dark:text-white">{sample.dueDate}</span>
+                                    </div>
+                                  ) : (
+                                    <div className="flex items-center">
+                                      <AlertTriangle className="w-4 h-4 text-yellow-500 mr-2" />
+                                      <span className="text-sm text-yellow-600 dark:text-yellow-400">Not set</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Associated Tests */}
+                          {sample.tests.length > 0 && (
+                            <div>
+                              <h5 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                                <TestTube className="w-4 h-4 mr-2 text-primary-600" />
+                                Associated Tests ({sample.tests.length})
+                              </h5>
+                              <div className="grid grid-cols-1 gap-3">
+                                {sample.tests.map((test) => (
+                                  <div key={test.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                                    <div className="flex-1">
+                                      <div className="flex items-center justify-between">
+                                        <div>
+                                          <div className="font-medium text-sm text-gray-900 dark:text-white">{test.testName}</div>
+                                          <div className="text-xs text-gray-500 dark:text-gray-400">{test.method}</div>
+                                        </div>
+                                                                                 <div className="flex items-center space-x-2">
+                                           <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(test.status)}`}>
+                                             {test.status}
+                                           </span>
+                                         </div>
+                                      </div>
+                                      {test.assignedAnalyst && (
+                                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center">
+                                          <User className="w-3 h-3 mr-1" />
+                                          {test.assignedAnalyst}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
                                 ))}
                               </div>
                             </div>
@@ -1009,12 +1060,12 @@ const OrderApproval: React.FC = () => {
                   <span className="text-blue-700 dark:text-blue-300 font-medium">Type:</span>
                   <p className="text-blue-900 dark:text-blue-100">{selectedSampleForDetails.sampleType}</p>
                 </div>
-                <div>
-                  <span className="text-blue-700 dark:text-blue-300 font-medium">Priority:</span>
-                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(selectedSampleForDetails.priority)}`}>
-                    {selectedSampleForDetails.priority}
-                  </span>
-                </div>
+                                                 <div>
+                                   <span className="text-blue-700 dark:text-blue-300 font-medium">Status:</span>
+                                   <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(selectedSampleForDetails.status)}`}>
+                                     {selectedSampleForDetails.status}
+                                   </span>
+                                 </div>
               </div>
             </div>
 
