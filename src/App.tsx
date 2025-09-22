@@ -11,6 +11,7 @@ import LabTests from './pages/LabTests';
 import TestAllocation from './pages/TestAllocation';
 import ResultsApproval from './pages/ResultsApproval';
 import Tests from './pages/Tests';
+import TestTypes from './pages/TestTypes';
 import TestAssignment from './pages/TestAssignment';
 import Reports from './pages/Reports';
 import UsersPage from './pages/Users';
@@ -23,6 +24,7 @@ import InstrumentMaster from './pages/InstrumentMaster';
 import Analytics from './pages/Analytics';
 import Calendar from './pages/Calendar';
 import DatabasePage from './pages/Database';
+import TestParameters from './pages/TestParameters';
 
 // Mock authentication state
 const useAuth = () => {
@@ -77,7 +79,7 @@ const App: React.FC = () => {
               {/* Master Data Routes */}
               <Route path="/customer-master" element={<CustomerMaster />} />
               <Route path="/group-master" element={<GroupMaster />} />
-              <Route path="/tests" element={<Tests />} />
+              <Route path="/test-parameters" element={<TestParameters />} />
               <Route path="/chemicals" element={<Chemicals />} />
               <Route path="/commodities" element={<Commodities />} />
               <Route path="/instrument-master" element={<InstrumentMaster />} />

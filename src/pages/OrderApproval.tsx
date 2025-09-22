@@ -27,13 +27,19 @@ import {
   DollarSign,
   FileCheck,
   Layers,
-  Receipt
+  Receipt,
+  Edit,
+  MoreVertical,
+  Printer,
+  Download,
+  UserPlus
 } from 'lucide-react';
 import Drawer from '../components/Drawer';
 import CustomSelect from '../components/CustomSelect';
 import Label from '../components/Label';
 import Input from '../components/Input';
 import Breadcrumb from '../components/Breadcrumb';
+import ReturnOrderModal from '../components/ReturnOrderModal';
 
 interface Order {
   id: string;
@@ -98,6 +104,25 @@ const OrderApproval: React.FC = () => {
   const [expandedSamples, setExpandedSamples] = useState<Set<string>>(new Set());
   const [loading] = useState(false);
   const [editingSample, setEditingSample] = useState<string | null>(null);
+  const [showActions, setShowActions] = useState<Record<string, boolean>>({});
+  const [dropdownPositions, setDropdownPositions] = useState<Record<string, 'top' | 'bottom'>>({});
+  const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
+  const [returnLoading, setReturnLoading] = useState(false);
+
+  // Click outside handler for dropdowns
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('[data-dropdown-container]')) {
+        setShowActions({});
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Sample assignment state
   const [sampleAssignments, setSampleAssignments] = useState<{
@@ -570,6 +595,85 @@ const OrderApproval: React.FC = () => {
     // This could open a new drawer or redirect to invoice generation page
   };
 
+  const toggleActions = (id: string, event?: React.MouseEvent) => {
+    const isCurrentlyOpen = showActions[id];
+
+    setShowActions(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+
+    // Calculate dropdown position when opening
+    if (!isCurrentlyOpen && event) {
+      const target = event.currentTarget as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const dropdownHeight = 120; // Estimated dropdown height
+      const spaceBelow = viewportHeight - rect.bottom - 10;
+      const spaceAbove = rect.top - 10;
+
+      const shouldOpenUpward = spaceBelow < dropdownHeight && spaceAbove >= dropdownHeight;
+
+      setDropdownPositions(prev => ({
+        ...prev,
+        [id]: shouldOpenUpward ? 'top' : 'bottom'
+      }));
+    }
+  };
+
+  const handleEditOrder = (order: Order) => {
+    console.log('Edit order:', order.id);
+    // You can implement edit logic here - could open a drawer or navigate to edit page
+  };
+
+  const handlePrintOrder = (order: Order) => {
+    console.log('Print order:', order.id);
+    // You can implement print logic here
+  };
+
+  const handleDownloadReport = (order: Order) => {
+    console.log('Download report for order:', order.id);
+    // You can implement download logic here
+  };
+
+  const handleDeleteOrder = (order: Order) => {
+    console.log('Delete order:', order.id);
+    // You can implement delete logic here with confirmation
+  };
+
+  const handleReturnOrder = () => {
+    setIsReturnModalOpen(true);
+  };
+
+  const handleReturnOrderConfirm = async (remark: string) => {
+    if (!selectedOrder) return;
+    
+    setReturnLoading(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      console.log('Returning order:', selectedOrder.orderId, 'with remark:', remark);
+      
+      // Update order status to 'Returned' and go back to orders list
+      // In a real application, you would make an API call here
+      setSelectedOrder(null);
+      setIsReturnModalOpen(false);
+      
+      // You could also show a success message here
+    } catch (error) {
+      console.error('Error returning order:', error);
+    } finally {
+      setReturnLoading(false);
+    }
+  };
+
+  const handleAssignSample = (sampleId: string) => {
+    // Auto-expand the card when assign button is clicked
+    setExpandedSamples(prev => new Set(prev).add(sampleId));
+    setEditingSample(sampleId);
+  };
+
   const handleEditSample = (sampleId: string) => {
     setEditingSample(sampleId);
   };
@@ -757,40 +861,109 @@ const OrderApproval: React.FC = () => {
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center space-x-2">
-                    <motion.button
-                          onClick={() => handleViewOrder(order)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                          className="flex items-center px-3 py-1.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
-                        >
-                          <Users className="w-4 h-4 mr-1" />
-                          Manage Samples
-                        </motion.button>
+                        {/* View Action - Eye Icon */}
                         <motion.button
-                          onClick={() => handleViewOrderTestDetails(order)}
+                          onClick={() => handleViewOrder(order)}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 rounded-lg transition-colors duration-200"
-                          title="View Test Details"
+                          className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                          title="Manage Samples"
                         >
-                          <FileCheck className="w-4 h-4 mr-1" />
-                          Test Details
+                          <Users className="w-4 h-4" />
                         </motion.button>
+
+                        {/* Edit Action - Pencil Icon */}
                         <motion.button
-                          onClick={() => handleGenerateInvoice(order)}
-                          disabled={order.status !== 'Approved'}
-                          whileHover={{ scale: order.status === 'Approved' ? 1.05 : 1 }}
-                          whileTap={{ scale: order.status === 'Approved' ? 0.95 : 1 }}
-                          className={`flex items-center px-3 py-1.5 text-sm font-medium rounded-lg transition-colors duration-200 ${
-                            order.status === 'Approved'
-                              ? 'text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/30'
-                              : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 cursor-not-allowed'
-                          }`}
-                          title={order.status !== 'Approved' ? 'Order must be approved to generate invoice' : 'Generate Performer Invoice'}
+                          onClick={() => handleEditOrder(order)}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                          title="Edit Order"
                         >
-                          <Receipt className="w-4 h-4 mr-1" />
-                          Generate Invoice
+                          <Edit className="w-4 h-4" />
                         </motion.button>
+
+                        {/* More Options - Vertical Ellipsis */}
+                        <div className="relative" data-dropdown-container>
+                          <motion.button
+                            onClick={(e) => toggleActions(order.id, e)}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                            title="More Options"
+                          >
+                            <MoreVertical className="w-4 h-4" />
+                          </motion.button>
+
+                          {/* Dropdown Menu */}
+                          {showActions[order.id] && (
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.95 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.95 }}
+                              className={`absolute right-0 z-10 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 ${
+                                dropdownPositions[order.id] === 'top' ? 'bottom-8' : 'top-8'
+                              }`}
+                            >
+                              <button
+                                onClick={() => {
+                                  handleViewOrderTestDetails(order);
+                                  setShowActions(prev => ({ ...prev, [order.id]: false }));
+                                }}
+                                className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                              >
+                                <FileCheck className="w-4 h-4" />
+                                Test Details
+                              </button>
+                              <button
+                                onClick={() => {
+                                  handleGenerateInvoice(order);
+                                  setShowActions(prev => ({ ...prev, [order.id]: false }));
+                                }}
+                                disabled={order.status !== 'Approved'}
+                                className={`w-full px-4 py-2 text-left text-sm flex items-center gap-2 ${
+                                  order.status === 'Approved'
+                                    ? 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20'
+                                    : 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                                }`}
+                                title={order.status !== 'Approved' ? 'Order must be approved to generate invoice' : 'Generate Performer Invoice'}
+                              >
+                                <Receipt className="w-4 h-4" />
+                                Generate Invoice
+                              </button>
+                              <button
+                                onClick={() => {
+                                  handlePrintOrder(order);
+                                  setShowActions(prev => ({ ...prev, [order.id]: false }));
+                                }}
+                                className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                              >
+                                <Printer className="w-4 h-4" />
+                                Print Order
+                              </button>
+                              <button
+                                onClick={() => {
+                                  handleDownloadReport(order);
+                                  setShowActions(prev => ({ ...prev, [order.id]: false }));
+                                }}
+                                className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                              >
+                                <Download className="w-4 h-4" />
+                                Download Report
+                              </button>
+                              <button
+                                onClick={() => {
+                                  handleDeleteOrder(order);
+                                  setShowActions(prev => ({ ...prev, [order.id]: false }));
+                                }}
+                                className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                                Delete Order
+                              </button>
+                            </motion.div>
+                          )}
+                        </div>
                       </div>
                     </td>
                   </motion.tr>
@@ -849,6 +1022,24 @@ const OrderApproval: React.FC = () => {
               </div>
             </div>
           </div>
+          
+          {/* Return Order Action */}
+          <div className="mt-4 pt-4 border-t border-blue-200 dark:border-blue-800">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-blue-600 dark:text-blue-400">
+                After reviewing sample details, you can return this order if needed
+              </p>
+              <motion.button
+                onClick={handleReturnOrder}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center px-4 py-2 text-sm font-medium text-orange-700 dark:text-orange-300 bg-orange-100 dark:bg-orange-900/20 hover:bg-orange-200 dark:hover:bg-orange-900/30 border border-orange-200 dark:border-orange-800 rounded-lg transition-colors duration-200"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Return Order
+              </motion.button>
+            </div>
+          </div>
         </motion.div>
 
         {/* Samples Management Table */}
@@ -894,20 +1085,17 @@ const OrderApproval: React.FC = () => {
                           )}
                         </motion.button>
                         <Package className="w-6 h-6 text-primary-600" />
-      <div>
+                        <div>
                           <h4 className="text-lg font-semibold text-gray-900 dark:text-white">{sample.sampleId}</h4>
                           <p className="text-sm text-gray-600 dark:text-gray-400">{sample.sampleName}</p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-3">
+                      <div className="flex items-center">
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(sample.status)}`}>
                           {sample.status}
                         </span>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
-                          {sample.testsCount} tests
-                        </div>
                       </div>
-      </div>
+                    </div>
 
                     {/* Assignment Status Summary - Always Visible */}
                     <div className="mt-3 flex items-center justify-between">
@@ -941,16 +1129,6 @@ const OrderApproval: React.FC = () => {
                       </div>
                       <div className="flex items-center space-x-2">
                         <motion.button
-                          onClick={() => handleViewSampleDetails(sample)}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 rounded-lg transition-colors duration-200"
-                          title="View Sample Details"
-                        >
-                          <Info className="w-4 h-4 mr-1" />
-                          Details
-                        </motion.button>
-                        <motion.button
                           onClick={() => handleViewSampleTestDetails(sample)}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
@@ -961,10 +1139,11 @@ const OrderApproval: React.FC = () => {
                           Tests
                         </motion.button>
                         <motion.button
-                          onClick={() => handleEditSample(sample.id)}
+                          onClick={() => handleAssignSample(sample.id)}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           className="flex items-center px-3 py-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 dark:bg-primary-900/20 dark:hover:bg-primary-900/30 rounded-lg transition-colors duration-200"
+                          title={sample.assignedDivisionalHead ? "Update Assignment" : "Assign Sample to Divisional Head"}
                         >
                           <Edit3 className="w-4 h-4 mr-1" />
                           {sample.assignedDivisionalHead ? 'Update' : 'Assign'}
@@ -1161,6 +1340,15 @@ const OrderApproval: React.FC = () => {
             </div>
           </div>
         </motion.div>
+
+        {/* Return Order Modal */}
+        <ReturnOrderModal
+          isOpen={isReturnModalOpen}
+          onClose={() => setIsReturnModalOpen(false)}
+          onConfirm={handleReturnOrderConfirm}
+          orderId={selectedOrder.orderId}
+          loading={returnLoading}
+        />
       </div>
     );
   };
