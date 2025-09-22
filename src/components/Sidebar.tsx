@@ -43,7 +43,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
     { id: 'order-registration', label: 'Order Registration', icon: ClipboardList },
     { id: 'order-approval', label: 'Order Approval', icon: CheckCircle2 },
     { id: 'test-allocation', label: 'Test Allocation', icon: UserPlus },
-    { id: 'results-approval', label: 'Results Approval', icon: UserCheck },
     { id: 'tests', label: 'Tests', icon: TestTube },
     // { id: 'lab-tests', label: 'Lab Tests', icon: TestTube },
     // { id: 'reports', label: 'Reports', icon: FileText },
@@ -52,6 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
     // { id: 'database', label: 'Database', icon: Database },
     { id: 'users', label: 'Users', icon: Users },
     // { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'results-approval', label: 'Results Approval', icon: UserCheck },
   ];
 
   const masterDataItems = [

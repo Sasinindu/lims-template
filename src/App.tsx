@@ -11,6 +11,7 @@ import LabTests from './pages/LabTests';
 import TestAllocation from './pages/TestAllocation';
 import ResultsApproval from './pages/ResultsApproval';
 import Tests from './pages/Tests';
+import TestAssignment from './pages/TestAssignment';
 import Reports from './pages/Reports';
 import UsersPage from './pages/Users';
 import Settings from './pages/Settings';
@@ -62,6 +63,7 @@ const App: React.FC = () => {
               <Route path="/order-registration" element={<OrderRegistration />} />
               <Route path="/order-approval" element={<OrderApproval />} />
               <Route path="/test-allocation" element={<TestAllocation />} />
+            <Route path="/test-allocation/assign/:sampleId" element={<TestAssignment />} />
               <Route path="/results-approval" element={<ResultsApproval />} />
             <Route path="/tests" element={<Tests />} />
               <Route path="/lab-tests" element={<LabTests />} />
