@@ -22,7 +22,9 @@ import {
   Eye,
   MoreVertical,
   Printer,
-  Download
+  Download,
+  DollarSign,
+  Info
 } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
 import Drawer from '../components/Drawer';
@@ -31,6 +33,166 @@ import Label from '../components/Label';
 import Input from '../components/Input';
 import SimpleTable from '../components/SimpleTable';
 import { useConfirmation } from '../hooks/useConfirmation';
+
+// Mock Group Master data for filtering
+const groupMasterData = [
+  {
+    id: 'GM001',
+    customer: { id: 'C001', name: 'ABC Corporation' },
+    commodityCategory: { id: 'CC001', name: 'Food Products' },
+    commoditySubCategory: { id: 'CSC001', name: 'Dairy Products' },
+    commodity: { id: 'COM001', name: 'Milk' },
+    testParameter: { 
+      id: 'TP001', 
+      name: 'Microbiological Testing',
+      analytes: [
+        'Total Plate Count',
+        'Coliform Count', 
+        'E.coli Count',
+        'Yeast & Mold Count',
+        'Salmonella',
+        'Listeria monocytogenes'
+      ]
+    },
+    costGroups: [
+      { group: 'Standard', price: 250.00 },
+      { group: 'Premium', price: 350.00 }
+    ],
+    status: 'Active'
+  },
+  {
+    id: 'GM002',
+    customer: { id: 'C001', name: 'ABC Corporation' },
+    commodityCategory: { id: 'CC001', name: 'Food Products' },
+    commoditySubCategory: { id: 'CSC002', name: 'Meat Products' },
+    commodity: { id: 'COM002', name: 'Beef' },
+    testParameter: { 
+      id: 'TP002', 
+      name: 'Chemical Analysis',
+      analytes: [
+        'Protein Content',
+        'Fat Content', 
+        'Moisture Content',
+        'Ash Content',
+        'pH Level',
+        'Water Activity (aw)'
+      ]
+    },
+    costGroups: [
+      { group: 'Standard', price: 180.00 },
+      { group: 'Premium', price: 280.00 }
+    ],
+    status: 'Active'
+  },
+  {
+    id: 'GM003',
+    customer: { id: 'C002', name: 'XYZ Industries' },
+    commodityCategory: { id: 'CC001', name: 'Food Products' },
+    commoditySubCategory: { id: 'CSC003', name: 'Cereals & Grains' },
+    commodity: { id: 'COM003', name: 'Rice' },
+    testParameter: { 
+      id: 'TP003', 
+      name: 'Pesticide Residue Analysis',
+      analytes: [
+        'Organochlorines',
+        'Organophosphates', 
+        'Carbamates',
+        'Pyrethroids',
+        'Triazines',
+        'Glyphosate',
+        '2,4-D',
+        'Atrazine'
+      ]
+    },
+    costGroups: [
+      { group: 'Standard', price: 320.00 },
+      { group: 'Premium', price: 450.00 }
+    ],
+    status: 'Active'
+  },
+  {
+    id: 'GM004',
+    customer: { id: 'C003', name: 'DEF Manufacturing' },
+    commodityCategory: { id: 'CC001', name: 'Food Products' },
+    commoditySubCategory: { id: 'CSC003', name: 'Cereals & Grains' },
+    commodity: { id: 'COM004', name: 'Wheat' },
+    testParameter: { 
+      id: 'TP004', 
+      name: 'Nutritional Analysis',
+      analytes: [
+        'Protein',
+        'Carbohydrates', 
+        'Total Fat',
+        'Saturated Fat',
+        'Dietary Fiber',
+        'Sugars',
+        'Sodium',
+        'Calories',
+        'Ash Content',
+        'Gluten Content'
+      ]
+    },
+    costGroups: [
+      { group: 'Standard', price: 150.00 },
+      { group: 'Premium', price: 220.00 }
+    ],
+    status: 'Active'
+  },
+  {
+    id: 'GM005',
+    customer: { id: 'C001', name: 'ABC Corporation' },
+    commodityCategory: { id: 'CC001', name: 'Food Products' },
+    commoditySubCategory: { id: 'CSC001', name: 'Dairy Products' },
+    commodity: { id: 'COM005', name: 'Cheese' },
+    testParameter: { 
+      id: 'TP005', 
+      name: 'Heavy Metals Analysis',
+      analytes: [
+        'Lead (Pb)',
+        'Cadmium (Cd)', 
+        'Mercury (Hg)',
+        'Arsenic (As)',
+        'Chromium (Cr)',
+        'Zinc (Zn)',
+        'Copper (Cu)',
+        'Iron (Fe)'
+      ]
+    },
+    costGroups: [
+      { group: 'Standard', price: 380.00 },
+      { group: 'Premium', price: 520.00 }
+    ],
+    status: 'Active'
+  },
+  {
+    id: 'GM006',
+    customer: { id: 'C002', name: 'XYZ Industries' },
+    commodityCategory: { id: 'CC001', name: 'Food Products' },
+    commoditySubCategory: { id: 'CSC004', name: 'Beverages' },
+    commodity: { id: 'COM006', name: 'Fruit Juice' },
+    testParameter: { 
+      id: 'TP006', 
+      name: 'Vitamin Analysis',
+      analytes: [
+        'Vitamin A',
+        'Vitamin C (Ascorbic Acid)', 
+        'Vitamin D',
+        'Vitamin E',
+        'Thiamine (B1)',
+        'Riboflavin (B2)',
+        'Niacin (B3)',
+        'Vitamin B6',
+        'Folate',
+        'Vitamin B12'
+      ]
+    },
+    costGroups: [
+      { group: 'Standard', price: 290.00 },
+      { group: 'Premium', price: 390.00 }
+    ],
+    status: 'Active'
+  }
+];
 
 const OrderRegistration: React.FC = () => {
   return (
@@ -72,6 +234,15 @@ const Orders: React.FC = () => {
   const [selectedSampleForTest, setSelectedSampleForTest] = useState<any>(null);
   const [showActions, setShowActions] = useState<Record<string, boolean>>({});
   const [dropdownPositions, setDropdownPositions] = useState<{ [key: string]: 'bottom' | 'top' }>({});
+
+  // Order form data state
+  const [orderFormData, setOrderFormData] = useState({
+    companyName: '',
+    siteName: '',
+    commodityCategory: '',
+    commoditySubCategory: '',
+    commodity: ''
+  });
 
   // Use confirmation hook
   const { confirmDelete } = useConfirmation();
@@ -443,15 +614,28 @@ const Orders: React.FC = () => {
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
-        return <OrderInformationStep isViewMode={isViewMode} initialData={isViewMode ? viewingOrder : editingOrder} />;
+        return <OrderInformationStep 
+          isViewMode={isViewMode} 
+          initialData={isViewMode ? viewingOrder : editingOrder}
+          onFormDataChange={setOrderFormData}
+        />;
       case 2:
         return <SamplesStep onAddTestForSample={handleAddTestForSample} isViewMode={isViewMode} />;
       case 3:
-        return <TestsStep selectedSample={selectedSampleForTest} onTestAdded={() => setSelectedSampleForTest(null)} isViewMode={isViewMode} />;
+        return <TestsStep 
+          selectedSample={selectedSampleForTest} 
+          onTestAdded={() => setSelectedSampleForTest(null)} 
+          isViewMode={isViewMode}
+          orderFormData={orderFormData}
+        />;
       case 4:
         return <ReviewStep isViewMode={isViewMode} />;
       default:
-        return <OrderInformationStep isViewMode={isViewMode} initialData={isViewMode ? viewingOrder : editingOrder} />;
+        return <OrderInformationStep 
+          isViewMode={isViewMode} 
+          initialData={isViewMode ? viewingOrder : editingOrder}
+          onFormDataChange={setOrderFormData}
+        />;
     }
   };
 
@@ -680,7 +864,26 @@ export default OrderRegistration;
 const OrderInformationStep: React.FC<{
   isViewMode?: boolean;
   initialData?: any;
-}> = ({ isViewMode = false, initialData = null }) => {
+  onFormDataChange?: (data: any) => void;
+}> = ({ isViewMode = false, initialData = null, onFormDataChange }) => {
+  const [formData, setFormData] = useState({
+    companyName: initialData?.companyName || '',
+    siteName: initialData?.siteName || '',
+    commodityCategory: '',
+    commoditySubCategory: '',
+    commodity: '',
+    samplingBy: 'client',
+    packing: 'poly-bag'
+  });
+
+  const handleFormChange = (field: string, value: string) => {
+    const newFormData = { ...formData, [field]: value };
+    setFormData(newFormData);
+    if (onFormDataChange) {
+      onFormDataChange(newFormData);
+    }
+  };
+
   return (
     <div className="space-y-8">
       <div>
@@ -698,11 +901,12 @@ const OrderInformationStep: React.FC<{
           <div>
             <Label htmlFor="companyName" required>Company Name</Label>
             <CustomSelect
-              value=""
-              onChange={() => { }}
+              value={formData.companyName}
+              onChange={(value) => handleFormChange('companyName', value)}
               options={[
                 { value: 'ABC Corporation', label: 'ABC Corporation' },
                 { value: 'XYZ Industries', label: 'XYZ Industries' },
+                { value: 'DEF Manufacturing', label: 'DEF Manufacturing' },
                 { value: 'Ministry of Health', label: 'Ministry of Health' },
                 { value: 'University of Science', label: 'University of Science' }
               ]}
@@ -712,15 +916,52 @@ const OrderInformationStep: React.FC<{
           <div>
             <Label htmlFor="siteName" required>Site Name</Label>
             <CustomSelect
-              value=""
-              onChange={() => { }}
+              value={formData.siteName}
+              onChange={(value) => handleFormChange('siteName', value)}
               options={[
                 { value: 'Head Office', label: 'Head Office' },
                 { value: 'Branch Office', label: 'Branch Office' },
                 { value: 'Main Facility', label: 'Main Facility' },
+                { value: 'Production Unit A', label: 'Production Unit A' },
                 { value: 'Research Lab', label: 'Research Lab' }
               ]}
               placeholder="Select Site"
+            />
+          </div>
+          <div>
+            <Label htmlFor="commodityCategory" required>Commodity Category</Label>
+            <CustomSelect
+              value={formData.commodityCategory}
+              onChange={(value) => handleFormChange('commodityCategory', value)}
+              options={[
+                { value: 'Food Products', label: 'Food Products' },
+                { value: 'Beverages', label: 'Beverages' },
+                { value: 'Pharmaceuticals', label: 'Pharmaceuticals' },
+                { value: 'Cosmetics', label: 'Cosmetics' },
+                { value: 'Chemicals', label: 'Chemicals' }
+              ]}
+              placeholder="Select Commodity Category"
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              This helps filter relevant test parameters for your samples
+            </p>
+          </div>
+          <div>
+            <Label htmlFor="commoditySubCategory">Commodity Sub Category</Label>
+            <CustomSelect
+              value={formData.commoditySubCategory}
+              onChange={(value) => handleFormChange('commoditySubCategory', value)}
+              options={[
+                { value: 'Dairy Products', label: 'Dairy Products' },
+                { value: 'Meat Products', label: 'Meat Products' },
+                { value: 'Bakery Products', label: 'Bakery Products' },
+                { value: 'Fruits & Vegetables', label: 'Fruits & Vegetables' },
+                { value: 'Cereals & Grains', label: 'Cereals & Grains' },
+                { value: 'Beverages', label: 'Beverages' },
+                { value: 'Seafood', label: 'Seafood' },
+                { value: 'Oils & Fats', label: 'Oils & Fats' }
+              ]}
+              placeholder="Select Commodity Sub Category"
             />
           </div>
           <div>
@@ -761,17 +1002,6 @@ const OrderInformationStep: React.FC<{
           </div>
         </div>
       </div>
-
-      {/* Site Details Section */}
-      {/* <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
-          <MapPin className="w-5 h-5 mr-2 text-primary-600" />
-          Site Details
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
-        </div>
-      </div> */}
 
       {/* Contact Information Section */}
       <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
@@ -846,11 +1076,25 @@ const OrderInformationStep: React.FC<{
             <Label htmlFor="samplingBy" required>Sampling by</Label>
             <div className="flex space-x-6 mt-2">
               <label className="flex items-center">
-                <input type="radio" name="samplingBy" value="client" className="mr-2" />
+                <input 
+                  type="radio" 
+                  name="samplingBy" 
+                  value="client" 
+                  checked={formData.samplingBy === 'client'}
+                  onChange={(e) => handleFormChange('samplingBy', e.target.value)}
+                  className="mr-2" 
+                />
                 <span className="text-sm">Client</span>
               </label>
               <label className="flex items-center">
-                <input type="radio" name="samplingBy" value="lab" className="mr-2" />
+                <input 
+                  type="radio" 
+                  name="samplingBy" 
+                  value="lab" 
+                  checked={formData.samplingBy === 'lab'}
+                  onChange={(e) => handleFormChange('samplingBy', e.target.value)}
+                  className="mr-2" 
+                />
                 <span className="text-sm">Lab Representative</span>
               </label>
             </div>
@@ -883,19 +1127,47 @@ const OrderInformationStep: React.FC<{
             <Label htmlFor="packing">Packing</Label>
             <div className="grid grid-cols-2 gap-2 mt-2">
               <label className="flex items-center">
-                <input type="checkbox" className="mr-2" />
+                <input 
+                  type="radio" 
+                  name="packing" 
+                  value="poly-bag"
+                  checked={formData.packing === 'poly-bag'}
+                  onChange={(e) => handleFormChange('packing', e.target.value)}
+                  className="mr-2" 
+                />
                 <span className="text-sm">Poly Bag</span>
               </label>
               <label className="flex items-center">
-                <input type="checkbox" className="mr-2" />
+                <input 
+                  type="radio" 
+                  name="packing" 
+                  value="plastic-container"
+                  checked={formData.packing === 'plastic-container'}
+                  onChange={(e) => handleFormChange('packing', e.target.value)}
+                  className="mr-2" 
+                />
                 <span className="text-sm">Plastic Container</span>
               </label>
               <label className="flex items-center">
-                <input type="checkbox" className="mr-2" />
+                <input 
+                  type="radio" 
+                  name="packing" 
+                  value="glass-container"
+                  checked={formData.packing === 'glass-container'}
+                  onChange={(e) => handleFormChange('packing', e.target.value)}
+                  className="mr-2" 
+                />
                 <span className="text-sm">Glass Container</span>
               </label>
               <label className="flex items-center">
-                <input type="checkbox" className="mr-2" />
+                <input 
+                  type="radio" 
+                  name="packing" 
+                  value="other"
+                  checked={formData.packing === 'other'}
+                  onChange={(e) => handleFormChange('packing', e.target.value)}
+                  className="mr-2" 
+                />
                 <span className="text-sm">Other</span>
               </label>
             </div>
@@ -928,10 +1200,6 @@ const OrderInformationStep: React.FC<{
               <label className="flex items-center">
                 <input type="checkbox" className="mr-2" />
                 <span className="text-sm">Email</span>
-              </label>
-              <label className="flex items-center">
-                <input type="checkbox" className="mr-2" />
-                <span className="text-sm">Hard copy</span>
               </label>
               <label className="flex items-center">
                 <input type="checkbox" className="mr-2" />
@@ -1170,34 +1438,41 @@ const TestsStep: React.FC<{
   selectedSample?: any;
   onTestAdded: () => void;
   isViewMode?: boolean;
-}> = ({ selectedSample, onTestAdded, isViewMode = false }) => {
+  orderFormData?: any;
+}> = ({ selectedSample, onTestAdded, isViewMode = false, orderFormData }) => {
   const [tests, setTests] = useState([
     {
       id: 'T001',
       testId: 'TST-001',
       sampleId: 'SMP-001',
-      testParameter: 'Microbiological Analysis',
-      testMethod: 'ISO 4833-1:2013',
+      testParameter: 'Microbiological Testing',
+      group: 'Standard',
       specification: 'Total Plate Count < 10,000 CFU/g',
-      reference: 'Food Safety Standards'
+      reference: 'Food Safety Standards',
+      price: 250.00,
+      analytes: ['Total Plate Count', 'Coliform Count', 'E.coli Count']
     },
     {
       id: 'T002',
       testId: 'TST-002',
       sampleId: 'SMP-001',
       testParameter: 'Chemical Analysis',
-      testMethod: 'AOAC 991.25',
+      group: 'Premium',
       specification: 'Protein Content > 3.0%',
-      reference: 'Nutritional Standards'
+      reference: 'Nutritional Standards',
+      price: 280.00,
+      analytes: ['Protein Content', 'Fat Content', 'Moisture Content']
     },
     {
       id: 'T003',
       testId: 'TST-003',
       sampleId: 'SMP-002',
-      testParameter: 'Pathogen Detection',
-      testMethod: 'ISO 6579:2017',
-      specification: 'Salmonella: Absent in 25g',
-      reference: 'Food Safety Standards'
+      testParameter: 'Pesticide Residue Analysis',
+      group: 'Standard',
+      specification: 'Pesticide residues within acceptable limits',
+      reference: 'Food Safety Standards',
+      price: 320.00,
+      analytes: ['Organochlorines', 'Organophosphates', 'Carbamates']
     }
   ]);
 
@@ -1233,10 +1508,26 @@ const TestsStep: React.FC<{
       )
     },
     {
-      key: 'testMethod',
-      title: 'Test Protocol',
+      key: 'group',
+      title: 'Group',
       render: (value: string) => (
-        <span className="text-sm text-gray-600 dark:text-gray-400">{value}</span>
+        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+          value === 'Premium' 
+            ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400'
+            : 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
+        }`}>
+          {value}
+        </span>
+      )
+    },
+    {
+      key: 'price',
+      title: 'Price',
+      render: (value: number) => (
+        <div className="flex items-center">
+          <DollarSign className="w-4 h-4 text-green-500 mr-1" />
+          <span className="text-sm font-medium text-gray-900 dark:text-white">Rs. {value.toFixed(2)}</span>
+        </div>
       )
     },
     {
@@ -1319,6 +1610,7 @@ const TestsStep: React.FC<{
             isEditing={!!editingTest}
             initialData={editingTest}
             selectedSample={selectedSample}
+            orderFormData={orderFormData}
           />
         </div>
       )}
@@ -1373,26 +1665,23 @@ const ReviewStep: React.FC<{
     {
       testId: 'TST-001',
       sampleId: 'SMP-001',
-      testParameter: 'Microbiological Analysis',
-      testMethod: 'ISO 4833-1:2013',
-      basePrice: 150.00,
-      finalPrice: 150.00
+      testParameter: 'Microbiological Testing',
+      basePrice: 250.00,
+      finalPrice: 250.00
     },
     {
       testId: 'TST-002',
       sampleId: 'SMP-001',
       testParameter: 'Chemical Analysis',
-      testMethod: 'AOAC 991.25',
-      basePrice: 200.00,
-      finalPrice: 200.00
+      basePrice: 180.00,
+      finalPrice: 180.00
     },
     {
       testId: 'TST-003',
       sampleId: 'SMP-002',
-      testParameter: 'Pathogen Detection',
-      testMethod: 'ISO 6579:2017',
-      basePrice: 300.00,
-      finalPrice: 300.00
+      testParameter: 'Pesticide Residue Analysis',
+      basePrice: 320.00,
+      finalPrice: 320.00
     }
   ];
 
@@ -1456,7 +1745,6 @@ const ReviewStep: React.FC<{
                   <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Test ID</th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Sample ID</th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Test Parameter</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Test Method</th>
                   <th className="text-right py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Price</th>
                 </tr>
               </thead>
@@ -1477,9 +1765,6 @@ const ReviewStep: React.FC<{
                     </td>
                     <td className="py-3 px-4">
                       <span className="text-sm text-gray-900 dark:text-white">{test.testParameter}</span>
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">{test.testMethod}</span>
                     </td>
                     <td className="py-3 px-4 text-right">
                       <span className="text-sm font-medium text-gray-900 dark:text-white">Rs. {test.finalPrice.toFixed(2)}</span>
@@ -1605,15 +1890,26 @@ const SampleForm: React.FC<{
     { value: 'Meat Products', label: 'Meat Products' },
     { value: 'Bakery Products', label: 'Bakery Products' },
     { value: 'Fruits & Vegetables', label: 'Fruits & Vegetables' },
-    { value: 'Cereals & Grains', label: 'Cereals & Grains' }
+    { value: 'Cereals & Grains', label: 'Cereals & Grains' },
+    { value: 'Beverages', label: 'Beverages' },
+    { value: 'Seafood', label: 'Seafood' },
+    { value: 'Oils & Fats', label: 'Oils & Fats' }
   ];
 
   const commodityOptions = [
     { value: 'Milk', label: 'Milk' },
+    { value: 'Cheese', label: 'Cheese' },
+    { value: 'Yogurt', label: 'Yogurt' },
     { value: 'Beef', label: 'Beef' },
     { value: 'Chicken', label: 'Chicken' },
+    { value: 'Pork', label: 'Pork' },
     { value: 'Bread', label: 'Bread' },
-    { value: 'Rice', label: 'Rice' }
+    { value: 'Rice', label: 'Rice' },
+    { value: 'Wheat', label: 'Wheat' },
+    { value: 'Corn', label: 'Corn' },
+    { value: 'Fruit Juice', label: 'Fruit Juice' },
+    { value: 'Soft Drinks', label: 'Soft Drinks' },
+    { value: 'Water', label: 'Water' }
   ];
 
   const sampleConditionOptions = [
@@ -1807,13 +2103,16 @@ const TestForm: React.FC<{
   isEditing?: boolean;
   initialData?: any;
   selectedSample?: any;
-}> = ({ onSave, onCancel, isEditing = false, initialData = null, selectedSample = null }) => {
+  orderFormData?: any;
+}> = ({ onSave, onCancel, isEditing = false, initialData = null, selectedSample = null, orderFormData }) => {
   const [formData, setFormData] = useState({
     sampleId: selectedSample?.sampleId || initialData?.sampleId || '',
     testParameter: initialData?.testParameter || '',
-    testMethod: initialData?.testMethod || '',
+    group: initialData?.group || 'Standard',
     specification: initialData?.specification || '',
-    reference: initialData?.reference || ''
+    reference: initialData?.reference || '',
+    price: initialData?.price || 0,
+    analytes: initialData?.analytes || []
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -1824,26 +2123,82 @@ const TestForm: React.FC<{
     { value: 'SMP-003', label: 'SMP-003' }
   ];
 
-  const testParameterOptions = [
-    { value: 'Microbiological Analysis', label: 'Microbiological Analysis' },
-    { value: 'Chemical Analysis', label: 'Chemical Analysis' },
-    { value: 'Pathogen Detection', label: 'Pathogen Detection' },
-    { value: 'Nutritional Analysis', label: 'Nutritional Analysis' },
-    { value: 'Heavy Metals', label: 'Heavy Metals' }
+  const groupOptions = [
+    { value: 'Standard', label: 'Standard' },
+    { value: 'Premium', label: 'Premium' }
   ];
 
-  const testMethodOptions = [
-    { value: 'ISO 4833-1:2013', label: 'ISO 4833-1:2013' },
-    { value: 'AOAC 991.25', label: 'AOAC 991.25' },
-    { value: 'ISO 6579:2017', label: 'ISO 6579:2017' },
-    { value: 'ISO 21528-1:2017', label: 'ISO 21528-1:2017' },
-    { value: 'EPA 200.8', label: 'EPA 200.8' }
-  ];
+  // Filter test parameters based on order form data (company, commodity category, etc.)
+  const getFilteredTestParameters = () => {
+    // If no company or commodity category selected, show a helpful message
+    if (!orderFormData?.companyName || !orderFormData?.commodityCategory) {
+      return [];
+    }
 
-  const handleInputChange = (field: string, value: string) => {
+    const filtered = groupMasterData
+      .filter(item => 
+        item.customer.name === orderFormData.companyName &&
+        item.commodityCategory.name === orderFormData.commodityCategory &&
+        item.status === 'Active'
+      )
+      .map(item => ({
+        value: item.testParameter.name,
+        label: item.testParameter.name,
+        costGroups: item.costGroups,
+        analytes: item.testParameter.analytes
+      }));
+
+    // If no exact matches found, try to find by company only
+    if (filtered.length === 0 && orderFormData.companyName) {
+      return groupMasterData
+        .filter(item => 
+          item.customer.name === orderFormData.companyName &&
+          item.status === 'Active'
+        )
+        .map(item => ({
+          value: item.testParameter.name,
+          label: item.testParameter.name,
+          costGroups: item.costGroups,
+          analytes: item.testParameter.analytes
+        }));
+    }
+
+    return filtered;
+  };
+
+  const filteredTestParameters = getFilteredTestParameters();
+
+  const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const handleTestParameterChange = (value: string) => {
+    const selectedTest = filteredTestParameters.find(test => test.value === value);
+    if (selectedTest) {
+      // Get price for the currently selected group
+      const selectedGroupPrice = selectedTest.costGroups.find(cg => cg.group === formData.group);
+      setFormData(prev => ({
+        ...prev,
+        testParameter: value,
+        price: selectedGroupPrice?.price || 0,
+        analytes: selectedTest.analytes
+      }));
+    }
+  };
+
+  const handleGroupChange = (value: string) => {
+    setFormData(prev => ({ ...prev, group: value }));
+    
+    // Update price based on selected group and test parameter
+    if (formData.testParameter) {
+      const selectedTest = filteredTestParameters.find(test => test.value === formData.testParameter);
+      if (selectedTest) {
+        const selectedGroupPrice = selectedTest.costGroups.find(cg => cg.group === value);
+        setFormData(prev => ({ ...prev, price: selectedGroupPrice?.price || 0 }));
+      }
     }
   };
 
@@ -1856,8 +2211,8 @@ const TestForm: React.FC<{
     if (!formData.testParameter) {
       newErrors.testParameter = 'Test parameter is required';
     }
-    if (!formData.testMethod) {
-      newErrors.testMethod = 'Test method is required';
+    if (!formData.group) {
+      newErrors.group = 'Group selection is required';
     }
     if (!formData.specification) {
       newErrors.specification = 'Specification is required';
@@ -1922,24 +2277,50 @@ const TestForm: React.FC<{
           </Label>
           <CustomSelect
             value={formData.testParameter}
-            onChange={(value) => handleInputChange('testParameter', value)}
-            options={testParameterOptions}
+            onChange={handleTestParameterChange}
+            options={filteredTestParameters}
             placeholder="Select test parameter"
             error={errors.testParameter}
           />
+          {filteredTestParameters.length === 0 && (
+            <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+              No test parameters available. Please ensure Company Name and Commodity Category are selected in the Order Information step.
+            </p>
+          )}
         </div>
 
         <div>
-          <Label htmlFor="testMethod" required>
-            Test Protocol
+          <Label htmlFor="group" required>
+            Group
           </Label>
           <CustomSelect
-            value={formData.testMethod}
-            onChange={(value) => handleInputChange('testMethod', value)}
-            options={testMethodOptions}
-            placeholder="Select test protocol"
-            error={errors.testMethod}
+            value={formData.group}
+            onChange={handleGroupChange}
+            options={groupOptions}
+            placeholder="Select group"
+            error={errors.group}
           />
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Different groups have different pricing tiers
+          </p>
+        </div>
+
+        <div>
+          <Label htmlFor="price">
+            Price (Auto-populated)
+          </Label>
+          <div className="flex items-center">
+            <DollarSign className="w-4 h-4 text-green-500 mr-2" />
+            <Input
+              value={`Rs. ${formData.price.toFixed(2)}`}
+              onChange={() => {}}
+              disabled
+              className="bg-gray-50 dark:bg-gray-700"
+            />
+          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Price is automatically updated based on selected group and test parameter
+          </p>
         </div>
 
         <div>
@@ -1954,6 +2335,60 @@ const TestForm: React.FC<{
         </div>
       </div>
 
+      {/* Analytes Information */}
+      {formData.analytes.length > 0 && (
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+          <div className="flex items-start">
+            <Info className="w-5 h-5 text-green-600 dark:text-green-400 mr-2 mt-0.5" />
+            <div>
+              <h5 className="text-sm font-medium text-green-900 dark:text-green-100 mb-2">
+                Analytes included in this test:
+              </h5>
+              <div className="flex flex-wrap gap-2">
+                {formData.analytes.map((analyte: string, index: number) => (
+                  <span
+                    key={index}
+                    className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 rounded-full"
+                  >
+                    {analyte}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Group Pricing Information */}
+      {formData.testParameter && filteredTestParameters.length > 0 && (
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <div className="flex items-start">
+            <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-2 mt-0.5" />
+            <div>
+              <h5 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
+                Available pricing groups for {formData.testParameter}:
+              </h5>
+              <div className="flex flex-wrap gap-2">
+                {filteredTestParameters
+                  .find(test => test.value === formData.testParameter)
+                  ?.costGroups.map((costGroup: any, index: number) => (
+                    <span
+                      key={index}
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        costGroup.group === formData.group
+                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 ring-2 ring-blue-500'
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+                      }`}
+                    >
+                      {costGroup.group}: Rs. {costGroup.price.toFixed(2)}
+                    </span>
+                  ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div>
         <Label htmlFor="specification" required>
           Specification/Reference
@@ -1964,7 +2399,6 @@ const TestForm: React.FC<{
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
           rows={3}
           placeholder="Enter specification or reference"
-        // error={errors.specification}
         />
       </div>
 
