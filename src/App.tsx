@@ -10,12 +10,12 @@ import OrderApproval from './pages/OrderApproval';
 import LabTests from './pages/LabTests';
 import TestAllocation from './pages/TestAllocation';
 import ResultsApproval from './pages/ResultsApproval';
+import Tests from './pages/Tests';
 import Reports from './pages/Reports';
 import UsersPage from './pages/Users';
 import Settings from './pages/Settings';
 import CustomerMaster from './pages/CustomerMaster';
 import GroupMaster from './pages/GroupMaster';
-import Tests from './pages/Tests';
 import Chemicals from './pages/Chemicals';
 import Commodities from './pages/Commodities';
 import InstrumentMaster from './pages/InstrumentMaster';
@@ -63,6 +63,7 @@ const App: React.FC = () => {
               <Route path="/order-approval" element={<OrderApproval />} />
               <Route path="/test-allocation" element={<TestAllocation />} />
               <Route path="/results-approval" element={<ResultsApproval />} />
+            <Route path="/tests" element={<Tests />} />
               <Route path="/lab-tests" element={<LabTests />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/analytics" element={<Analytics />} />

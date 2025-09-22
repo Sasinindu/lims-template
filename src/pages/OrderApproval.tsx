@@ -23,7 +23,11 @@ import {
   Edit3,
   Info,
   Plus,
-  Trash2
+  Trash2,
+  DollarSign,
+  FileCheck,
+  Layers,
+  Receipt
 } from 'lucide-react';
 import Drawer from '../components/Drawer';
 import CustomSelect from '../components/CustomSelect';
@@ -69,10 +73,17 @@ interface Test {
   id: string;
   testId: string;
   testName: string;
+  testType: string;
   method: string;
+  parameters: string[];
+  specifications: string;
+  price: number;
+  group: string;
+  analytes: string[];
   assignedAnalyst?: string;
   status: string;
   priority: string;
+  estimatedDuration: string;
 }
 
 interface DivisionalHead {
@@ -99,6 +110,14 @@ const OrderApproval: React.FC = () => {
   // Sample details drawer state
   const [isSampleDetailsOpen, setIsSampleDetailsOpen] = useState(false);
   const [selectedSampleForDetails, setSelectedSampleForDetails] = useState<Sample | null>(null);
+
+  // Order test details drawer state
+  const [isOrderTestDetailsOpen, setIsOrderTestDetailsOpen] = useState(false);
+  const [selectedOrderForTestDetails, setSelectedOrderForTestDetails] = useState<Order | null>(null);
+
+  // Sample test details drawer state
+  const [isSampleTestDetailsOpen, setIsSampleTestDetailsOpen] = useState(false);
+  const [selectedSampleForTestDetails, setSelectedSampleForTestDetails] = useState<Sample | null>(null);
 
   const [orders] = useState<Order[]>([
     {
@@ -135,28 +154,49 @@ const OrderApproval: React.FC = () => {
               id: 'T001',
               testId: 'TST-001',
               testName: 'Protein Content',
+              testType: 'Chemical Analysis',
               method: 'Kjeldahl Method',
+              parameters: ['Total Protein', 'Crude Protein'],
+              specifications: '≥ 3.0%',
+              price: 250.00,
+              group: 'Standard',
+              analytes: ['Total Protein', 'Nitrogen Content'],
               assignedAnalyst: undefined,
               status: 'Pending',
-              priority: 'High'
+              priority: 'High',
+              estimatedDuration: '4 hours'
             },
             {
               id: 'T002',
               testId: 'TST-002',
               testName: 'Fat Content',
+              testType: 'Chemical Analysis',
               method: 'Soxhlet Extraction',
+              parameters: ['Total Fat', 'Saturated Fat'],
+              specifications: '3.0 - 4.0%',
+              price: 200.00,
+              group: 'Standard',
+              analytes: ['Total Fat Content', 'Free Fatty Acids'],
               assignedAnalyst: undefined,
               status: 'Pending',
-              priority: 'Medium'
+              priority: 'Medium',
+              estimatedDuration: '6 hours'
             },
             {
               id: 'T003',
               testId: 'TST-003',
               testName: 'Microbiological Count',
+              testType: 'Microbiological Analysis',
               method: 'Plate Count Method',
+              parameters: ['Total Plate Count', 'Coliform Count'],
+              specifications: '≤ 1.0 × 10⁵ CFU/ml',
+              price: 350.00,
+              group: 'Premium',
+              analytes: ['Total Plate Count', 'Coliform Count', 'E.coli Count'],
               assignedAnalyst: undefined,
               status: 'Pending',
-              priority: 'High'
+              priority: 'High',
+              estimatedDuration: '48 hours'
             }
           ]
         },
@@ -183,19 +223,33 @@ const OrderApproval: React.FC = () => {
               id: 'T004',
               testId: 'TST-004',
               testName: 'Moisture Content',
+              testType: 'Chemical Analysis',
               method: 'Oven Drying Method',
+              parameters: ['Moisture Content', 'Dry Matter'],
+              specifications: '70.0 - 78.0%',
+              price: 150.00,
+              group: 'Standard',
+              analytes: ['Total Moisture', 'Water Activity'],
               assignedAnalyst: 'Dr. John Smith',
               status: 'Assigned',
-              priority: 'Medium'
+              priority: 'Medium',
+              estimatedDuration: '4 hours'
             },
             {
               id: 'T005',
               testId: 'TST-005',
               testName: 'Protein Analysis',
+              testType: 'Chemical Analysis',
               method: 'Kjeldahl Method',
+              parameters: ['Crude Protein', 'True Protein'],
+              specifications: '≥ 20.0%',
+              price: 280.00,
+              group: 'Standard',
+              analytes: ['Total Protein', 'Amino Acids'],
               assignedAnalyst: 'Dr. John Smith',
               status: 'Assigned',
-              priority: 'High'
+              priority: 'High',
+              estimatedDuration: '5 hours'
             }
           ]
         },
@@ -222,37 +276,65 @@ const OrderApproval: React.FC = () => {
               id: 'T006',
               testId: 'TST-006',
               testName: 'Moisture Analysis',
+              testType: 'Chemical Analysis',
               method: 'Oven Drying Method',
+              parameters: ['Moisture Content', 'Water Activity'],
+              specifications: '≤ 14.0%',
+              price: 120.00,
+              group: 'Standard',
+              analytes: ['Total Moisture', 'Free Water'],
               assignedAnalyst: 'Dr. Jane Doe',
               status: 'In Progress',
-              priority: 'High'
+              priority: 'High',
+              estimatedDuration: '3 hours'
             },
             {
               id: 'T007',
               testId: 'TST-007',
               testName: 'Pesticide Residue',
+              testType: 'Chemical Analysis',
               method: 'GC-MS Method',
+              parameters: ['Organochlorines', 'Organophosphates', 'Carbamates'],
+              specifications: '≤ 0.01 mg/kg',
+              price: 450.00,
+              group: 'Premium',
+              analytes: ['Pesticide Multi-residue Screen', 'Individual Pesticides'],
               assignedAnalyst: 'Dr. Jane Doe',
               status: 'Completed',
-              priority: 'High'
+              priority: 'High',
+              estimatedDuration: '8 hours'
             },
             {
               id: 'T008',
               testId: 'TST-008',
               testName: 'Heavy Metals',
+              testType: 'Chemical Analysis',
               method: 'ICP-MS Method',
+              parameters: ['Lead', 'Cadmium', 'Mercury', 'Arsenic'],
+              specifications: '≤ 0.1 mg/kg',
+              price: 380.00,
+              group: 'Premium',
+              analytes: ['Lead', 'Cadmium', 'Mercury', 'Arsenic', 'Chromium'],
               assignedAnalyst: 'Dr. Jane Doe',
               status: 'In Progress',
-              priority: 'Medium'
+              priority: 'Medium',
+              estimatedDuration: '6 hours'
             },
             {
               id: 'T009',
               testId: 'TST-009',
               testName: 'Aflatoxin Analysis',
+              testType: 'Chemical Analysis',
               method: 'HPLC Method',
+              parameters: ['Aflatoxin B1', 'Aflatoxin B2', 'Aflatoxin G1', 'Aflatoxin G2'],
+              specifications: '≤ 5.0 μg/kg',
+              price: 420.00,
+              group: 'Premium',
+              analytes: ['Total Aflatoxins', 'Individual Aflatoxins'],
               assignedAnalyst: 'Dr. Jane Doe',
               status: 'Pending',
-              priority: 'High'
+              priority: 'High',
+              estimatedDuration: '10 hours'
             }
           ]
         },
@@ -279,28 +361,49 @@ const OrderApproval: React.FC = () => {
               id: 'T010',
               testId: 'TST-010',
               testName: 'Acid Value',
+              testType: 'Chemical Analysis',
               method: 'Titration Method',
+              parameters: ['Free Fatty Acids', 'Acid Number'],
+              specifications: '≤ 0.5 mg KOH/g',
+              price: 180.00,
+              group: 'Standard',
+              analytes: ['Free Acidity', 'Oleic Acid Equivalent'],
               assignedAnalyst: 'Dr. Alex Chen',
               status: 'Completed',
-              priority: 'Medium'
+              priority: 'Medium',
+              estimatedDuration: '2 hours'
             },
             {
               id: 'T011',
               testId: 'TST-011',
               testName: 'Peroxide Value',
+              testType: 'Chemical Analysis',
               method: 'Iodometric Method',
+              parameters: ['Primary Oxidation', 'Peroxide Value'],
+              specifications: '≤ 10 meq O₂/kg',
+              price: 160.00,
+              group: 'Standard',
+              analytes: ['Peroxide Value', 'Oxidative Stability'],
               assignedAnalyst: 'Dr. Alex Chen',
               status: 'Completed',
-              priority: 'Medium'
+              priority: 'Medium',
+              estimatedDuration: '3 hours'
             },
             {
               id: 'T012',
               testId: 'TST-012',
               testName: 'Moisture Content',
+              testType: 'Chemical Analysis',
               method: 'Karl Fischer Method',
+              parameters: ['Water Content', 'Moisture Level'],
+              specifications: '≤ 0.2%',
+              price: 140.00,
+              group: 'Standard',
+              analytes: ['Total Water', 'Free Water'],
               assignedAnalyst: 'Dr. Alex Chen',
               status: 'Completed',
-              priority: 'Low'
+              priority: 'Low',
+              estimatedDuration: '1 hour'
             }
           ]
         }
@@ -449,6 +552,22 @@ const OrderApproval: React.FC = () => {
   const handleViewSampleDetails = (sample: Sample) => {
     setSelectedSampleForDetails(sample);
     setIsSampleDetailsOpen(true);
+  };
+
+  const handleViewOrderTestDetails = (order: Order) => {
+    setSelectedOrderForTestDetails(order);
+    setIsOrderTestDetailsOpen(true);
+  };
+
+  const handleViewSampleTestDetails = (sample: Sample) => {
+    setSelectedSampleForTestDetails(sample);
+    setIsSampleTestDetailsOpen(true);
+  };
+
+  const handleGenerateInvoice = (order: Order) => {
+    // Generate invoice logic would go here
+    console.log('Generating invoice for order:', order.orderId);
+    // This could open a new drawer or redirect to invoice generation page
   };
 
   const handleEditSample = (sampleId: string) => {
@@ -637,15 +756,27 @@ const OrderApproval: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-4 py-4">
-                      <motion.button
-                        onClick={() => handleViewOrder(order)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="flex items-center px-3 py-1.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
-                      >
-                        <Users className="w-4 h-4 mr-1" />
-                        Manage Samples
-                      </motion.button>
+                      <div className="flex items-center space-x-2">
+                        <motion.button
+                          onClick={() => handleViewOrder(order)}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex items-center px-3 py-1.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
+                        >
+                          <Users className="w-4 h-4 mr-1" />
+                          Manage Samples
+                        </motion.button>
+                        <motion.button
+                          onClick={() => handleViewOrderTestDetails(order)}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 rounded-lg transition-colors duration-200"
+                          title="View Test Details"
+                        >
+                          <FileCheck className="w-4 h-4 mr-1" />
+                          Test Details
+                        </motion.button>
+                      </div>
                     </td>
                   </motion.tr>
                 ))}
@@ -803,6 +934,16 @@ const OrderApproval: React.FC = () => {
                         >
                           <Info className="w-4 h-4 mr-1" />
                           Details
+                        </motion.button>
+                        <motion.button
+                          onClick={() => handleViewSampleTestDetails(sample)}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex items-center px-3 py-1.5 text-sm font-medium text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/30 rounded-lg transition-colors duration-200"
+                          title="View Test Details & Pricing"
+                        >
+                          <Receipt className="w-4 h-4 mr-1" />
+                          Tests
                         </motion.button>
                         <motion.button
                           onClick={() => handleEditSample(sample.id)}
@@ -1151,6 +1292,424 @@ const OrderApproval: React.FC = () => {
                 </div>
               </div>
             )}
+          </div>
+        )}
+      </Drawer>
+
+      {/* Order Test Details Drawer */}
+      <Drawer
+        isOpen={isOrderTestDetailsOpen}
+        onClose={() => setIsOrderTestDetailsOpen(false)}
+        title={`Order Test Details - ${selectedOrderForTestDetails?.orderId || ''}`}
+        size="3xl"
+      >
+        {selectedOrderForTestDetails && (
+          <div className="p-6 space-y-6">
+            {/* Order Summary */}
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-blue-900 dark:text-blue-100 mb-2">
+                    {selectedOrderForTestDetails.orderId} - Test Overview
+                  </h3>
+                  <p className="text-blue-700 dark:text-blue-300 mb-4">
+                    {selectedOrderForTestDetails.companyName} - {selectedOrderForTestDetails.siteName}
+                  </p>
+                  <div className="grid grid-cols-3 gap-6 text-sm">
+                    <div>
+                      <span className="text-blue-700 dark:text-blue-300 font-medium">PO Number:</span>
+                      <p className="text-blue-900 dark:text-blue-100">{selectedOrderForTestDetails.poNumber}</p>
+                    </div>
+                    <div>
+                      <span className="text-blue-700 dark:text-blue-300 font-medium">Total Samples:</span>
+                      <p className="text-blue-900 dark:text-blue-100">{selectedOrderForTestDetails.totalSamples}</p>
+                    </div>
+                    <div>
+                      <span className="text-blue-700 dark:text-blue-300 font-medium">Total Tests:</span>
+                      <p className="text-blue-900 dark:text-blue-100">{selectedOrderForTestDetails.totalTests}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-bold text-blue-900 dark:text-blue-100">
+                    Rs. {selectedOrderForTestDetails.samples.reduce((total, sample) => 
+                      total + sample.tests.reduce((sampleTotal, test) => sampleTotal + test.price, 0), 0
+                    ).toFixed(2)}
+                  </div>
+                  <div className="text-blue-700 dark:text-blue-300">Total Order Value</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Sample-wise Test Details */}
+            <div className="space-y-6">
+              {selectedOrderForTestDetails.samples.map((sample, sampleIndex) => (
+                <div key={sample.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+                  {/* Sample Header */}
+                  <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <Package className="w-6 h-6 text-primary-600" />
+                        <div>
+                          <h4 className="text-lg font-semibold text-gray-900 dark:text-white">{sample.sampleId}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{sample.sampleName}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-gray-900 dark:text-white">
+                            Rs. {sample.tests.reduce((total, test) => total + test.price, 0).toFixed(2)}
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">{sample.tests.length} tests</div>
+                        </div>
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(sample.status)}`}>
+                          {sample.status}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tests Table */}
+                  <div className="p-6">
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-gray-200 dark:border-gray-700">
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Test Details</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Parameters</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Specifications</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Group & Duration</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Price</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                          {sample.tests.map((test, testIndex) => (
+                            <motion.tr
+                              key={test.id}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: testIndex * 0.05 }}
+                              className={`hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors duration-200 ${
+                                testIndex % 2 === 0 ? 'bg-gray-50/30 dark:bg-gray-800/30' : 'bg-white/30 dark:bg-gray-900/30'
+                              }`}
+                            >
+                              <td className="px-4 py-4">
+                                <div>
+                                  <div className="flex items-center">
+                                    <TestTube className="w-4 h-4 text-primary-600 mr-2" />
+                                    <span className="font-medium text-gray-900 dark:text-white">{test.testName}</span>
+                                  </div>
+                                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{test.testType}</div>
+                                  <div className="text-xs text-gray-500 dark:text-gray-400">{test.method}</div>
+                                </div>
+                              </td>
+                              <td className="px-4 py-4">
+                                <div className="flex flex-wrap gap-1">
+                                  {test.parameters.map((param, paramIndex) => (
+                                    <span
+                                      key={paramIndex}
+                                      className="px-2 py-1 text-xs bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded-full"
+                                    >
+                                      {param}
+                                    </span>
+                                  ))}
+                                </div>
+                              </td>
+                              <td className="px-4 py-4">
+                                <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                  {test.specifications}
+                                </div>
+                              </td>
+                              <td className="px-4 py-4">
+                                <div className="text-sm">
+                                  <div className={`px-2 py-1 text-xs font-medium rounded-full inline-block mb-1 ${
+                                    test.group === 'Premium' 
+                                      ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400'
+                                      : 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
+                                  }`}>
+                                    {test.group}
+                                  </div>
+                                  <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                                    <Clock className="w-3 h-3 mr-1" />
+                                    {test.estimatedDuration}
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-4 py-4">
+                                <div className="flex items-center">
+                                  <DollarSign className="w-4 h-4 text-green-500 mr-1" />
+                                  <span className="text-lg font-bold text-green-600 dark:text-green-400">
+                                    Rs. {test.price.toFixed(2)}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="px-4 py-4">
+                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(test.status)}`}>
+                                  {test.status}
+                                </span>
+                              </td>
+                            </motion.tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Analytes Section */}
+                    <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                      <h5 className="text-sm font-semibold text-green-900 dark:text-green-100 mb-3 flex items-center">
+                        <Layers className="w-4 h-4 mr-2" />
+                        Analytes Included in Sample Tests
+                      </h5>
+                      <div className="flex flex-wrap gap-2">
+                        {Array.from(new Set(sample.tests.flatMap(test => test.analytes))).map((analyte, index) => (
+                          <span
+                            key={index}
+                            className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 rounded-full"
+                          >
+                            {analyte}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Order Summary Footer */}
+            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Order Financial Summary</h4>
+                  <div className="grid grid-cols-3 gap-6 text-sm">
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">Standard Tests:</span>
+                      <p className="font-medium text-gray-900 dark:text-white">
+                        {selectedOrderForTestDetails.samples.reduce((count, sample) => 
+                          count + sample.tests.filter(test => test.group === 'Standard').length, 0
+                        )} tests
+                      </p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">Premium Tests:</span>
+                      <p className="font-medium text-gray-900 dark:text-white">
+                        {selectedOrderForTestDetails.samples.reduce((count, sample) => 
+                          count + sample.tests.filter(test => test.group === 'Premium').length, 0
+                        )} tests
+                      </p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">Avg. Duration:</span>
+                      <p className="font-medium text-gray-900 dark:text-white">
+                        {Math.round(selectedOrderForTestDetails.samples.reduce((total, sample) => 
+                          total + sample.tests.reduce((testTotal, test) => 
+                            testTotal + parseInt(test.estimatedDuration), 0
+                          ), 0
+                        ) / selectedOrderForTestDetails.totalTests)} hours
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    Rs. {selectedOrderForTestDetails.samples.reduce((total, sample) => 
+                      total + sample.tests.reduce((sampleTotal, test) => sampleTotal + test.price, 0), 0
+                    ).toFixed(2)}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Total Order Value</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </Drawer>
+
+      {/* Sample Test Details Drawer */}
+      <Drawer
+        isOpen={isSampleTestDetailsOpen}
+        onClose={() => setIsSampleTestDetailsOpen(false)}
+        title={`Sample Test Details - ${selectedSampleForTestDetails?.sampleId || ''}`}
+        size="3xl"
+      >
+        {selectedSampleForTestDetails && (
+          <div className="p-6 space-y-6">
+            {/* Sample Summary */}
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-green-900 dark:text-green-100 mb-2">
+                    {selectedSampleForTestDetails.sampleId} - Test Details & Pricing
+                  </h3>
+                  <p className="text-green-700 dark:text-green-300 mb-4">
+                    {selectedSampleForTestDetails.sampleName} ({selectedSampleForTestDetails.sampleType})
+                  </p>
+                  <div className="grid grid-cols-3 gap-6 text-sm">
+                    <div>
+                      <span className="text-green-700 dark:text-green-300 font-medium">Commodity:</span>
+                      <p className="text-green-900 dark:text-green-100">{selectedSampleForTestDetails.commodity}</p>
+                    </div>
+                    <div>
+                      <span className="text-green-700 dark:text-green-300 font-medium">Quantity:</span>
+                      <p className="text-green-900 dark:text-green-100">{selectedSampleForTestDetails.sampleQuantity}</p>
+                    </div>
+                    <div>
+                      <span className="text-green-700 dark:text-green-300 font-medium">Total Tests:</span>
+                      <p className="text-green-900 dark:text-green-100">{selectedSampleForTestDetails.tests.length}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-bold text-green-900 dark:text-green-100">
+                    Rs. {selectedSampleForTestDetails.tests.reduce((total, test) => total + test.price, 0).toFixed(2)}
+                  </div>
+                  <div className="text-green-700 dark:text-green-300">Sample Total</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Detailed Tests Table */}
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+              <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                  <Receipt className="w-5 h-5 mr-2 text-primary-600" />
+                  Test Registration Details
+                </h4>
+              </div>
+              
+              <div className="p-6">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200 dark:border-gray-700">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Test Information</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Parameters & Analytes</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Specifications</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pricing Details</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Assignment</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                      {selectedSampleForTestDetails.tests.map((test, index) => (
+                        <motion.tr
+                          key={test.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className={`hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors duration-200 ${
+                            index % 2 === 0 ? 'bg-gray-50/30 dark:bg-gray-800/30' : 'bg-white/30 dark:bg-gray-900/30'
+                          }`}
+                        >
+                          <td className="px-4 py-6">
+                            <div className="space-y-2">
+                              <div className="flex items-center">
+                                <TestTube className="w-4 h-4 text-primary-600 mr-2" />
+                                <span className="font-semibold text-gray-900 dark:text-white">{test.testName}</span>
+                              </div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                <div className="font-medium">{test.testType}</div>
+                                <div>{test.method}</div>
+                              </div>
+                              <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                                <Clock className="w-3 h-3 mr-1" />
+                                {test.estimatedDuration}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-6">
+                            <div className="space-y-3">
+                              <div>
+                                <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Parameters:</div>
+                                <div className="flex flex-wrap gap-1">
+                                  {test.parameters.map((param, paramIndex) => (
+                                    <span
+                                      key={paramIndex}
+                                      className="px-2 py-1 text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 rounded-full"
+                                    >
+                                      {param}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                              <div>
+                                <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Analytes:</div>
+                                <div className="flex flex-wrap gap-1">
+                                  {test.analytes.map((analyte, analyteIndex) => (
+                                    <span
+                                      key={analyteIndex}
+                                      className="px-2 py-1 text-xs bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 rounded-full"
+                                    >
+                                      {analyte}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-6">
+                            <div className="text-sm font-medium text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
+                              {test.specifications}
+                            </div>
+                          </td>
+                          <td className="px-4 py-6">
+                            <div className="space-y-2">
+                              <div className="flex items-center">
+                                <DollarSign className="w-4 h-4 text-green-500 mr-2" />
+                                <span className="text-xl font-bold text-green-600 dark:text-green-400">
+                                  Rs. {test.price.toFixed(2)}
+                                </span>
+                              </div>
+                              <div className={`px-2 py-1 text-xs font-medium rounded-full inline-block ${
+                                test.group === 'Premium' 
+                                  ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400'
+                                  : 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
+                              }`}>
+                                {test.group} Group
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-6">
+                            <div className="space-y-2">
+                              <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(test.status)}`}>
+                                {test.status}
+                              </span>
+                              {test.assignedAnalyst && (
+                                <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                                  <User className="w-3 h-3 mr-1" />
+                                  {test.assignedAnalyst}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Sample Test Summary */}
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                      {selectedSampleForTestDetails.tests.filter(test => test.group === 'Standard').length}
+                    </div>
+                    <div className="text-sm text-blue-700 dark:text-blue-300">Standard Tests</div>
+                  </div>
+                  <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+                    <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                      {selectedSampleForTestDetails.tests.filter(test => test.group === 'Premium').length}
+                    </div>
+                    <div className="text-sm text-purple-700 dark:text-purple-300">Premium Tests</div>
+                  </div>
+                  <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                      Rs. {selectedSampleForTestDetails.tests.reduce((total, test) => total + test.price, 0).toFixed(2)}
+                    </div>
+                    <div className="text-sm text-green-700 dark:text-green-300">Total Cost</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </Drawer>
