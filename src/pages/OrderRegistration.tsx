@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   FileText,
@@ -30,14 +30,66 @@ import CustomSelect from '../components/CustomSelect';
 import Label from '../components/Label';
 import Input from '../components/Input';
 import SimpleTable from '../components/SimpleTable';
+import { useConfirmation } from '../hooks/useConfirmation';
 
 const OrderRegistration: React.FC = () => {
+  return (
+    <div className="space-y-6">
+      {/* Page Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          Order Registration
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">
+          Register and manage laboratory test orders
+        </p>
+      </motion.div>
+
+      {/* Main Content */}
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Orders />
+      </motion.div>
+    </div>
+  );
+};
+
+// Orders Component
+const Orders: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<any>(null);
+  const [viewingOrder, setViewingOrder] = useState<any>(null);
+  const [isViewMode, setIsViewMode] = useState(false);
   const [loading] = useState(false);
   const [selectedSampleForTest, setSelectedSampleForTest] = useState<any>(null);
   const [showActions, setShowActions] = useState<Record<string, boolean>>({});
+  const [dropdownPositions, setDropdownPositions] = useState<{ [key: string]: 'bottom' | 'top' }>({});
+
+  // Use confirmation hook
+  const { confirmDelete } = useConfirmation();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('[data-dropdown-container]')) {
+        setShowActions({});
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const [orders, setOrders] = useState([
     {
@@ -114,30 +166,60 @@ const OrderRegistration: React.FC = () => {
     }
   };
 
-  const toggleActions = (id: string) => {
+  const toggleActions = (id: string, event?: React.MouseEvent) => {
+    const isCurrentlyOpen = showActions[id];
+
     setShowActions(prev => ({
       ...prev,
       [id]: !prev[id]
     }));
+
+    // Calculate dropdown position when opening
+    if (!isCurrentlyOpen && event) {
+      const target = event.currentTarget as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const dropdownHeight = 120; // Estimated dropdown height
+      const spaceBelow = viewportHeight - rect.bottom - 10;
+      const spaceAbove = rect.top - 10;
+
+      const shouldOpenUpward = spaceBelow < dropdownHeight && spaceAbove >= dropdownHeight;
+
+      setDropdownPositions(prev => ({
+        ...prev,
+        [id]: shouldOpenUpward ? 'top' : 'bottom'
+      }));
+    }
   };
 
   const handleAddOrder = () => {
     setEditingOrder(null);
+    setViewingOrder(null);
+    setIsViewMode(false);
     setIsDrawerOpen(true);
   };
 
   const handleEditOrder = (record: any) => {
     setEditingOrder(record);
+    setViewingOrder(null);
+    setIsViewMode(false);
     setIsDrawerOpen(true);
   };
 
   const handleViewOrder = (record: any) => {
-    console.log('View order:', record.id);
-    // You can implement view logic here
+    setViewingOrder(record);
+    setEditingOrder(null);
+    setIsViewMode(true);
+    setIsDrawerOpen(true);
   };
 
-  const handleDeleteOrder = (record: any) => {
-    if (window.confirm(`Are you sure you want to delete order "${record.orderId}"?`)) {
+  const handleDeleteOrder = async (record: any) => {
+    console.log('Delete button clicked for:', record.orderId);
+
+    const confirmed = await confirmDelete(record.orderId, 'order');
+
+    if (confirmed) {
+      console.log('Delete order:', record.id);
       setOrders(prev => prev.filter(order => order.id !== record.id));
     }
   };
@@ -257,15 +339,60 @@ const OrderRegistration: React.FC = () => {
             <Edit className="w-4 h-4" />
           </motion.button>
 
-          <motion.button
-            onClick={() => handleDeleteOrder(record)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-            title="Edit Chemical"
-          >
-            <Trash2 className="w-4 h-4" />
-          </motion.button>
+          {/* More Options - Vertical Ellipsis */}
+          <div className="relative" data-dropdown-container>
+            <motion.button
+              onClick={(e) => toggleActions(record.id, e)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              title="More Options"
+            >
+              <MoreVertical className="w-4 h-4" />
+            </motion.button>
+
+            {/* Dropdown Menu */}
+            {showActions[record.id] && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className={`absolute right-0 z-10 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 ${dropdownPositions[record.id] === 'top' ? 'bottom-8' : 'top-8'
+                  }`}
+              >
+                <button
+                  onClick={() => {
+                    handlePrintOrder(record);
+                    setShowActions(prev => ({ ...prev, [record.id]: false }));
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                >
+                  <Printer className="w-4 h-4" />
+                  Print Order
+                </button>
+                <button
+                  onClick={() => {
+                    handleDownloadReport(record);
+                    setShowActions(prev => ({ ...prev, [record.id]: false }));
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                >
+                  <Download className="w-4 h-4" />
+                  Download Report
+                </button>
+                <button
+                  onClick={() => {
+                    handleDeleteOrder(record);
+                    setShowActions(prev => ({ ...prev, [record.id]: false }));
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete Order
+                </button>
+              </motion.div>
+            )}
+          </div>
         </div>
       )
     }
@@ -292,11 +419,15 @@ const OrderRegistration: React.FC = () => {
     }
     setIsDrawerOpen(false);
     setEditingOrder(null);
+    setViewingOrder(null);
+    setIsViewMode(false);
   };
 
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
     setEditingOrder(null);
+    setViewingOrder(null);
+    setIsViewMode(false);
     setSelectedSampleForTest(null);
   };
 
@@ -312,20 +443,35 @@ const OrderRegistration: React.FC = () => {
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
-        return <OrderInformationStep />;
+        return <OrderInformationStep isViewMode={isViewMode} initialData={isViewMode ? viewingOrder : editingOrder} />;
       case 2:
-        return <SamplesStep onAddTestForSample={handleAddTestForSample} />;
+        return <SamplesStep onAddTestForSample={handleAddTestForSample} isViewMode={isViewMode} />;
       case 3:
-        return <TestsStep selectedSample={selectedSampleForTest} onTestAdded={() => setSelectedSampleForTest(null)} />;
+        return <TestsStep selectedSample={selectedSampleForTest} onTestAdded={() => setSelectedSampleForTest(null)} isViewMode={isViewMode} />;
       case 4:
-        return <ReviewStep />;
+        return <ReviewStep isViewMode={isViewMode} />;
       default:
-        return <OrderInformationStep />;
+        return <OrderInformationStep isViewMode={isViewMode} initialData={isViewMode ? viewingOrder : editingOrder} />;
     }
   };
 
-  // Drawer Footer Component
-  const drawerFooter = (
+  // Footer component for the order drawer
+  const drawerFooter = isViewMode ? (
+    <div className="p-4">
+      <div className="flex items-center justify-end space-x-3">
+        <motion.button
+          type="button"
+          onClick={handleCloseDrawer}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Close
+        </motion.button>
+      </div>
+    </div>
+  ) : (
     <div className="p-4">
       <div className="flex items-center justify-between space-x-3">
         <motion.button
@@ -383,31 +529,75 @@ const OrderRegistration: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
+      {/* Order Stats */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ delay: 0.2 }}
+        className="grid grid-cols-1 md:grid-cols-4 gap-6"
       >
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Order Registration
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Register and manage laboratory test orders
-        </p>
+        <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Orders</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{orders.length}</p>
+            </div>
+            <div className="p-3 bg-blue-500 rounded-full">
+              <FileText className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">In Progress</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {orders.filter(o => o.status === 'In Progress').length}
+              </p>
+            </div>
+            <div className="p-3 bg-yellow-500 rounded-full">
+              <Clock className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Completed</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {orders.filter(o => o.status === 'Completed').length}
+              </p>
+            </div>
+            <div className="p-3 bg-green-500 rounded-full">
+              <CheckCircle className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Samples</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {orders.reduce((sum, order) => sum + order.samplesCount, 0)}
+              </p>
+            </div>
+            <div className="p-3 bg-purple-500 rounded-full">
+              <Package className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
       </motion.div>
 
       {/* Orders Data Table */}
+
       <DataTable
         columns={columns}
         data={orders}
         loading={loading}
-        searchPlaceholder="Search orders..."
+        searchPlaceholder="Search groups..."
         addButtonText="New Order"
         onAdd={handleAddOrder}
         searchable={true}
-        filterable={true}
-        exportable={true}
         pagination={true}
         pageSize={10}
       />
@@ -416,7 +606,13 @@ const OrderRegistration: React.FC = () => {
       <Drawer
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}
-        title={editingOrder ? 'Edit Order' : 'New Order Registration'}
+        title={
+          isViewMode
+            ? `View Order - ${viewingOrder?.orderId || ''}`
+            : editingOrder
+              ? 'Edit Order'
+              : 'New Order Registration'
+        }
         size="3xl"
         footer={drawerFooter}
       >
@@ -481,7 +677,10 @@ const OrderRegistration: React.FC = () => {
 export default OrderRegistration;
 
 // Step Components
-const OrderInformationStep: React.FC = () => {
+const OrderInformationStep: React.FC<{
+  isViewMode?: boolean;
+  initialData?: any;
+}> = ({ isViewMode = false, initialData = null }) => {
   return (
     <div className="space-y-8">
       <div>
@@ -526,7 +725,7 @@ const OrderInformationStep: React.FC = () => {
           </div>
           <div>
             <Label htmlFor="addressLine1" required>Address Line 1</Label>
-            <Input value="" onChange={() => { }} placeholder="Enter address line 1" />
+            <Input value="" onChange={() => { }} placeholder="Enter address line 1" disabled={isViewMode} />
           </div>
           <div>
             <Label htmlFor="addressLine2">Address Line 2</Label>
@@ -763,7 +962,10 @@ const OrderInformationStep: React.FC = () => {
 };
 
 // Samples Step Component
-const SamplesStep: React.FC<{ onAddTestForSample: (sample: any) => void }> = ({ onAddTestForSample }) => {
+const SamplesStep: React.FC<{
+  onAddTestForSample: (sample: any) => void;
+  isViewMode?: boolean;
+}> = ({ onAddTestForSample, isViewMode = false }) => {
   const [samples, setSamples] = useState([
     {
       id: 'S001',
@@ -964,7 +1166,11 @@ const SamplesStep: React.FC<{ onAddTestForSample: (sample: any) => void }> = ({ 
 };
 
 // Tests Step Component
-const TestsStep: React.FC<{ selectedSample?: any; onTestAdded: () => void }> = ({ selectedSample, onTestAdded }) => {
+const TestsStep: React.FC<{
+  selectedSample?: any;
+  onTestAdded: () => void;
+  isViewMode?: boolean;
+}> = ({ selectedSample, onTestAdded, isViewMode = false }) => {
   const [tests, setTests] = useState([
     {
       id: 'T001',
@@ -1159,7 +1365,9 @@ const TestsStep: React.FC<{ selectedSample?: any; onTestAdded: () => void }> = (
 };
 
 // Review Step Component
-const ReviewStep: React.FC = () => {
+const ReviewStep: React.FC<{
+  isViewMode?: boolean;
+}> = ({ isViewMode = false }) => {
   // Mock test data with pricing - Order level urgency applied
   const testPricing = [
     {
@@ -1238,7 +1446,7 @@ const ReviewStep: React.FC = () => {
           <span className="w-5 h-5 mr-2 text-primary-600 bg-primary-100 dark:bg-primary-900/20 rounded-full flex items-center justify-center text-xs font-bold">Rs</span>
           Estimated Price Breakdown
         </h3>
-        
+
         {/* Test-wise Price Details */}
         <div className="space-y-4">
           <div className="overflow-x-auto">
@@ -1284,58 +1492,58 @@ const ReviewStep: React.FC = () => {
 
           {/* Price Summary */}
           <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-  <div className="flex justify-end">
-    <div className="w-full max-w-md space-y-2">
-      {/* Base Price */}
-      <div className="flex justify-between text-sm">
-        <span className="text-gray-600 dark:text-gray-400">
-          Base Price ({testPricing.length} tests):
-        </span>
-        <span className="text-gray-900 dark:text-white">
-          Rs. {baseSubtotal.toFixed(2)}
-        </span>
-      </div>
+            <div className="flex justify-end">
+              <div className="w-full max-w-md space-y-2">
+                {/* Base Price */}
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">
+                    Base Price ({testPricing.length} tests):
+                  </span>
+                  <span className="text-gray-900 dark:text-white">
+                    Rs. {baseSubtotal.toFixed(2)}
+                  </span>
+                </div>
 
-      {/* Urgency Fee */}
-      <div className="flex justify-between text-sm">
-        <span className="text-gray-600 dark:text-gray-400">
-          Urgency Fee (50% surcharge):
-        </span>
-        <span className="text-orange-600 dark:text-orange-400 font-medium">
-          +Rs. {urgencyFee.toFixed(2)}
-        </span>
-      </div>
+                {/* Urgency Fee */}
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">
+                    Urgency Fee (50% surcharge):
+                  </span>
+                  <span className="text-orange-600 dark:text-orange-400 font-medium">
+                    +Rs. {urgencyFee.toFixed(2)}
+                  </span>
+                </div>
 
-      {/* Subtotal */}
-      <div className="flex justify-between text-sm font-medium">
-        <span className="text-gray-600 dark:text-gray-400">Subtotal:</span>
-        <span className="text-gray-900 dark:text-white">
-          Rs. {subtotal.toFixed(2)}
-        </span>
-      </div>
+                {/* Subtotal */}
+                <div className="flex justify-between text-sm font-medium">
+                  <span className="text-gray-600 dark:text-gray-400">Subtotal:</span>
+                  <span className="text-gray-900 dark:text-white">
+                    Rs. {subtotal.toFixed(2)}
+                  </span>
+                </div>
 
-      {/* Tax */}
-      <div className="flex justify-between text-sm">
-        <span className="text-gray-600 dark:text-gray-400">Tax (15%):</span>
-        <span className="text-gray-900 dark:text-white">
-          Rs. {taxAmount.toFixed(2)}
-        </span>
-      </div>
+                {/* Tax */}
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Tax (15%):</span>
+                  <span className="text-gray-900 dark:text-white">
+                    Rs. {taxAmount.toFixed(2)}
+                  </span>
+                </div>
 
-      {/* Total */}
-      <div className="border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">
-        <div className="flex justify-between items-center">
-          <span className="text-base font-semibold text-gray-900 dark:text-white">
-            Total Amount:
-          </span>
-          <span className="text-lg font-bold text-primary-600 dark:text-primary-400">
-            Rs. {totalAmount.toFixed(2)}
-          </span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+                {/* Total */}
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-base font-semibold text-gray-900 dark:text-white">
+                      Total Amount:
+                    </span>
+                    <span className="text-lg font-bold text-primary-600 dark:text-primary-400">
+                      Rs. {totalAmount.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
 
           {/* Price Notes */}
@@ -1756,7 +1964,7 @@ const TestForm: React.FC<{
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
           rows={3}
           placeholder="Enter specification or reference"
-          // error={errors.specification}
+        // error={errors.specification}
         />
       </div>
 
@@ -1766,7 +1974,7 @@ const TestForm: React.FC<{
           onClick={onCancel}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"    
+          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
         >
           <X className="w-4 h-4 mr-2" />
           Cancel
