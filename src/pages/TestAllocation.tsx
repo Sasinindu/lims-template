@@ -313,12 +313,12 @@ const TestAllocation: React.FC = () => {
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Test Allocation
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Allocate individual tests to analysts for testing
-          </p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          Test Allocation
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">
+          Allocate individual tests to analysts for testing
+        </p>
         </div>
       </motion.div>
 
@@ -652,76 +652,76 @@ const TestAllocation: React.FC = () => {
         {selectedSample && (
           <div className="p-6 space-y-6">
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Sample ID</Label>
+          <div>
+            <Label>Sample ID</Label>
                 <Input value={selectedSample.sampleId} disabled />
-              </div>
-              <div>
-                <Label>Order ID</Label>
+          </div>
+          <div>
+            <Label>Order ID</Label>
                 <Input value={selectedSample.orderId} disabled />
-              </div>
-              <div>
+          </div>
+          <div>
                 <Label>Company</Label>
                 <Input value={selectedSample.companyName} disabled />
-              </div>
-              <div>
+          </div>
+          <div>
                 <Label>Site</Label>
                 <Input value={selectedSample.siteName} disabled />
-              </div>
-              <div>
+          </div>
+          <div>
                 <Label>Commodity</Label>
                 <Input value={selectedSample.commodity} disabled />
-              </div>
-              <div>
+          </div>
+          <div>
                 <Label>Category</Label>
                 <Input value={selectedSample.commodityCategory} disabled />
               </div>
             </div>
             
-            <div>
+                <div>
               <Label>Tests ({selectedSample.tests.length})</Label>
               <div className="mt-2 space-y-2">
                 {selectedSample.tests.map((test) => (
                   <div key={test.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <div>
+                <div>
                       <div className="font-medium text-sm">{test.testName}</div>
                       <div className="text-xs text-gray-500">{test.method}</div>
-                    </div>
+                </div>
                     <div className="text-right">
                       <div className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(test.status)}`}>
                         {test.status}
-                      </div>
-                      {test.assignedAnalyst && (
+                </div>
+                {test.assignedAnalyst && (
                         <div className="text-xs text-gray-500 mt-1">{test.assignedAnalyst}</div>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                )}
               </div>
             </div>
-          </div>
+          ))}
+        </div>
+      </div>
+    </div>
         )}
       </Drawer>
 
       {/* Allocation Drawer */}
-      <Drawer
+    <Drawer
         isOpen={isAllocationDrawerOpen}
         onClose={() => setIsAllocationDrawerOpen(false)}
         title={`Allocate ${selectedTest ? 'Test' : 'Sample'}`}
-        size="xl"
+      size="xl"
       >
         <div className="p-6 space-y-6">
           <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
             <h3 className="font-medium text-blue-900 dark:text-blue-100">
               {selectedTest ? 'Test Allocation' : 'Sample Allocation'}
-            </h3>
+          </h3>
             <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
               {selectedTest 
                 ? `Allocating test "${selectedTest.testName}" from sample ${selectedSampleForAllocation?.sampleId}`
                 : `Allocating all tests for sample ${selectedSampleForAllocation?.sampleId}`
               }
             </p>
-          </div>
+            </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -737,16 +737,16 @@ const TestAllocation: React.FC = () => {
               <Label htmlFor="dueDate" required>Due Date</Label>
               <Input type="date" />
             </div>
-          </div>
-
-          <div>
+                  </div>
+                  
+                  <div>
             <Label htmlFor="notes">Notes</Label>
             <textarea
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
               rows={3}
               placeholder="Add any special instructions or notes..."
-            />
-          </div>
+                    />
+                  </div>
 
           <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
             <button
@@ -766,7 +766,7 @@ const TestAllocation: React.FC = () => {
             </motion.button>
           </div>
         </div>
-      </Drawer>
+    </Drawer>
     </div>
   );
 };

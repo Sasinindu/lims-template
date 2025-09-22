@@ -757,10 +757,10 @@ const OrderApproval: React.FC = () => {
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center space-x-2">
-                        <motion.button
+                    <motion.button
                           onClick={() => handleViewOrder(order)}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                           className="flex items-center px-3 py-1.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
                         >
                           <Users className="w-4 h-4 mr-1" />
@@ -776,17 +776,32 @@ const OrderApproval: React.FC = () => {
                           <FileCheck className="w-4 h-4 mr-1" />
                           Test Details
                         </motion.button>
+                        <motion.button
+                          onClick={() => handleGenerateInvoice(order)}
+                          disabled={order.status !== 'Approved'}
+                          whileHover={{ scale: order.status === 'Approved' ? 1.05 : 1 }}
+                          whileTap={{ scale: order.status === 'Approved' ? 0.95 : 1 }}
+                          className={`flex items-center px-3 py-1.5 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                            order.status === 'Approved'
+                              ? 'text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/30'
+                              : 'text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 cursor-not-allowed'
+                          }`}
+                          title={order.status !== 'Approved' ? 'Order must be approved to generate invoice' : 'Generate Performer Invoice'}
+                        >
+                          <Receipt className="w-4 h-4 mr-1" />
+                          Generate Invoice
+                        </motion.button>
                       </div>
                     </td>
                   </motion.tr>
                 ))}
               </tbody>
             </table>
-          </div>
+                      </div>
         </div>
       </motion.div>
-    </div>
-  );
+                  </div>
+                );
 
   const renderSampleManagementView = () => {
     if (!selectedOrder) return null;
@@ -808,8 +823,8 @@ const OrderApproval: React.FC = () => {
           <div className="text-right">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">{selectedOrder.orderId}</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">{selectedOrder.companyName} - {selectedOrder.siteName}</p>
+            </div>
           </div>
-        </div>
 
         {/* Order Summary Card */}
         <motion.div
@@ -822,12 +837,12 @@ const OrderApproval: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">Sample Assignment Overview</h3>
               <p className="text-blue-700 dark:text-blue-300">Assign samples to divisional heads and set due dates for efficient processing</p>
-            </div>
+          </div>
             <div className="flex items-center space-x-6 text-sm">
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">{selectedOrder.totalSamples}</div>
                 <div className="text-blue-700 dark:text-blue-300">Total Samples</div>
-              </div>
+        </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">{selectedOrder.totalTests}</div>
                 <div className="text-blue-700 dark:text-blue-300">Total Tests</div>
@@ -849,7 +864,7 @@ const OrderApproval: React.FC = () => {
             <div className="mb-6">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Sample Assignment Management</h3>
               <p className="text-gray-600 dark:text-gray-400">Assign divisional heads and set due dates for each sample</p>
-            </div>
+    </div>
 
             <div className="space-y-4">
               {selectedOrder.samples.map((sample, index) => (
@@ -879,7 +894,7 @@ const OrderApproval: React.FC = () => {
                           )}
                         </motion.button>
                         <Package className="w-6 h-6 text-primary-600" />
-                        <div>
+      <div>
                           <h4 className="text-lg font-semibold text-gray-900 dark:text-white">{sample.sampleId}</h4>
                           <p className="text-sm text-gray-600 dark:text-gray-400">{sample.sampleName}</p>
                         </div>
@@ -892,7 +907,7 @@ const OrderApproval: React.FC = () => {
                           {sample.testsCount} tests
                         </div>
                       </div>
-                    </div>
+      </div>
 
                     {/* Assignment Status Summary - Always Visible */}
                     <div className="mt-3 flex items-center justify-between">
@@ -970,7 +985,7 @@ const OrderApproval: React.FC = () => {
                       >
                         <div className="p-6 space-y-6">
                           {/* Sample Details Grid */}
-                          <div>
+          <div>
                             <h5 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                               <Package className="w-4 h-4 mr-2 text-primary-600" />
                               Sample Information
@@ -979,28 +994,28 @@ const OrderApproval: React.FC = () => {
                               <div>
                                 <span className="text-gray-600 dark:text-gray-400 font-medium">Type:</span>
                                 <p className="text-gray-900 dark:text-white mt-1">{sample.sampleType}</p>
-                              </div>
-                              <div>
+          </div>
+          <div>
                                 <span className="text-gray-600 dark:text-gray-400 font-medium">Quantity:</span>
                                 <p className="text-gray-900 dark:text-white mt-1">{sample.sampleQuantity}</p>
-                              </div>
-                              <div>
+          </div>
+          <div>
                                 <span className="text-gray-600 dark:text-gray-400 font-medium">Commodity:</span>
                                 <p className="text-gray-900 dark:text-white mt-1">{sample.commodity}</p>
-                              </div>
-                              <div>
+          </div>
+          <div>
                                 <span className="text-gray-600 dark:text-gray-400 font-medium">Category:</span>
                                 <p className="text-gray-900 dark:text-white mt-1">{sample.commodityCategory}</p>
-                              </div>
-                              <div>
+          </div>
+          <div>
                                 <span className="text-gray-600 dark:text-gray-400 font-medium">Collection Date:</span>
                                 <p className="text-gray-900 dark:text-white mt-1">{sample.collectionDate}</p>
-                              </div>
-                              <div>
+          </div>
+          <div>
                                 <span className="text-gray-600 dark:text-gray-400 font-medium">Collection Site:</span>
                                 <p className="text-gray-900 dark:text-white mt-1">{sample.collectionSite}</p>
-                              </div>
-                            </div>
+          </div>
+        </div>
                             <div className="mt-4">
                               <span className="text-gray-600 dark:text-gray-400 font-medium">Description:</span>
                               <p className="text-gray-900 dark:text-white mt-1">{sample.description}</p>
@@ -1009,7 +1024,7 @@ const OrderApproval: React.FC = () => {
                               <span className="text-gray-600 dark:text-gray-400 font-medium">Sample Condition:</span>
                               <p className="text-gray-900 dark:text-white mt-1">{sample.sampleCondition}</p>
                             </div>
-                          </div>
+      </div>
 
                           {/* Assignment Section */}
                           <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
@@ -1021,7 +1036,7 @@ const OrderApproval: React.FC = () => {
                             {editingSample === sample.id ? (
                               <div className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                  <div>
+          <div>
                                     <Label htmlFor={`divisionalHead-${sample.id}`} required>
                                       Assign to Divisional Head
                                     </Label>
@@ -1031,8 +1046,8 @@ const OrderApproval: React.FC = () => {
                                       options={getDivisionalHeadOptions()}
                                       placeholder="Select divisional head"
                                     />
-                                  </div>
-                                  <div>
+          </div>
+          <div>
                                     <Label htmlFor={`dueDate-${sample.id}`} required>
                                       Set Due Date
                                     </Label>
@@ -1042,7 +1057,7 @@ const OrderApproval: React.FC = () => {
                                       onChange={(e) => updateSampleAssignment(sample.id, 'dueDate', e.target.value)}
                                       className="w-full"
                                     />
-                                  </div>
+          </div>
                                 </div>
                                 <div className="flex items-center justify-end space-x-2 pt-3 border-t border-gray-200 dark:border-gray-600">
                                   <motion.button
@@ -1066,7 +1081,7 @@ const OrderApproval: React.FC = () => {
                               </div>
                             ) : (
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
+          <div>
                                   <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">Assigned Divisional Head</div>
                                   {sample.assignedDivisionalHead ? (
                                     <div className="flex items-center">
@@ -1076,36 +1091,36 @@ const OrderApproval: React.FC = () => {
                                         <p className="text-xs text-gray-500 dark:text-gray-400">
                                           {divisionalHeads.find(h => h.name === sample.assignedDivisionalHead)?.department}
                                         </p>
-                                      </div>
-                                    </div>
+          </div>
+        </div>
                                   ) : (
                                     <div className="flex items-center">
                                       <AlertTriangle className="w-4 h-4 text-yellow-500 mr-2" />
                                       <span className="text-sm text-yellow-600 dark:text-yellow-400">Not assigned</span>
-                                    </div>
+      </div>
                                   )}
-                                </div>
-                                <div>
+        </div>
+          <div>
                                   <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">Due Date</div>
                                   {sample.dueDate ? (
                                     <div className="flex items-center">
                                       <CalendarIcon className="w-4 h-4 text-blue-500 mr-2" />
                                       <span className="text-sm font-medium text-gray-900 dark:text-white">{sample.dueDate}</span>
-                                    </div>
+          </div>
                                   ) : (
                                     <div className="flex items-center">
                                       <AlertTriangle className="w-4 h-4 text-yellow-500 mr-2" />
                                       <span className="text-sm text-yellow-600 dark:text-yellow-400">Not set</span>
-                                    </div>
+          </div>
                                   )}
-                                </div>
-                              </div>
+          </div>
+        </div>
                             )}
-                          </div>
+      </div>
 
                           {/* Associated Tests */}
                           {sample.tests.length > 0 && (
-                            <div>
+          <div>
                               <h5 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
                                 <TestTube className="w-4 h-4 mr-2 text-primary-600" />
                                 Associated Tests ({sample.tests.length})
@@ -1115,24 +1130,24 @@ const OrderApproval: React.FC = () => {
                                   <div key={test.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
                                     <div className="flex-1">
                                       <div className="flex items-center justify-between">
-                                        <div>
+          <div>
                                           <div className="font-medium text-sm text-gray-900 dark:text-white">{test.testName}</div>
                                           <div className="text-xs text-gray-500 dark:text-gray-400">{test.method}</div>
-                                        </div>
+          </div>
                                                                                  <div className="flex items-center space-x-2">
                                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(test.status)}`}>
                                              {test.status}
                                            </span>
-                                         </div>
-                                      </div>
+          </div>
+            </div>
                                       {test.assignedAnalyst && (
                                         <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center">
                                           <User className="w-3 h-3 mr-1" />
                                           {test.assignedAnalyst}
-                                        </div>
+          </div>
                                       )}
-                                    </div>
-                                  </div>
+          </div>
+          </div>
                                 ))}
                               </div>
                             </div>
@@ -1159,14 +1174,14 @@ const OrderApproval: React.FC = () => {
         transition={{ duration: 0.5 }}
         className="flex items-center justify-between"
       >
-        <div>
+          <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Order Approval
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
             Manage sample assignments to divisional heads with due date tracking
           </p>
-        </div>
+          </div>
       </motion.div>
 
       {/* Breadcrumb Navigation */}
@@ -1189,60 +1204,60 @@ const OrderApproval: React.FC = () => {
             <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
               <h3 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Sample Overview</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
+          <div>
                   <span className="text-blue-700 dark:text-blue-300 font-medium">Sample ID:</span>
                   <p className="text-blue-900 dark:text-blue-100">{selectedSampleForDetails.sampleId}</p>
-                </div>
-                <div>
+          </div>
+          <div>
                   <span className="text-blue-700 dark:text-blue-300 font-medium">Sample Name:</span>
                   <p className="text-blue-900 dark:text-blue-100">{selectedSampleForDetails.sampleName}</p>
-                </div>
-                <div>
+          </div>
+          <div>
                   <span className="text-blue-700 dark:text-blue-300 font-medium">Type:</span>
                   <p className="text-blue-900 dark:text-blue-100">{selectedSampleForDetails.sampleType}</p>
-                </div>
-                                                 <div>
+          </div>
+          <div>
                                    <span className="text-blue-700 dark:text-blue-300 font-medium">Status:</span>
                                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(selectedSampleForDetails.status)}`}>
                                      {selectedSampleForDetails.status}
                                    </span>
-                                 </div>
-              </div>
-            </div>
+          </div>
+        </div>
+      </div>
 
             {/* Sample Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+          <div>
                 <Label>Description</Label>
                 <div className="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <p className="text-sm text-gray-900 dark:text-white">{selectedSampleForDetails.description}</p>
-                </div>
-              </div>
-              <div>
+            </div>
+          </div>
+          <div>
                 <Label>Sample Condition</Label>
                 <Input value={selectedSampleForDetails.sampleCondition} disabled />
-              </div>
-              <div>
+          </div>
+          <div>
                 <Label>Quantity</Label>
                 <Input value={selectedSampleForDetails.sampleQuantity} disabled />
-              </div>
+          </div>
               <div>
                 <Label>Collection Date</Label>
                 <Input value={selectedSampleForDetails.collectionDate} disabled />
-              </div>
+        </div>
               <div>
                 <Label>Collection Site</Label>
                 <Input value={selectedSampleForDetails.collectionSite} disabled />
-              </div>
+      </div>
               <div>
                 <Label>Status</Label>
                 <div className="mt-1">
                   <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(selectedSampleForDetails.status)}`}>
                     {selectedSampleForDetails.status}
                   </span>
-                </div>
-              </div>
-            </div>
+    </div>
+        </div>
+        </div>
 
             {/* Assignment Information */}
             {(selectedSampleForDetails.assignedDivisionalHead || selectedSampleForDetails.dueDate) && (
@@ -1250,23 +1265,23 @@ const OrderApproval: React.FC = () => {
                 <h3 className="font-medium text-green-900 dark:text-green-100 mb-2">Assignment Information</h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   {selectedSampleForDetails.assignedDivisionalHead && (
-                    <div>
+      <div>
                       <span className="text-green-700 dark:text-green-300 font-medium">Divisional Head:</span>
                       <p className="text-green-900 dark:text-green-100">{selectedSampleForDetails.assignedDivisionalHead}</p>
                       <p className="text-xs text-green-700 dark:text-green-300">
                         {divisionalHeads.find(h => h.name === selectedSampleForDetails.assignedDivisionalHead)?.department}
                       </p>
-                    </div>
+      </div>
                   )}
                   {selectedSampleForDetails.dueDate && (
                     <div>
                       <span className="text-green-700 dark:text-green-300 font-medium">Due Date:</span>
                       <p className="text-green-900 dark:text-green-100">{selectedSampleForDetails.dueDate}</p>
-                    </div>
-                  )}
+        </div>
+      )}
                 </div>
-              </div>
-            )}
+        </div>
+      )}
 
             {/* Associated Tests */}
             {selectedSampleForDetails.tests.length > 0 && (
@@ -1278,21 +1293,21 @@ const OrderApproval: React.FC = () => {
                       <div>
                         <div className="font-medium text-sm text-gray-900 dark:text-white">{test.testName}</div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">{test.method}</div>
-                      </div>
+        </div>
                       <div className="text-right">
                         <div className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(test.status)}`}>
                           {test.status}
-                        </div>
+          </div>
                         {test.assignedAnalyst && (
                           <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{test.assignedAnalyst}</div>
-                        )}
-                      </div>
-                    </div>
+        )}
+      </div>
+    </div>
                   ))}
-                </div>
-              </div>
+        </div>
+        </div>
             )}
-          </div>
+        </div>
         )}
       </Drawer>
 
@@ -1308,7 +1323,7 @@ const OrderApproval: React.FC = () => {
             {/* Order Summary */}
             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
               <div className="flex items-center justify-between">
-                <div>
+      <div>
                   <h3 className="text-xl font-bold text-blue-900 dark:text-blue-100 mb-2">
                     {selectedOrderForTestDetails.orderId} - Test Overview
                   </h3>
@@ -1319,27 +1334,27 @@ const OrderApproval: React.FC = () => {
                     <div>
                       <span className="text-blue-700 dark:text-blue-300 font-medium">PO Number:</span>
                       <p className="text-blue-900 dark:text-blue-100">{selectedOrderForTestDetails.poNumber}</p>
-                    </div>
+      </div>
                     <div>
                       <span className="text-blue-700 dark:text-blue-300 font-medium">Total Samples:</span>
                       <p className="text-blue-900 dark:text-blue-100">{selectedOrderForTestDetails.totalSamples}</p>
-                    </div>
+        </div>
                     <div>
                       <span className="text-blue-700 dark:text-blue-300 font-medium">Total Tests:</span>
                       <p className="text-blue-900 dark:text-blue-100">{selectedOrderForTestDetails.totalTests}</p>
-                    </div>
-                  </div>
-                </div>
+        </div>
+        </div>
+          </div>
                 <div className="text-right">
                   <div className="text-3xl font-bold text-blue-900 dark:text-blue-100">
                     Rs. {selectedOrderForTestDetails.samples.reduce((total, sample) => 
                       total + sample.tests.reduce((sampleTotal, test) => sampleTotal + test.price, 0), 0
                     ).toFixed(2)}
-                  </div>
+      </div>
                   <div className="text-blue-700 dark:text-blue-300">Total Order Value</div>
-                </div>
+    </div>
               </div>
-            </div>
+      </div>
 
             {/* Sample-wise Test Details */}
             <div className="space-y-6">
@@ -1350,40 +1365,40 @@ const OrderApproval: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <Package className="w-6 h-6 text-primary-600" />
-                        <div>
+            <div>
                           <h4 className="text-lg font-semibold text-gray-900 dark:text-white">{sample.sampleId}</h4>
                           <p className="text-sm text-gray-600 dark:text-gray-400">{sample.sampleName}</p>
-                        </div>
-                      </div>
+              </div>
+            </div>
                       <div className="flex items-center space-x-4">
                         <div className="text-right">
                           <div className="text-lg font-bold text-gray-900 dark:text-white">
                             Rs. {sample.tests.reduce((total, test) => total + test.price, 0).toFixed(2)}
-                          </div>
+              </div>
                           <div className="text-sm text-gray-600 dark:text-gray-400">{sample.tests.length} tests</div>
-                        </div>
+            </div>
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(sample.status)}`}>
                           {sample.status}
                         </span>
-                      </div>
-                    </div>
-                  </div>
+          </div>
+        </div>
+      </div>
 
                   {/* Tests Table */}
                   <div className="p-6">
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
-                        <thead>
-                          <tr className="border-b border-gray-200 dark:border-gray-700">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200 dark:border-gray-700">
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Test Details</th>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Parameters</th>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Specifications</th>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Group & Duration</th>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Price</th>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                           {sample.tests.map((test, testIndex) => (
                             <motion.tr
                               key={test.id}
@@ -1396,14 +1411,14 @@ const OrderApproval: React.FC = () => {
                             >
                               <td className="px-4 py-4">
                                 <div>
-                                  <div className="flex items-center">
-                                    <TestTube className="w-4 h-4 text-primary-600 mr-2" />
+                      <div className="flex items-center">
+                        <TestTube className="w-4 h-4 text-primary-600 mr-2" />
                                     <span className="font-medium text-gray-900 dark:text-white">{test.testName}</span>
                                   </div>
                                   <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{test.testType}</div>
                                   <div className="text-xs text-gray-500 dark:text-gray-400">{test.method}</div>
-                                </div>
-                              </td>
+                      </div>
+                    </td>
                               <td className="px-4 py-4">
                                 <div className="flex flex-wrap gap-1">
                                   {test.parameters.map((param, paramIndex) => (
@@ -1414,13 +1429,13 @@ const OrderApproval: React.FC = () => {
                                       {param}
                                     </span>
                                   ))}
-                                </div>
-                              </td>
+                      </div>
+                    </td>
                               <td className="px-4 py-4">
                                 <div className="text-sm font-medium text-gray-900 dark:text-white">
                                   {test.specifications}
                                 </div>
-                              </td>
+                    </td>
                               <td className="px-4 py-4">
                                 <div className="text-sm">
                                   <div className={`px-2 py-1 text-xs font-medium rounded-full inline-block mb-1 ${
@@ -1435,7 +1450,7 @@ const OrderApproval: React.FC = () => {
                                     {test.estimatedDuration}
                                   </div>
                                 </div>
-                              </td>
+                    </td>
                               <td className="px-4 py-4">
                                 <div className="flex items-center">
                                   <DollarSign className="w-4 h-4 text-green-500 mr-1" />
@@ -1443,17 +1458,17 @@ const OrderApproval: React.FC = () => {
                                     Rs. {test.price.toFixed(2)}
                                   </span>
                                 </div>
-                              </td>
+                    </td>
                               <td className="px-4 py-4">
                                 <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(test.status)}`}>
                                   {test.status}
                                 </span>
                               </td>
                             </motion.tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
                     {/* Analytes Section */}
                     <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
@@ -1468,14 +1483,14 @@ const OrderApproval: React.FC = () => {
                             className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 rounded-full"
                           >
                             {analyte}
-                          </span>
+                  </span>
                         ))}
-                      </div>
-                    </div>
-                  </div>
+                </div>
+                </div>
+                </div>
                 </div>
               ))}
-            </div>
+                </div>
 
             {/* Order Summary Footer */}
             <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6">
@@ -1490,7 +1505,7 @@ const OrderApproval: React.FC = () => {
                           count + sample.tests.filter(test => test.group === 'Standard').length, 0
                         )} tests
                       </p>
-                    </div>
+                  </div>
                     <div>
                       <span className="text-gray-600 dark:text-gray-400">Premium Tests:</span>
                       <p className="font-medium text-gray-900 dark:text-white">
@@ -1498,7 +1513,7 @@ const OrderApproval: React.FC = () => {
                           count + sample.tests.filter(test => test.group === 'Premium').length, 0
                         )} tests
                       </p>
-                    </div>
+                </div>
                     <div>
                       <span className="text-gray-600 dark:text-gray-400">Avg. Duration:</span>
                       <p className="font-medium text-gray-900 dark:text-white">
@@ -1508,20 +1523,20 @@ const OrderApproval: React.FC = () => {
                           ), 0
                         ) / selectedOrderForTestDetails.totalTests)} hours
                       </p>
-                    </div>
-                  </div>
-                </div>
+              </div>
+            </div>
+          </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                     Rs. {selectedOrderForTestDetails.samples.reduce((total, sample) => 
                       total + sample.tests.reduce((sampleTotal, test) => sampleTotal + test.price, 0), 0
                     ).toFixed(2)}
-                  </div>
+        </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Total Order Value</div>
-                </div>
-              </div>
-            </div>
-          </div>
+      </div>
+    </div>
+        </div>
+        </div>
         )}
       </Drawer>
 
@@ -1537,7 +1552,7 @@ const OrderApproval: React.FC = () => {
             {/* Sample Summary */}
             <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-6">
               <div className="flex items-center justify-between">
-                <div>
+        <div>
                   <h3 className="text-xl font-bold text-green-900 dark:text-green-100 mb-2">
                     {selectedSampleForTestDetails.sampleId} - Test Details & Pricing
                   </h3>
@@ -1545,26 +1560,26 @@ const OrderApproval: React.FC = () => {
                     {selectedSampleForTestDetails.sampleName} ({selectedSampleForTestDetails.sampleType})
                   </p>
                   <div className="grid grid-cols-3 gap-6 text-sm">
-                    <div>
+        <div>
                       <span className="text-green-700 dark:text-green-300 font-medium">Commodity:</span>
                       <p className="text-green-900 dark:text-green-100">{selectedSampleForTestDetails.commodity}</p>
-                    </div>
-                    <div>
+        </div>
+        <div>
                       <span className="text-green-700 dark:text-green-300 font-medium">Quantity:</span>
                       <p className="text-green-900 dark:text-green-100">{selectedSampleForTestDetails.sampleQuantity}</p>
-                    </div>
-                    <div>
+        </div>
+        <div>
                       <span className="text-green-700 dark:text-green-300 font-medium">Total Tests:</span>
                       <p className="text-green-900 dark:text-green-100">{selectedSampleForTestDetails.tests.length}</p>
-                    </div>
-                  </div>
-                </div>
+          </div>
+        </div>
+      </div>
                 <div className="text-right">
                   <div className="text-3xl font-bold text-green-900 dark:text-green-100">
                     Rs. {selectedSampleForTestDetails.tests.reduce((total, test) => total + test.price, 0).toFixed(2)}
-                  </div>
+      </div>
                   <div className="text-green-700 dark:text-green-300">Sample Total</div>
-                </div>
+      </div>
               </div>
             </div>
 
@@ -1574,7 +1589,7 @@ const OrderApproval: React.FC = () => {
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                   <Receipt className="w-5 h-5 mr-2 text-primary-600" />
                   Test Registration Details
-                </h4>
+      </h4>
               </div>
               
               <div className="p-6">
@@ -1602,23 +1617,23 @@ const OrderApproval: React.FC = () => {
                         >
                           <td className="px-4 py-6">
                             <div className="space-y-2">
-                              <div className="flex items-center">
+          <div className="flex items-center">
                                 <TestTube className="w-4 h-4 text-primary-600 mr-2" />
                                 <span className="font-semibold text-gray-900 dark:text-white">{test.testName}</span>
-                              </div>
+            </div>
                               <div className="text-sm text-gray-600 dark:text-gray-400">
                                 <div className="font-medium">{test.testType}</div>
                                 <div>{test.method}</div>
-                              </div>
+          </div>
                               <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                                 <Clock className="w-3 h-3 mr-1" />
                                 {test.estimatedDuration}
-                              </div>
-                            </div>
+        </div>
+        </div>
                           </td>
                           <td className="px-4 py-6">
                             <div className="space-y-3">
-                              <div>
+        <div>
                                 <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Parameters:</div>
                                 <div className="flex flex-wrap gap-1">
                                   {test.parameters.map((param, paramIndex) => (
@@ -1629,9 +1644,9 @@ const OrderApproval: React.FC = () => {
                                       {param}
                                     </span>
                                   ))}
-                                </div>
-                              </div>
-                              <div>
+        </div>
+        </div>
+        <div>
                                 <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Analytes:</div>
                                 <div className="flex flex-wrap gap-1">
                                   {test.analytes.map((analyte, analyteIndex) => (
@@ -1642,14 +1657,14 @@ const OrderApproval: React.FC = () => {
                                       {analyte}
                                     </span>
                                   ))}
-                                </div>
-                              </div>
-                            </div>
+        </div>
+      </div>
+      </div>
                           </td>
                           <td className="px-4 py-6">
                             <div className="text-sm font-medium text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
                               {test.specifications}
-                            </div>
+      </div>
                           </td>
                           <td className="px-4 py-6">
                             <div className="space-y-2">
@@ -1679,26 +1694,26 @@ const OrderApproval: React.FC = () => {
                                   {test.assignedAnalyst}
                                 </div>
                               )}
-                            </div>
+      </div>
                           </td>
                         </motion.tr>
                       ))}
                     </tbody>
                   </table>
-                </div>
+    </div>
 
                 {/* Sample Test Summary */}
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
                     <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                       {selectedSampleForTestDetails.tests.filter(test => test.group === 'Standard').length}
-                    </div>
+        </div>
                     <div className="text-sm text-blue-700 dark:text-blue-300">Standard Tests</div>
-                  </div>
+        </div>
                   <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
                     <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                       {selectedSampleForTestDetails.tests.filter(test => test.group === 'Premium').length}
-                    </div>
+        </div>
                     <div className="text-sm text-purple-700 dark:text-purple-300">Premium Tests</div>
                   </div>
                   <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
@@ -1712,7 +1727,7 @@ const OrderApproval: React.FC = () => {
             </div>
           </div>
         )}
-      </Drawer>
+    </Drawer>
     </div>
   );
 };
