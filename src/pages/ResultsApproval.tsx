@@ -447,17 +447,18 @@ const ResultsApproval: React.FC = () => {
     {
       key: 'actions',
       title: 'Actions',
-      width: '120px',
       render: (value: any, test: Test) => (
-        <motion.button
-          onClick={() => handleTestDetails(test)}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
-        >
-          <Eye className="w-4 h-4 mr-2" />
-          View Details
-        </motion.button>
+        <div className="flex items-center justify-center">
+          <motion.button
+            onClick={() => handleTestDetails(test)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+            title="View Details"
+          >
+            <Eye className="w-4 h-4" />
+          </motion.button>
+        </div>
       )
     }
   ];
@@ -523,26 +524,25 @@ const ResultsApproval: React.FC = () => {
     {
       key: 'actions',
       title: 'Actions',
-      width: '200px',
       render: (value: any, sample: Sample) => (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-center space-x-2">
           <motion.button
             onClick={() => handleViewTests(sample)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex items-center px-3 py-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 dark:bg-primary-900/20 dark:hover:bg-primary-900/30 rounded-lg transition-colors duration-200"
+            className="p-1 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+            title="View Tests"
           >
-            <Eye className="w-4 h-4 mr-1" />
-            View Tests
+            <Eye className="w-4 h-4" />
           </motion.button>
           <motion.button
             onClick={() => handleViewSampleReport(sample)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex items-center px-3 py-1.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200"
+            className="p-1 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+            title="Sample Report"
           >
-            <FileText className="w-4 h-4 mr-1" />
-            Sample Report
+            <FileText className="w-4 h-4" />
           </motion.button>
         </div>
       )
