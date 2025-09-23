@@ -68,6 +68,10 @@ const ResultsApproval: React.FC = () => {
   const [isTestDetailsOpen, setIsTestDetailsOpen] = useState(false);
   const [selectedTest, setSelectedTest] = useState<Test | null>(null);
   
+  // Sample Report View
+  const [isSampleReportOpen, setIsSampleReportOpen] = useState(false);
+  const [reportSample, setReportSample] = useState<Sample | null>(null);
+  
 
 
   // All samples from all orders (flattened for direct sample-level access)
@@ -360,6 +364,11 @@ const ResultsApproval: React.FC = () => {
     setIsTestDetailsOpen(true);
   };
 
+  const handleViewSampleReport = (sample: Sample) => {
+    setReportSample(sample);
+    setIsSampleReportOpen(true);
+  };
+
   const handleApproveTest = (testId: string) => {
     console.log('Approving test:', testId);
     // Update test status logic here
@@ -513,17 +522,28 @@ const ResultsApproval: React.FC = () => {
     {
       key: 'actions',
       title: 'Actions',
-      width: '100px',
+      width: '200px',
       render: (value: any, sample: Sample) => (
-        <motion.button
-          onClick={() => handleViewTests(sample)}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-200"
-        >
-          <Eye className="w-4 h-4 mr-2" />
-          View Tests
-        </motion.button>
+        <div className="flex items-center space-x-2">
+          <motion.button
+            onClick={() => handleViewTests(sample)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center px-3 py-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 dark:bg-primary-900/20 dark:hover:bg-primary-900/30 rounded-lg transition-colors duration-200"
+          >
+            <Eye className="w-4 h-4 mr-1" />
+            View Tests
+          </motion.button>
+          <motion.button
+            onClick={() => handleViewSampleReport(sample)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center px-3 py-1.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200"
+          >
+            <FileText className="w-4 h-4 mr-1" />
+            Sample Report
+          </motion.button>
+        </div>
       )
     }
   ];
@@ -839,6 +859,286 @@ const ResultsApproval: React.FC = () => {
                 </motion.button>
               </div>
             )}
+          </div>
+        )}
+      </Drawer>
+
+      {/* Sample Report Drawer */}
+      <Drawer
+        isOpen={isSampleReportOpen}
+        onClose={() => setIsSampleReportOpen(false)}
+        title={`Sample Report - ${reportSample?.sampleId || ''}`}
+        size="3xl"
+      >
+        {reportSample && (
+          <div className="p-6 space-y-6">
+            {/* Sample Information Header */}
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                    {reportSample.sampleName}
+                  </h3>
+                  <p className="text-blue-700 dark:text-blue-300 text-lg">
+                    {reportSample.sampleId} • {reportSample.sampleType}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <span className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(reportSample.status)}`}>
+                    {reportSample.status}
+                  </span>
+                  <p className="text-blue-700 dark:text-blue-300 text-sm mt-2">
+                    Order: {reportSample.orderId}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <span className="text-blue-700 dark:text-blue-300 font-medium">Commodity:</span>
+                  <p className="text-blue-900 dark:text-blue-100">{reportSample.commodity}</p>
+                </div>
+                <div>
+                  <span className="text-blue-700 dark:text-blue-300 font-medium">Assigned Analyst:</span>
+                  <p className="text-blue-900 dark:text-blue-100">{reportSample.assignedAnalyst}</p>
+                </div>
+                <div>
+                  <span className="text-blue-700 dark:text-blue-300 font-medium">Collection Date:</span>
+                  <p className="text-blue-900 dark:text-blue-100">{reportSample.collectionDate}</p>
+                </div>
+                <div>
+                  <span className="text-blue-700 dark:text-blue-300 font-medium">Due Date:</span>
+                  <p className="text-blue-900 dark:text-blue-100">{reportSample.dueDate}</p>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <span className="text-blue-700 dark:text-blue-300 font-medium">Description:</span>
+                <p className="text-blue-900 dark:text-blue-100 mt-1">{reportSample.description}</p>
+              </div>
+
+              <div className="mt-4 flex items-center space-x-6">
+                <div className="flex items-center">
+                  <User className="w-4 h-4 text-gray-500 mr-1" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Assigned Analyst: {reportSample.assignedAnalyst}</span>
+                </div>
+                <div className="flex items-center">
+                  <Package className="w-4 h-4 text-gray-500 mr-1" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Quantity: {reportSample.sampleQuantity}</span>
+                </div>
+                <div className="flex items-center">
+                  <CalendarIcon className="w-4 h-4 text-gray-500 mr-1" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Condition: {reportSample.sampleCondition}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Tests and Results */}
+            <div className="space-y-4">
+              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                <TestTube className="w-5 h-5 mr-2 text-primary-600" />
+                Test Results Summary ({reportSample.tests.length} tests)
+              </h4>
+
+              {reportSample.tests.map((test, index) => (
+                <motion.div
+                  key={test.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+                >
+                  {/* Test Header */}
+                  <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-primary-100 dark:bg-primary-900/20 rounded-full flex items-center justify-center">
+                          <span className="text-sm font-semibold text-primary-600 dark:text-primary-400">{index + 1}</span>
+                        </div>
+                        <div>
+                          <h5 className="text-lg font-semibold text-gray-900 dark:text-white">{test.testName}</h5>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{test.testId} - {test.testType}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-3">
+                        <span className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(test.status)}`}>
+                          {test.status}
+                        </span>
+                        <span className={`px-3 py-1 text-sm font-medium rounded-full ${getReviewStatusColor(test.reviewStatus)}`}>
+                          {test.reviewStatus}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Test Details and Results */}
+                  <div className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                      <div>
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Method:</span>
+                        <p className="text-gray-900 dark:text-white mt-1">{test.method}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Specifications:</span>
+                        <p className="text-gray-900 dark:text-white mt-1">{test.specifications}</p>
+                      </div>
+                    </div>
+
+                    {/* Analytes */}
+                    <div className="mb-6">
+                      <span className="font-medium text-gray-700 dark:text-gray-300">Analytes:</span>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {test.analytes.map((analyte, analyteIndex) => (
+                          <span
+                            key={analyteIndex}
+                            className="px-3 py-1 text-sm bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 rounded-full"
+                          >
+                            {analyte}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Test Results */}
+                    {test.result && (
+                      <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <h6 className="font-medium text-gray-700 dark:text-gray-300 mb-3">Test Results:</h6>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <span className="text-sm text-gray-600 dark:text-gray-400">Result:</span>
+                            <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                              {test.result} {test.unit}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-600 dark:text-gray-400">Pass/Fail:</span>
+                            <p className={`text-lg font-semibold ${
+                              test.passStatus === 'Pass' 
+                                ? 'text-green-600 dark:text-green-400'
+                                : 'text-red-600 dark:text-red-400'
+                            }`}>
+                              {test.passStatus}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-600 dark:text-gray-400">Completed:</span>
+                            <p className="text-sm text-gray-900 dark:text-white">{test.completedDate}</p>
+                          </div>
+                        </div>
+                        {test.testNotes && (
+                          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+                            <span className="text-sm text-gray-600 dark:text-gray-400">Notes:</span>
+                            <p className="text-sm text-gray-900 dark:text-white mt-1">{test.testNotes}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Return Reason */}
+                    {test.reviewStatus === 'Returned' && test.returnReason && (
+                      <div className="mb-6 p-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
+                        <h6 className="font-medium text-orange-900 dark:text-orange-100 mb-2">Return Reason:</h6>
+                        <p className="text-orange-800 dark:text-orange-200">{test.returnReason}</p>
+                      </div>
+                    )}
+
+                    {/* Action Buttons for Individual Tests */}
+                    {test.reviewStatus === 'Pending Review' && test.status === 'Completed' && (
+                      <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <motion.button
+                          onClick={() => {
+                            handleReturnTest(test.id, 'Requires additional analysis');
+                          }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="flex items-center px-4 py-2 text-sm font-medium text-orange-600 hover:text-orange-700 bg-orange-50 hover:bg-orange-100 dark:bg-orange-900/20 dark:hover:bg-orange-900/30 rounded-lg transition-colors duration-200"
+                        >
+                          <XCircle className="w-4 h-4 mr-2" />
+                          Return for Rework
+                        </motion.button>
+                        <motion.button
+                          onClick={() => {
+                            handleRejectTest(test.id);
+                          }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="flex items-center px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/30 rounded-lg transition-colors duration-200"
+                        >
+                          <X className="w-4 h-4 mr-2" />
+                          Reject Test
+                        </motion.button>
+                        <motion.button
+                          onClick={() => {
+                            handleApproveTest(test.id);
+                          }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200"
+                        >
+                          <CheckCircle2 className="w-4 h-4 mr-2" />
+                          Approve Test
+                        </motion.button>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Bulk Actions for Sample */}
+            <div className="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-6 -mx-6 -mb-6">
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="font-medium">{reportSample.tests.length} tests total</span> • 
+                  <span className="ml-1">
+                    {reportSample.tests.filter(t => t.reviewStatus === 'Pending Review').length} pending review
+                  </span> • 
+                  <span className="ml-1">
+                    {reportSample.tests.filter(t => t.reviewStatus === 'Approved').length} approved
+                  </span>
+                </div>
+                
+                <div className="flex items-center space-x-3">
+                  <motion.button
+                    onClick={() => setIsSampleReportOpen(false)}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="px-6 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300 dark:hover:text-white rounded-lg transition-colors duration-200"
+                  >
+                    Close Report
+                  </motion.button>
+                  
+                  {reportSample.tests.some(t => t.reviewStatus === 'Pending Review' && t.status === 'Completed') && (
+                    <>
+                      <motion.button
+                        onClick={() => {
+                          const pendingTests = reportSample.tests.filter(t => t.reviewStatus === 'Pending Review' && t.status === 'Completed');
+                          pendingTests.forEach(test => handleReturnTest(test.id, 'Sample requires additional review'));
+                        }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="px-6 py-2 text-sm font-medium text-orange-600 hover:text-orange-700 bg-orange-50 hover:bg-orange-100 dark:bg-orange-900/20 dark:hover:bg-orange-900/30 rounded-lg transition-colors duration-200"
+                      >
+                        Return All Pending
+                      </motion.button>
+                      
+                      <motion.button
+                        onClick={() => {
+                          const pendingTests = reportSample.tests.filter(t => t.reviewStatus === 'Pending Review' && t.status === 'Completed');
+                          pendingTests.forEach(test => handleApproveTest(test.id));
+                        }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="px-6 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200"
+                      >
+                        Approve All Pending
+                      </motion.button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </Drawer>
