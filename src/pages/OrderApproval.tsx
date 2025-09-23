@@ -40,6 +40,7 @@ import Label from '../components/Label';
 import Input from '../components/Input';
 import Breadcrumb from '../components/Breadcrumb';
 import ReturnOrderModal from '../components/ReturnOrderModal';
+import { useConfirmation } from '../hooks/useConfirmation';
 
 interface Order {
   id: string;
@@ -108,6 +109,8 @@ const OrderApproval: React.FC = () => {
   const [dropdownPositions, setDropdownPositions] = useState<Record<string, 'top' | 'bottom'>>({});
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
   const [returnLoading, setReturnLoading] = useState(false);
+  const [approvalSuccess, setApprovalSuccess] = useState<string | null>(null);
+  const { confirm } = useConfirmation();
 
   // Click outside handler for dropdowns
   React.useEffect(() => {
@@ -621,9 +624,38 @@ const OrderApproval: React.FC = () => {
     }
   };
 
-  const handleEditOrder = (order: Order) => {
-    console.log('Edit order:', order.id);
-    // You can implement edit logic here - could open a drawer or navigate to edit page
+  const handleApproveOrder = async (order: Order) => {
+    const confirmed = await confirm({
+      title: 'Approve Order',
+      message: `Are you sure you want to approve order ${order.orderId}? This will finalize the order and all assigned samples.`,
+      type: 'approve',
+      itemType: 'order',
+      itemName: order.orderId,
+      confirmText: 'Approve Order',
+      cancelText: 'Cancel'
+    });
+
+    if (confirmed) {
+      try {
+        // Simulate API call for approval
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Update order status to 'Approved'
+        // In a real application, you would make an API call here
+        console.log('Order approved successfully:', order.orderId);
+        
+        // Show success message
+        setApprovalSuccess(`Order ${order.orderId} has been approved successfully!`);
+        
+        // Hide success message after 5 seconds
+        setTimeout(() => {
+          setApprovalSuccess(null);
+        }, 5000);
+        
+      } catch (error) {
+        console.error('Error approving order:', error);
+      }
+    }
   };
 
   const handlePrintOrder = (order: Order) => {
@@ -871,16 +903,18 @@ const OrderApproval: React.FC = () => {
                           <Users className="w-4 h-4" />
                         </motion.button>
 
-                        {/* Edit Action - Pencil Icon */}
-                        <motion.button
-                          onClick={() => handleEditOrder(order)}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="p-1 text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                          title="Edit Order"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </motion.button>
+                        {/* Approve Order Action - Check Icon - Only for orders with assigned samples */}
+                        {order.samples.some(sample => sample.status === 'Assigned') && (
+                          <motion.button
+                            onClick={() => handleApproveOrder(order)}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="p-1 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+                            title="Approve Order"
+                          >
+                            <Check className="w-4 h-4" />
+                          </motion.button>
+                        )}
 
                         {/* More Options - Vertical Ellipsis */}
                         <div className="relative" data-dropdown-container>
@@ -973,28 +1007,21 @@ const OrderApproval: React.FC = () => {
     </div>
   );
 
-  const renderSampleManagementView = () => {
+    const renderSampleManagementView = () => {
     if (!selectedOrder) return null;
 
     return (
       <div className="space-y-6">
-        {/* Back Button and Order Info */}
-        <div className="flex items-center justify-between">
-          <motion.button
-            onClick={handleBackToOrders}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Orders
-          </motion.button>
-
-          <div className="text-right">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{selectedOrder.orderId}</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400">{selectedOrder.companyName} - {selectedOrder.siteName}</p>
-          </div>
-        </div>
+        {/* Order Info Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="text-right"
+        >
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{selectedOrder.orderId}</h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400">{selectedOrder.companyName} - {selectedOrder.siteName}</p>
+        </motion.div>
 
         {/* Order Summary Card */}
         <motion.div
@@ -1292,41 +1319,6 @@ const OrderApproval: React.FC = () => {
                               </div>
                             )}
                           </div>
-
-                          {/* Associated Tests */}
-                          {sample.tests.length > 0 && (
-                            <div>
-                              <h5 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
-                                <TestTube className="w-4 h-4 mr-2 text-primary-600" />
-                                Associated Tests ({sample.tests.length})
-                              </h5>
-                              <div className="grid grid-cols-1 gap-3">
-                                {sample.tests.map((test) => (
-                                  <div key={test.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
-                                    <div className="flex-1">
-                                      <div className="flex items-center justify-between">
-                                        <div>
-                                          <div className="font-medium text-sm text-gray-900 dark:text-white">{test.testName}</div>
-                                          <div className="text-xs text-gray-500 dark:text-gray-400">{test.method}</div>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(test.status)}`}>
-                                            {test.status}
-                                          </span>
-                                        </div>
-                                      </div>
-                                      {test.assignedAnalyst && (
-                                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center">
-                                          <User className="w-3 h-3 mr-1" />
-                                          {test.assignedAnalyst}
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
                         </div>
                       </motion.div>
                     )}
@@ -1352,6 +1344,60 @@ const OrderApproval: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Page Header */}
+      <Breadcrumb items={getBreadcrumbItems()} />
+      
+      {/* Success Message */}
+      {approvalSuccess && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4"
+        >
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <CheckCircle className="w-5 h-5 text-green-400" />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                {approvalSuccess}
+              </p>
+            </div>
+            <div className="ml-auto pl-3">
+              <div className="-mx-1.5 -my-1.5">
+                <motion.button
+                  onClick={() => setApprovalSuccess(null)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex rounded-md bg-green-50 dark:bg-green-900/20 p-1.5 text-green-500 hover:bg-green-100 dark:hover:bg-green-900/30 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-green-50 dark:focus:ring-offset-green-900/20"
+                >
+                  <X className="w-4 h-4" />
+                </motion.button>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+      
+      {/* Back Button - Show when viewing a specific order */}
+      {selectedOrder && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center"
+        >
+          <motion.button
+            onClick={handleBackToOrders}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Order Approval
+          </motion.button>
+        </motion.div>
+      )}
+
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -1369,7 +1415,6 @@ const OrderApproval: React.FC = () => {
       </motion.div>
 
       {/* Breadcrumb Navigation */}
-      <Breadcrumb items={getBreadcrumbItems()} />
 
       {/* Current View */}
       {!selectedOrder && renderOrdersView()}

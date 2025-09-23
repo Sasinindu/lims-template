@@ -4,7 +4,7 @@ import ConfirmationModalContent from '../components/ConfirmationModalContent';
 interface ConfirmationOptions {
   title: string;
   message: string;
-  type?: 'delete' | 'warning' | 'danger';
+  type?: 'delete' | 'warning' | 'danger' | 'approve';
   itemType?: 'customer' | 'site' | 'chemical' | 'instrument' | 'order' | 'test' | 'generic';
   itemName?: string;
   confirmText?: string;

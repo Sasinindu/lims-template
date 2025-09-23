@@ -1,11 +1,11 @@
 import React from 'react';
-import { AlertTriangle, Trash2, User, Building2, FlaskConical, Package, FileText } from 'lucide-react';
+import { AlertTriangle, Trash2, User, Building2, FlaskConical, Package, FileText, CheckCircle } from 'lucide-react';
 import { useModal } from '../contexts/ModalContext';
 
 interface ConfirmationModalContentProps {
   title: string;
   message: string;
-  type?: 'delete' | 'warning' | 'danger';
+  type?: 'delete' | 'warning' | 'danger' | 'approve';
   itemType?: 'customer' | 'site' | 'chemical' | 'instrument' | 'order' | 'test' | 'generic';
   itemName?: string;
   onConfirm: () => void;
@@ -28,6 +28,10 @@ const ConfirmationModalContent: React.FC<ConfirmationModalContentProps> = ({
   const { closeModal } = useModal();
 
   const getIcon = () => {
+    if (type === 'approve') {
+      return <CheckCircle className="w-8 h-8" />;
+    }
+    
     switch (itemType) {
       case 'customer':
         return <User className="w-8 h-8" />;
@@ -46,6 +50,14 @@ const ConfirmationModalContent: React.FC<ConfirmationModalContentProps> = ({
 
   const getColors = () => {
     switch (type) {
+      case 'approve':
+        return {
+          bg: 'bg-green-50 dark:bg-green-900/10',
+          iconBg: 'bg-green-100 dark:bg-green-900/20',
+          iconColor: 'text-green-600 dark:text-green-400',
+          button: 'bg-green-600 hover:bg-green-700 focus:ring-green-500',
+          border: 'border-green-200 dark:border-green-800'
+        };
       case 'danger':
         return {
           bg: 'bg-red-50 dark:bg-red-900/10',
@@ -77,6 +89,8 @@ const ConfirmationModalContent: React.FC<ConfirmationModalContentProps> = ({
 
   const getDefaultConfirmText = () => {
     switch (type) {
+      case 'approve':
+        return 'Approve';
       case 'danger':
         return 'Delete Permanently';
       case 'warning':
@@ -164,6 +178,7 @@ const ConfirmationModalContent: React.FC<ConfirmationModalContentProps> = ({
             ) : (
               <>
                 {type === 'delete' && <Trash2 className="w-4 h-4 mr-2" />}
+                {type === 'approve' && <CheckCircle className="w-4 h-4 mr-2" />}
                 {confirmText || getDefaultConfirmText()}
               </>
             )}

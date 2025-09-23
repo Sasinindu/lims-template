@@ -327,10 +327,10 @@ const TestAllocation: React.FC = () => {
             <span className="text-sm font-medium text-gray-900 dark:text-white">
               {sample.assignedTests}/{sample.testsCount}
             </span>
-          </div>
+        </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">
             {sample.assignedTests} assigned
-          </div>
+        </div>
         </div>
       )
     },
@@ -363,7 +363,7 @@ const TestAllocation: React.FC = () => {
             whileTap={{ scale: 0.95 }}
             className="flex items-center px-3 py-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 dark:bg-primary-900/20 dark:hover:bg-primary-900/30 rounded-lg transition-colors duration-200"
             title="Assign Tests to Analysts"
-          >
+            >
             <UserPlus className="w-4 h-4 mr-1" />
             Assign Tests
           </motion.button>
@@ -384,7 +384,7 @@ const TestAllocation: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Test Allocation</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
             Assign tests to analysts for processing
-          </p>
+        </p>
         </div>
       </motion.div>
 
