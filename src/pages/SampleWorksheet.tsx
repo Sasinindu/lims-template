@@ -293,10 +293,6 @@ const SampleWorksheet: React.FC = () => {
             </div>
             <div className="mt-4 flex items-center space-x-6">
               <div className="flex items-center">
-                <MapPin className="w-4 h-4 text-gray-500 mr-1" />
-                <span className="text-sm text-gray-600 dark:text-gray-400">Collection Site: {sample.collectionSite}</span>
-              </div>
-              <div className="flex items-center">
                 <User className="w-4 h-4 text-gray-500 mr-1" />
                 <span className="text-sm text-gray-600 dark:text-gray-400">Assigned Analyst: {sample.assignedAnalyst}</span>
               </div>

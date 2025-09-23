@@ -300,7 +300,7 @@ const EnterResults: React.FC = () => {
             <p className="text-green-900 dark:text-green-100">{test.testType}</p>
           </div>
           <div>
-            <span className="text-green-700 dark:text-green-300 font-medium">Method:</span>
+            <span className="text-green-700 dark:text-green-300 font-medium">Protocol:</span>
             <p className="text-green-900 dark:text-green-100">{test.method}</p>
           </div>
           <div>

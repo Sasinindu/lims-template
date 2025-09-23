@@ -49,9 +49,10 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
     // { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     // { id: 'calendar', label: 'Calendar', icon: Calendar },
     // { id: 'database', label: 'Database', icon: Database },
+    { id: 'results-approval', label: 'Results Approval', icon: UserCheck },
     { id: 'users', label: 'Users', icon: Users },
     // { id: 'settings', label: 'Settings', icon: Settings },
-    { id: 'results-approval', label: 'Results Approval', icon: UserCheck },
+    
   ];
 
   const masterDataItems = [
