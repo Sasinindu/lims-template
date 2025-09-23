@@ -90,13 +90,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex">
-      <Sidebar currentPage={getCurrentPage()} onPageChange={handlePageChange} />
+    <div className="h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] overflow-hidden">
+      {/* Sidebar - Fixed position */}
+      <div className="row-span-2">
+        <Sidebar currentPage={getCurrentPage()} onPageChange={handlePageChange} />
+      </div>
       
-      <div className="flex-1 flex flex-col">
+      {/* Header - Fixed position */}
+      <div className="sticky top-0 z-50">
         <Header />
-        
-        <main className="flex-1 p-6 overflow-auto">
+      </div>
+      
+      {/* Main Content - Scrollable */}
+      <main className="overflow-auto bg-gradient-to-br from-gray-50/50 via-white/50 to-gray-100/50 dark:from-gray-900/50 dark:via-gray-800/50 dark:to-gray-900/50">
+        <div className="p-6 min-h-full">
           <motion.div
             key={location.pathname}
             initial={{ opacity: 0, y: 20 }}
@@ -106,8 +113,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           >
             {children}
           </motion.div>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };
