@@ -404,13 +404,6 @@ const TestAssignment: React.FC = () => {
                       <Clock className="w-3 h-3 mr-1" />
                       {test.estimatedDuration}
                     </div>
-                    <div className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      test.priority === 'High' ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' :
-                      test.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' :
-                      'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
-                    }`}>
-                      {test.priority} Priority
-                    </div>
                   </div>
                 </div>
                 
@@ -484,7 +477,7 @@ const TestAssignment: React.FC = () => {
               <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="font-medium text-gray-700 dark:text-gray-300">Parameters:</span>
+                    <span className="font-medium text-gray-700 dark:text-gray-300">Analytes:</span>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {test.parameters.map((param, paramIndex) => (
                         <span

@@ -73,7 +73,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       'settings': '/settings',
       'customer-master': '/customer-master',
       'group-master': '/group-master',
-      'test-types': '/test-types',
+      'test-parameters': '/test-parameters',
       'chemicals': '/chemicals',
       'commodities': '/commodities',
       'instrument-master': '/instrument-master',
