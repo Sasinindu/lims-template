@@ -14,12 +14,33 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const getCurrentPage = () => {
     const path = location.pathname.substring(1); // Remove leading slash
-    // Map paths to sidebar item IDs if they differ
+    
+    // Handle nested routes by checking if path starts with known route prefix
+    if (path.startsWith('test-allocation')) {
+      return 'test-allocation';
+    }
+    if (path.startsWith('order-approval')) {
+      return 'order-approval';
+    }
+    if (path.startsWith('order-registration')) {
+      return 'order-registration';
+    }
+    if (path.startsWith('customer-master')) {
+      return 'customer-master';
+    }
+    if (path.startsWith('group-master')) {
+      return 'group-master';
+    }
+    if (path.startsWith('instrument-master')) {
+      return 'instrument-master';
+    }
+    if (path.startsWith('test-parameters')) {
+      return 'test-parameters';
+    }
+    
+    // Map exact paths to sidebar item IDs
     const pathMap: { [key: string]: string } = {
       'dashboard': 'dashboard',
-      'order-registration': 'order-registration',
-      'order-approval': 'order-approval',
-      'test-allocation': 'test-allocation',
       'results-approval': 'results-approval',
       'tests': 'tests',
       'lab-tests': 'lab-tests',
@@ -29,12 +50,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       'database': 'database',
       'users': 'users',
       'settings': 'settings',
-      'customer-master': 'customer-master',
-      'group-master': 'group-master',
-      'test-parameters': 'test-parameters',
       'chemicals': 'chemicals',
       'commodities': 'commodities',
-      'instrument-master': 'instrument-master',
     };
     return pathMap[path] || 'dashboard'; // Default to dashboard
   };

@@ -9,10 +9,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Building2,
-  Eye,
-  Edit,
-  FileText,
-  ArrowRight
+  FileText
 } from 'lucide-react';
 import DataTable, { Column } from '../components/DataTable';
 import { useNavigate } from 'react-router-dom';
@@ -355,17 +352,18 @@ const TestAllocation: React.FC = () => {
     {
       key: 'actions',
       title: 'Actions',
+      width: '80px',
       render: (value: any, sample: Sample) => (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-center w-full">
+          {/* Assign Tests Action - UserPlus Icon */}
           <motion.button
             onClick={() => handleAssignTests(sample)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex items-center px-3 py-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 dark:bg-primary-900/20 dark:hover:bg-primary-900/30 rounded-lg transition-colors duration-200"
+            className="p-1 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
             title="Assign Tests to Analysts"
-            >
-            <UserPlus className="w-4 h-4 mr-1" />
-            Assign Tests
+          >
+            <UserPlus className="w-4 h-4" />
           </motion.button>
         </div>
       )
