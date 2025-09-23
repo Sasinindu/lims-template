@@ -11,7 +11,8 @@ import {
   Download,
   XCircle,
   CheckCircle2,
-  Search} from 'lucide-react';
+  Search,
+  ArrowLeft} from 'lucide-react';
 import Drawer from '../components/Drawer';
 import Breadcrumb from '../components/Breadcrumb';
 import DataTable, { Column } from '../components/DataTable';
@@ -648,10 +649,30 @@ const ResultsApproval: React.FC = () => {
     );
   };
 
-  return (
+    return (
     <div className="p-6 space-y-6">
        {/* Dynamic Breadcrumb Navigation */}
        <Breadcrumb items={getBreadcrumbItems()} />
+       
+      {/* Back Button - Show when viewing test results for a specific sample */}
+      {selectedSample && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center"
+        >
+          <motion.button
+            onClick={handleBackToSamples}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Results Approval
+          </motion.button>
+        </motion.div>
+      )}
+
       {/* Page Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -668,8 +689,6 @@ const ResultsApproval: React.FC = () => {
           </p>
         </div>
       </motion.div>
-
-     
 
       {/* Conditional Views */}
       {!selectedSample && renderSamplesView()}
