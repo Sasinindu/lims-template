@@ -48,6 +48,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       'tests': 'tests',
       'lab-tests': 'lab-tests',
       'reports': 'reports',
+      'manage-orders': 'manage-orders',
       'analytics': 'analytics',
       'calendar': 'calendar',
       'database': 'database',
@@ -80,6 +81,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       'chemicals': '/chemicals',
       'commodities': '/commodities',
       'instrument-master': '/instrument-master',
+      'manage-orders': '/manage-orders',
     };
     const path = routeMap[pageId];
     if (path) {

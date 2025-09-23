@@ -51,6 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
     // { id: 'database', label: 'Database', icon: Database },
     { id: 'results-approval', label: 'Results Approval', icon: UserCheck },
     { id: 'reports', label: 'Reports', icon: FileText },
+    { id: 'manage-orders', label: 'Manage Orders/Samples', icon: Settings },
     { id: 'users', label: 'Users', icon: Users },
     // { id: 'settings', label: 'Settings', icon: Settings },
     
