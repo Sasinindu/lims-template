@@ -45,7 +45,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
     { id: 'test-allocation', label: 'Test Allocation', icon: UserPlus },
     { id: 'tests', label: 'Tests', icon: TestTube },
     // { id: 'lab-tests', label: 'Lab Tests', icon: TestTube },
-    // { id: 'reports', label: 'Reports', icon: FileText },
+    { id: 'reports', label: 'Reports', icon: FileText },
     // { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     // { id: 'calendar', label: 'Calendar', icon: Calendar },
     // { id: 'database', label: 'Database', icon: Database },
