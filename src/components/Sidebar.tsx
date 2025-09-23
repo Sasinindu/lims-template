@@ -25,6 +25,7 @@ import {
   ClipboardList,
   CheckCircle2,
   UserPlus,
+  Receipt,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -52,6 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange }) => {
     { id: 'results-approval', label: 'Results Approval', icon: UserCheck },
     { id: 'reports', label: 'Reports', icon: FileText },
     { id: 'manage-orders', label: 'Manage Orders/Samples', icon: Settings },
+    { id: 'invoices', label: 'Invoices', icon: Receipt },
     { id: 'users', label: 'Users', icon: Users },
     // { id: 'settings', label: 'Settings', icon: Settings },
     

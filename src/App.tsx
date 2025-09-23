@@ -17,6 +17,7 @@ import EnterResults from './pages/EnterResults';
 import SampleWorksheet from './pages/SampleWorksheet';
 import Reports from './pages/Reports';
 import ManageOrders from './pages/ManageOrders';
+import Invoices from './pages/Invoices';
 import UsersPage from './pages/Users';
 import Settings from './pages/Settings';
 import CustomerMaster from './pages/CustomerMaster';
@@ -76,6 +77,7 @@ const App: React.FC = () => {
               <Route path="/lab-tests" element={<LabTests />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/manage-orders" element={<ManageOrders />} />
+              <Route path="/invoices" element={<Invoices />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/database" element={<DatabasePage />} />
