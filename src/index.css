@@ -164,3 +164,53 @@
 .focus-glossy:focus {
   box-shadow: 0 0 0 3px rgba(0, 156, 235, 0.1), 0 20px 40px -12px rgba(0, 156, 235, 0.15);
 }
+
+/* Print styles for worksheets */
+@media print {
+  @page {
+    margin: 0.5in;
+    size: letter;
+  }
+  
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .print\\:hidden {
+    display: none !important;
+  }
+  
+  .print\\:shadow-none {
+    box-shadow: none !important;
+  }
+  
+  .print\\:border-0 {
+    border: 0 !important;
+  }
+  
+  .print\\:bg-white {
+    background-color: white !important;
+  }
+  
+  .print\\:text-black {
+    color: black !important;
+  }
+  
+  /* Force print-friendly colors */
+  .dark\\:bg-gray-800,
+  .dark\\:bg-gray-700 {
+    background-color: white !important;
+  }
+  
+  .dark\\:text-white,
+  .dark\\:text-gray-300,
+  .dark\\:text-gray-400 {
+    color: black !important;
+  }
+  
+  .dark\\:border-gray-600,
+  .dark\\:border-gray-700 {
+    border-color: #d1d5db !important;
+  }
+}

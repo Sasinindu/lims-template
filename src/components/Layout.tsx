@@ -19,6 +19,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     if (path.startsWith('test-allocation')) {
       return 'test-allocation';
     }
+    if (path.startsWith('tests')) {
+      return 'tests';
+    }
     if (path.startsWith('order-approval')) {
       return 'order-approval';
     }
