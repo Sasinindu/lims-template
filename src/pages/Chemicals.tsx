@@ -51,6 +51,7 @@ const Chemicals: React.FC = () => {
       availability: 'In Stock',
       volume: 5.5,
       reorderQuantity: 10.0,
+      price: 45.99,
       status: 'Active',
       inventoryHistory: [
         { id: 'IH001', date: '2024-01-15', type: 'Stock In', quantity: 20.0, reason: 'Initial stock', user: 'Admin', balance: 20.0 },
@@ -65,6 +66,7 @@ const Chemicals: React.FC = () => {
       availability: 'Low Stock',
       volume: 2.3,
       reorderQuantity: 5.0,
+      price: 32.50,
       status: 'Active',
       inventoryHistory: [
         { id: 'IH004', date: '2024-01-10', type: 'Stock In', quantity: 10.0, reason: 'Monthly supply', user: 'Admin', balance: 10.0 },
@@ -79,6 +81,7 @@ const Chemicals: React.FC = () => {
       availability: 'In Stock',
       volume: 10.0,
       reorderQuantity: 15.0,
+      price: 28.75,
       status: 'Active',
       inventoryHistory: [
         { id: 'IH007', date: '2024-01-20', type: 'Stock In', quantity: 25.0, reason: 'Bulk purchase', user: 'Admin', balance: 25.0 },
@@ -93,6 +96,7 @@ const Chemicals: React.FC = () => {
       availability: 'Out of Stock',
       volume: 0,
       reorderQuantity: 500.0,
+      price: 15.20,
       status: 'Inactive',
       inventoryHistory: [
         { id: 'IH010', date: '2024-01-05', type: 'Stock In', quantity: 1000.0, reason: 'Annual stock', user: 'Admin', balance: 1000.0 },
@@ -107,6 +111,7 @@ const Chemicals: React.FC = () => {
       availability: 'In Stock',
       volume: 25.0,
       reorderQuantity: 10.0,
+      price: 12.99,
       status: 'Active',
       inventoryHistory: [
         { id: 'IH013', date: '2024-01-12', type: 'Stock In', quantity: 50.0, reason: 'Quarterly supply', user: 'Admin', balance: 50.0 },
@@ -297,6 +302,18 @@ const Chemicals: React.FC = () => {
       render: (value, record) => (
         <span className="text-sm text-gray-600 dark:text-gray-400">
           {value} {record.unit}
+        </span>
+      )
+    },
+    {
+      key: 'price',
+      title: 'Unit Price',
+      dataIndex: 'price',
+      width: '110px',
+      sortable: true,
+      render: (value) => (
+        <span className="text-sm font-medium text-green-600 dark:text-green-400">
+          ${value?.toFixed(2)}
         </span>
       )
     },

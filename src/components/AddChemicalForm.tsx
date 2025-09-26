@@ -26,6 +26,7 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
     availability: initialData?.availability || '',
     volume: initialData?.volume || '',
     reorderQuantity: initialData?.reorderQuantity || '',
+    price: initialData?.price || '',
     status: initialData?.status || 'Active',
     ...(initialData || {})
   });
@@ -79,6 +80,9 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
     if (!formData.reorderQuantity || formData.reorderQuantity <= 0) {
       newErrors.reorderQuantity = 'Reorder quantity must be greater than 0';
     }
+    if (!formData.price || formData.price <= 0) {
+      newErrors.price = 'Unit price must be greater than 0';
+    }
     if (!formData.status) {
       newErrors.status = 'Status is required';
     }
@@ -95,6 +99,7 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
         ...formData,
         volume: parseFloat(formData.volume.toString()),
         reorderQuantity: parseFloat(formData.reorderQuantity.toString()),
+        price: parseFloat(formData.price.toString()),
         id: isEditing ? formData.id : `CH${String(Date.now()).slice(-3)}`
       };
       onSave(chemicalData);
@@ -173,6 +178,20 @@ const AddChemicalForm: React.FC<AddChemicalFormProps> = ({
             onChange={(e) => handleInputChange('reorderQuantity', e.target.value)}
             placeholder="Enter reorder quantity"
             error={errors.reorderQuantity}
+            disabled={isViewMode}
+          />
+
+          {/* Unit Price */}
+          <Input
+            label="Unit Price (USD)"
+            required
+            type="number"
+            min="0"
+            step="0.01"
+            value={formData.price}
+            onChange={(e) => handleInputChange('price', e.target.value)}
+            placeholder="Enter unit price"
+            error={errors.price}
             disabled={isViewMode}
           />
 

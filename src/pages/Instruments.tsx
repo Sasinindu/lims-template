@@ -627,7 +627,7 @@ const Instruments: React.FC = () => {
               ? 'Edit Instrument' 
               : 'Add New Instrument'
         }
-        size="md"
+        size="xl"
         footer={drawerFooter}
       >
         <AddInstrumentForm
